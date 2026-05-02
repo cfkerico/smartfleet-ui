@@ -1,0 +1,63 @@
+<h2 mat-dialog-title>Créer Driver</h2>
+<mat-dialog-content class="dialog-content">
+    <form [formGroup]="form" class="driver-form-grid">
+
+        <mat-form-field appearance="outline">
+            <input matInput formControlName="civilite" placeholder="Civilité">
+            @if (f.civilite.touched && f.civilite.invalid) {
+                <mat-error>Champ obligtoire</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <input matInput formControlName="nom" placeholder="Nom">
+            @if (f.nom.touched && f.nom.invalid) {
+                <mat-error>Champ obligatoire (min 2 caractères)</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <input matInput formControlName="prenom" placeholder="Prénom">
+            @if (f.prenom.touched && f.prenom.invalid) {
+                <mat-error>Champ obligatoire (min 2 caractères)</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <input matInput formControlName="email" placeholder="Email">
+            @if (f.email.touched && f.email.invalid) {
+                <mat-error>Email invalid</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <input matInput formControlName="mobilePhoneNumber" placeholder="Téléphone Mobile">
+            @if (f.mobilePhoneNumber.touched && f.mobilePhoneNumber.invalid) {
+                <mat-error>Champ obligatoire</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <input matInput formControlName="workedDays"     placeholder="Worked Days">
+            @if (f.workedDays.touched && f.workedDays.invalid) {
+                <mat-error>Champ obligatoire</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <input  matInput formControlName="adresse" placeholder="Adresse">
+            @if (f.adresse.touched && f.adresse.invalid) {
+                <mat-error>Champ obligatoire</mat-error>
+            }
+        </mat-form-field>
+        
+
+        <mat-dialog-actions align="end">
+            <button mat-button (click)="cancel()">Annuler</button>
+            <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="save()">
+                Save
+            </button>
+        </mat-dialog-actions>
+         
+    </form>
+</mat-dialog-content>

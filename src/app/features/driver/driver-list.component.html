@@ -1,0 +1,48 @@
+<h1>Drivers</h1>
+
+    <button mat-raised-button color="primary" (click)="openForm()">
+      Ajouter
+    </button>
+
+    <table mat-table [dataSource]="drivers">
+
+      <ng-container matColumnDef="civilite">
+        <th mat-header-cell *matHeaderCellDef>Civilité</th>
+        <td mat-cell *matCellDef="let d">{{ d.civilite }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="nom">
+        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <td mat-cell *matCellDef="let d">{{ d.nom }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="prenom">
+        <th mat-header-cell *matHeaderCellDef>Prenom</th>
+        <td mat-cell *matCellDef="let d">{{ d.prenom }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let d">{{ d.email }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="mobilePhoneNumber">
+        <th mat-header-cell *matHeaderCellDef>mobilePhoneNumber</th>
+        <td mat-cell *matCellDef="let d">{{ d.mobilePhoneNumber }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="adresse">
+        <th mat-header-cell *matHeaderCellDef>adresse</th>
+        <td mat-cell *matCellDef="let d">{{ d.adresse }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="workedDays">
+        <th mat-header-cell *matHeaderCellDef>workedDays</th>
+        <th mat-cell *matCellDef="let d">{{ d.workedDays }}</th>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+
+    </table>
+    
