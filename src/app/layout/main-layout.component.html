@@ -2,7 +2,10 @@
 
 <div class="main-container"  [class.collapsed]=" layoutService.sidebarCollapsed()">
   <app-header-layout></app-header-layout>
+
   <main class="content">
     <router-outlet></router-outlet>
   </main>
+
+  <app-footer-layout></app-footer-layout>
 </div>
