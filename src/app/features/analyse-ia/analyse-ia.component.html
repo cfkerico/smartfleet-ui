@@ -1,0 +1,23 @@
+<mat-dialog-content>
+  <div class="analysis-card">
+    <h2>Analyse IA</h2>
+
+    <p><strong>Score :</strong> {{ data.score }}</p>
+
+    <p><strong>Analyse :</strong>
+      {{ data.analysis }}
+    </p>
+
+    <p><strong>Recommendation :</strong>
+      {{ data.recommendation}}
+    </p>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="close()">
+    Fermer
+  </button>
+</mat-dialog-actions>

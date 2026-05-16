@@ -15,8 +15,15 @@ export const routes: Routes = [
           },
           {
             path: 'drivers',
+            canActivate: [authGuard],
             loadComponent: () =>
               import('./features/driver/driver-list.component').then(m => m.DriverListComponent)
+          },
+          {
+            path: 'vehicles',
+            canActivate: [authGuard],
+            loadComponent: () =>
+              import('./features/vehicle/vehicle-list/vehicle-list.component').then(m => m.VehicleListComponent)
           },
           {
             path: '',

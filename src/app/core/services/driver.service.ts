@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Driver } from '../../models/driver.model';
+import { PageResponse} from '../../models/page-response.model';
+import {DriverAnalysis} from '../../models/driver-analysis.model';
 
 @Injectable({ providedIn: 'root' })
 export class DriverService {
@@ -10,11 +12,29 @@ export class DriverService {
 
     constructor(private http: HttpClient) {}
 
-    getAll(): Observable<Driver[]> {
-        return this.http.get<Driver[]>(this.apiUrl);
+    getAll(page: number, size: number): Observable<PageResponse<Driver>> {
+      const params = new HttpParams()
+        .set('page', page)
+        .set('size', size);
+        return this.http.get<PageResponse<Driver>>(this.apiUrl, {params});
     }
 
     create(driver: Driver): Observable<Driver> {
         return this.http.post<Driver>(this.apiUrl, driver);
+    }
+
+    update(driverId: number ,driver: Driver): Observable<Driver> {
+      console.log('----------driver----------- ',JSON.stringify(driver));
+      return this.http.put<Driver>(`${this.apiUrl}/${driverId}`, driver);
+    }
+
+    delete(driverId: number): Observable<any> {
+      console.log('************** drivers_id : ', driverId);
+      return this.http.delete<Driver>(`${this.apiUrl}/${driverId}`);
+    }
+
+    analyse(id: number) {
+      console.log('************** analysis drivers_id : '+`${this.apiUrl}/${id}/analyse`, id);
+      return this.http.get<DriverAnalysis>(`${this.apiUrl}/${id}/analyse`);
     }
 }

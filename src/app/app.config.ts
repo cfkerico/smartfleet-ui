@@ -5,6 +5,7 @@ import { initKeycloak } from  './core/auth/auth.init';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
+import { provideCharts, withDefaultRegisterables} from 'ng2-charts';
 
 
 export const appConfig: ApplicationConfig = {
@@ -13,6 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([authInterceptor, loadingInterceptor])
     ),
+    provideCharts(withDefaultRegisterables()),
     {
       provide: APP_INITIALIZER,
       useFactory: initKeycloak,

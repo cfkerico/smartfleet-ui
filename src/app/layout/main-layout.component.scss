@@ -1,4 +1,22 @@
-.layout { display: flex; height: 100vh; }
-.sidebar { width: 220px; background: #1e293b; color: white; padding: 20px; }
-.content { flex: 1; display: flex; flex-direction: column; }
-.header { height: 60px; background: #f1f5f9; display: flex; align-items: center; padding: 0 20px; }
+//.layout { display: flex; height: 100vh; }
+//.sidebar { width: 220px; background: #1e293b; color: white; padding: 20px; }
+//.content { flex: 1; display: flex; flex-direction: column; }
+//.header { height: 60px; background: #f1f5f9; display: flex; align-items: center; padding: 0 20px; }
+
+.main-container {
+  margin-left: 260px;
+
+  min-height: 100vh;
+
+  background: #f3f4f6;
+
+  transition: margin-left 0.25s ease;
+}
+
+.main-container.collapsed {
+  margin-left: 80px;
+}
+
+.content {
+  padding: 24px;
+}

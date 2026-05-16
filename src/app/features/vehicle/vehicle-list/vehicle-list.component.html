@@ -1,0 +1,74 @@
+<h1>Vehicles</h1>
+
+<button mat-raised-button color="primary" (click)="openForm()">
+  Ajouter
+</button>
+
+<mat-form-field appearance="outline" class="filter">
+  <mat-label>Filtrer</mat-label>
+
+  <input
+    matInput
+    (keyup)="applyFilter($event)"
+    placeholder="Recherche..."
+  >
+</mat-form-field>
+
+<table mat-table [dataSource]="vehicles">
+
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef>Name</th>
+    <td mat-cell *matCellDef="let d">{{ d.name }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="marque">
+    <th mat-header-cell *matHeaderCellDef>Marque</th>
+    <td mat-cell *matCellDef="let d">{{ d.marque }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="modele">
+    <th mat-header-cell *matHeaderCellDef>Modele</th>
+    <td mat-cell *matCellDef="let d">{{ d.modele }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="anneeFabrication">
+    <th mat-header-cell *matHeaderCellDef>Année Fabrication</th>
+    <td mat-cell *matCellDef="let d">{{ d.anneeFabrication }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="registration">
+    <th mat-header-cell *matHeaderCellDef>Immatriculation</th>
+    <td mat-cell *matCellDef="let d">{{ d.registration }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Actions</th>
+    <td mat-cell *matCellDef="let d">
+      <button
+        mat-icon-button
+        color="primary"
+        (click)="edit(d)">
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      <button
+        mat-icon-button
+        color="warn"
+        (click)="delete(d)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columns"></tr>
+  <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+</table>
+
+<mat-paginator
+  [length]="totalElements"
+  [pageSize]="pageSize"
+  [pageIndex]="pageIndex"
+  [pageSizeOptions]="[5, 10, 20]"
+  (page)="onPageChange($event)">
+</mat-paginator>

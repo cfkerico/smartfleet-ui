@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>Créer Driver</h2>
 <mat-dialog-content class="dialog-content">
-    <form [formGroup]="form" class="driver-form-grid">
+    <form [formGroup]="form" class="create-form-grid">
 
         <mat-form-field appearance="outline">
             <input matInput formControlName="civilite" placeholder="Civilité">
@@ -50,7 +50,7 @@
                 <mat-error>Champ obligatoire</mat-error>
             }
         </mat-form-field>
-        
+
 
         <mat-dialog-actions align="end">
             <button mat-button (click)="cancel()">Annuler</button>
@@ -58,6 +58,6 @@
                 Save
             </button>
         </mat-dialog-actions>
-         
+
     </form>
 </mat-dialog-content>

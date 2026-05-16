@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>Créer vehicle</h2>
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="form" class="create-form-grid">
+
+    <mat-form-field appearance="outline">
+      <input matInput formControlName="name" placeholder="Name">
+      @if (f.name.touched && f.name.invalid) {
+        <mat-error>Champ Obligatoire</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <input matInput formControlName="marque" placeholder="Marque">
+      @if (f.marque.touched && f.marque.invalid) {
+        <mat-error>Champ Obligatoire</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <input matInput formControlName="modele" placeholder="Modèle">
+      @if (f.modele.touched && f.modele.invalid) {
+        <mat-error>Champ Obligatoire</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <input matInput formControlName="anneeFabrication" placeholder="Année Fabrication">
+      @if (f.anneeFabrication.touched && f.anneeFabrication.invalid) {
+        <mat-error>Champ Obligatoire</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <input matInput formControlName="registration" placeholder="Matricule Véhicule">
+      @if (f.registration.touched && f.registration.invalid) {
+        <mat-error>Champ Obligatoire</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="cancel()">Annuler</button>
+      <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="save()">
+        Save
+      </button>
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>

@@ -1,0 +1,43 @@
+<header class="header">
+
+  <!-- LEFT -->
+  <div class="header-left">
+
+    <button mat-icon-button class="menu-btn" (click)="toggleSidebar()">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <span class="page-title">
+    Dashboard
+  </span>
+  </div>
+
+  <!--  CENTER  -->
+  <div class="header-center">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-icon matPrefix>
+        search
+      </mat-icon>
+      <input matInput placeholder="Search...">
+    </mat-form-field>
+  </div>
+
+  <!--  RIGHT -->
+  <div class="header-right">
+    <button mat-icon-button>
+      <mat-icon>
+        notifications
+      </mat-icon>
+
+    </button>
+
+    <button mat-button class="profile-btn">
+      <mat-icon>
+        account_circle
+      </mat-icon>
+
+      <span>CHOUPO</span>
+    </button>
+  </div>
+
+</header>

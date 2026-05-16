@@ -24,13 +24,6 @@
   padding: 24px;
 }
 
-/* Formulaire */
-.driver-form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
 /* Champs Material */
 .mat-mdc-form-field {
   width: 100%;
@@ -64,4 +57,13 @@ button:hover {
 
 .full-width {
   grid-column: span 2;
+}
+
+.mat-column-actions {
+  width: 120px;
+  text-align: right;
+}
+
+button {
+  margin-left: 8px;
 }
