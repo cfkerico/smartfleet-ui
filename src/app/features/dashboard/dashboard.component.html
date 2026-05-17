@@ -4,22 +4,24 @@
   </app-alerts-widget>
 </div>
 <h1>Analytics Dashboard</h1>
-<div class="cards">
-  <div class="card">
-    <h2>{{ analytics?.totalDrivers }}</h2>
-    <p>Drivers</p>
-  </div>
+@if (analytics$ | async; as analytics) {
+  <div class="cards">
+    <div class="card">
+      <h2>{{ analytics?.totalDrivers }}</h2>
+      <p>Drivers</p>
+    </div>
 
-  <div class="card">
-    <h2>{{ analytics?.totalVehicles }}</h2>
-    <p>Vehicles</p>
-  </div>
+    <div class="card">
+      <h2>{{ analytics?.totalVehicles }}</h2>
+      <p>Vehicles</p>
+    </div>
 
-  <div class="card">
-    <h2>{{ analytics?.averageScore }}</h2>
-    <p>Average IA Score</p>
+    <div class="card">
+      <h2>{{ analytics?.averageScore }}</h2>
+      <p>Average IA Score</p>
+    </div>
   </div>
-</div>
+}
 
 <div class="chart-container">
   <canvas
