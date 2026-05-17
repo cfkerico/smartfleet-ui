@@ -1,0 +1,38 @@
+<div class="alert-widget">
+
+  <!--  HEADER  -->
+  <div class="widget-header">
+    <h2>Live Alerts</h2>
+    <span class="counter">{{ notifications.length }}</span>
+  </div>
+
+  <!--  EMPTY -->
+  @if (notifications.length === 0) {
+    <div class="empty-state">
+      <mat-icon>notification_off</mat-icon>
+      <span>No alerts available</span>
+    </div>
+  }
+
+  <!--  LIST  -->
+  @for (notification of notifications; track notification.message) {
+    <div class="alert-card"
+         [class.info]="notification.type === 'INFO'"
+         [class.success]="notification.type === 'SUCCESS'"
+         [class.warning]="notification.type === 'WARNING'"
+         [class.error]="notification.type === 'ERROR'">
+      <!--  ICON  -->
+      <div class="alert-icon">
+        <mat-icon>{{ notification.type }}</mat-icon>
+      </div>
+
+      <!--  CONTENT -->
+      <div class="alert-content">
+        <div class="alert-type">{{ notification.type }}</div>
+        <div class="alert-message">{{ notification.message }}</div>
+      </div>
+    </div>
+
+  }
+
+</div>
