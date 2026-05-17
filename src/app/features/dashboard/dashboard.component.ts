@@ -57,7 +57,7 @@ export class DashboardComponent implements OnInit {
   private listenNotifications(): void {
     this.notificationService.notification$.subscribe(notification => {
       this.notifications.unshift(notification);
-      //this.cdr.detectChanges();
+      this.cdr.detectChanges(); // ==> Utile afin de charger la notification reçue à l'IHM
     });
   }
 
