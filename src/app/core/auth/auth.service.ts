@@ -23,4 +23,12 @@ export class AuthService {
   getUser() {
     return keycloak.tokenParsed;
   }
+
+  getCompanyId(): number {
+    return Number(keycloak.tokenParsed?.['companyId']);
+  }
+
+  getUsername(): String {
+    return keycloak.tokenParsed?.['username'];
+  }
 }

@@ -12,7 +12,7 @@ export class NotificationWebSocketService {
   private notificationSubject = new Subject<Notification>();
   notification$: Observable<Notification> = this.notificationSubject.asObservable();
 
-  connect(): void {
+  connect(companyId: number): void {
 
     this.client = new Client({
 
@@ -32,7 +32,7 @@ export class NotificationWebSocketService {
           'WebSocket connected'
         );
 
-        this.subscribeToAlerts();
+        this.subscribeToAlerts(companyId);
 
       },
 
@@ -48,9 +48,9 @@ export class NotificationWebSocketService {
     this.client.activate();
   }
 
-  private subscribeToAlerts(): void {
+  private subscribeToAlerts(companyId: number): void {
     this.client.subscribe(
-      '/topic/alerts',
+      `/topic/alerts/${companyId}`,
       message => {
         const notification = JSON.parse(message.body) as Notification;
         console.log('NOTIFICATION RECEIVED',

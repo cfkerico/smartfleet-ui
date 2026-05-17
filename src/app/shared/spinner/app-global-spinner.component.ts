@@ -15,6 +15,6 @@ export class AppGlobalSpinnerComponent {
   loading;
 
   constructor(private loadingService: LoadingService) {
-    this.loading = loadingService.loading
+    this.loading = this.loadingService.loading
   }
 }
