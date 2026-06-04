@@ -31,4 +31,29 @@ export class AuthService {
   getUsername(): String {
     return keycloak.tokenParsed?.['username'];
   }
+
+  getRoles(): string[] {
+    const token = this.getToken();
+    if (!token) {
+      return [];
+    }
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+
+      return payload.roles || [];
+    } catch (error) {
+      console.error('Token invalide', error);
+      return [];
+    }
+  }
+
+  hasRole(role: string): boolean {
+    return this.getRoles().includes(role);
+  }
+
+  isAdmin(): boolean {
+    return this.hasRole('ADMIN');
+  }
+
 }

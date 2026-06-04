@@ -1,16 +1,12 @@
+export type NotificationSeverity = 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR' | 'CRITICAL';
+
+export type NotificationStatus = 'UNREAD' | 'READ' | 'ARCHIVED';
+
 export interface Notification {
-  type: NotificationType;
+  id: number;
+  title: string;
   message: string;
-  date?: string;
-}
-
-export enum NotificationType {
-
-  INFO = 'INFO',
-
-  SUCCESS = 'SUCCESS',
-
-  WARNING = 'WARNING',
-
-  ERROR = 'ERROR'
+  severity: NotificationSeverity;
+  status: NotificationStatus;
+  createdAt: string;
 }

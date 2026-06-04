@@ -8,18 +8,21 @@ import { Notification } from '../../models/Notification';
 })
 export class NotificationWebSocketService {
 
-  private client!: Client;
+  private client?: Client;
+
   private notificationSubject = new Subject<Notification>();
   notification$: Observable<Notification> = this.notificationSubject.asObservable();
 
-  connect(companyId: number): void {
+  connect(companyId: number, role: string): void {
+
+    if (this.client?.active) {
+      return;
+    }
 
     this.client = new Client({
+      brokerURL: 'ws://localhost:8080/ws',
 
-      brokerURL:
-        'ws://localhost:8080/ws',
-
-      reconnectDelay: 5000,
+      reconnectDelay: 3000,
 
       debug: (message) => {
 
@@ -28,42 +31,24 @@ export class NotificationWebSocketService {
 
       onConnect: () => {
 
-        console.log(
-          'WebSocket connected'
-        );
+        console.log('Notification WebSocket connected');
 
-        this.subscribeToAlerts(companyId);
+        this.client?.subscribe(`/topic/notification/${companyId}/${role}`,
+          message => {
+            const notification = JSON.parse(message.body) as Notification;
 
-      },
+            console.log('WS NOTIFICATION RECEIVED', notification);
 
-      onStompError: frame => {
+            this.notificationSubject.next(notification);
+          });
 
-        console.error(
-          'Broker error',
-          frame
-        );
       }
     });
 
     this.client.activate();
   }
 
-  private subscribeToAlerts(companyId: number): void {
-    this.client.subscribe(
-      `/topic/alerts/${companyId}`,
-      message => {
-        const notification = JSON.parse(message.body) as Notification;
-        console.log('NOTIFICATION RECEIVED',
-          notification
-        );
-
-        this.notificationSubject.next(notification);
-      }
-    );
-  }
-
   disconnect(): void {
-
-    this.client.deactivate();
+    this.client?.deactivate();
   }
 }

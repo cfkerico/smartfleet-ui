@@ -6,7 +6,7 @@ import { AnalyticsService } from '../../core/services/analytics.service';
 import { BaseChartDirective } from 'ng2-charts';
 import { NotificationWebSocketService} from '../../core/services/notification-web-socket.service';
 import {AlertsWidgetComponent} from './alerts-widget/alerts-widget.component';
-import {NotificationType, Notification } from '../../models/Notification';
+import {NotificationSeverity, Notification } from '../../models/Notification';
 import {Observable, tap} from 'rxjs';
 import {DashboardAnalytics} from '../../models/dashboard-analytics.model';
 import {AsyncPipe} from '@angular/common';

@@ -17,18 +17,18 @@
   <!--  LIST  -->
   @for (notification of notifications; track notification.message) {
     <div class="alert-card"
-         [class.info]="notification.type === 'INFO'"
-         [class.success]="notification.type === 'SUCCESS'"
-         [class.warning]="notification.type === 'WARNING'"
-         [class.error]="notification.type === 'ERROR'">
+         [class.info]="notification.severity === 'INFO'"
+         [class.success]="notification.severity === 'SUCCESS'"
+         [class.warning]="notification.severity === 'WARNING'"
+         [class.error]="notification.severity === 'ERROR'">
       <!--  ICON  -->
       <div class="alert-icon">
-        <mat-icon>{{ notification.type }}</mat-icon>
+        <mat-icon>{{ notification.severity }}</mat-icon>
       </div>
 
       <!--  CONTENT -->
       <div class="alert-content">
-        <div class="alert-type">{{ notification.type }}</div>
+        <div class="alert-type">{{ notification.severity }}</div>
         <div class="alert-message">{{ notification.message }}</div>
       </div>
     </div>
