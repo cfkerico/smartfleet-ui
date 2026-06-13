@@ -41,7 +41,7 @@ export class AuthService {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
 
-      return payload.roles || [];
+      return payload.realm_access.roles || [];
     } catch (error) {
       console.error('Token invalide', error);
       return [];

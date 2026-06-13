@@ -33,7 +33,10 @@ export class DriverFormComponent {
     email : ['', [Validators.required, Validators.email]],
     mobilePhoneNumber : ['', Validators.required],
     adresse : '',
-    workedDays : [0, Validators.required]
+    workedDays : [0, Validators.required], 
+    licenseNumber: ['', Validators.required]//,
+    //licenseExpirationDate: [null, Validators.required],
+    //hireDate: [null, Validators.required]
   });
 
   isEdit = false;
@@ -51,6 +54,10 @@ export class DriverFormComponent {
         mobilePhoneNumber: data.mobilePhoneNumber,
         adresse: data.adresse,
         workedDays: data.workedDays,
+        licenseNumber: data.licenseNumber//,
+        //licenseExpirationDate: data.licenseExpirationDate,
+        //hireDate: data.hireDate
+
       });
     }
   }

@@ -37,6 +37,18 @@
             }
         </mat-form-field>
 
+        <!--<mat-form-field appearance="outline">
+            
+        <mat-label>Date d'embauche</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="hireDate">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+
+            @if (f.hireDate.touched && f.hireDate.invalid) {
+                <mat-error>La date d'embauche est obligatoire</mat-error>
+            }
+        </mat-form-field> -->
+
         <mat-form-field appearance="outline">
             <input matInput formControlName="workedDays"     placeholder="Worked Days">
             @if (f.workedDays.touched && f.workedDays.invalid) {

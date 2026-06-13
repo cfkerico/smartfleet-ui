@@ -13,6 +13,7 @@ export class NotificationApiService {
   constructor(private http: HttpClient) {}
 
   getUnreadNotification(): Observable<Notification[]> {
+    console.log('--------------- dans le unread :');
     return this.http.get<Notification[]>(`${this.apiUrl}/unread`);
   }
 

@@ -21,8 +21,7 @@ export class App implements OnInit {
   ngOnInit(): void {
     const companyId = this.authService.getCompanyId();
 
-    //const role = this.authService.getRoles()[0]
-    const role = 'TREASURER';
+    const role = this.authService.getRoles()[0]
       console.log('+++++++++++++++++ role : ', role);
     this.notificationWebSocketService.connect(companyId, role);
 

@@ -40,6 +40,14 @@
       }
     </a>
 
+    <!--  PAYMENTS  -->
+    <a routerLink="/revenues/payments" routerLinkActive="active" class="menu-item">
+      <mat-icon>payments</mat-icon>
+      @if (!layoutStateService.sidebarCollapsed()) {
+        <span>Recettes journalières</span>
+      }
+    </a>
+
     <!--  REPORTS -->
     <a routerLink="/reports" routerLinkActive="active" class="menu-item">
       <mat-icon>bar_chart</mat-icon>

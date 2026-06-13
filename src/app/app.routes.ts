@@ -26,6 +26,12 @@ export const routes: Routes = [
               import('./features/vehicle/vehicle-list/vehicle-list.component').then(m => m.VehicleListComponent)
           },
           {
+            path: 'revenues/payments',
+            canActivate: [authGuard],
+            loadComponent: () =>
+              import('./features/payment-history/payment-history.component').then(m => m.PaymentHistoryComponent)
+          },
+          {
             path: '',
             redirectTo: 'dashboard',
             pathMatch: 'full'

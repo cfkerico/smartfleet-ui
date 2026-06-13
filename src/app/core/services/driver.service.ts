@@ -8,7 +8,7 @@ import {DriverAnalysis} from '../../models/driver-analysis.model';
 @Injectable({ providedIn: 'root' })
 export class DriverService {
 
-    private apiUrl = 'http://localhost:8080/drivers';
+    private apiUrl = 'http://localhost:8080/api/drivers';
 
     constructor(private http: HttpClient) {}
 
