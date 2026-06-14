@@ -22,8 +22,8 @@ export class PaymentHistoryComponent implements AfterViewInit {
 
   displayedColumns: string[] = [
     'paymentDate',
-    'driverId',
-    'vehicleId',
+    'driver',
+    'vehicle',
     'expectedAmount',
     'paidAmount',
     'differenceAmount',

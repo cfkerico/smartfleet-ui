@@ -9,14 +9,14 @@
         <td mat-cell *matCellDef="let payment">{{ payment.paymentDate }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="driverId">
+    <ng-container matColumnDef="driver">
         <th mat-header-cell *matHeaderCellDef>Chauffeur</th>
-        <td mat-cell *matCellDef="let payment">{{ payment.driverId }}</td>
+        <td mat-cell *matCellDef="let payment">{{ payment.driverFullName }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="vehicleId">
+    <ng-container matColumnDef="vehicle">
         <th mat-header-cell *matHeaderCellDef>Véhicule</th>
-        <td mat-cell *matCellDef="let payment">{{ payment.vehicleId }}</td>
+        <td mat-cell *matCellDef="let payment">{{ payment.vehicleLabel }}</td>
     </ng-container>
 
     <ng-container matColumnDef="expectedAmount">
