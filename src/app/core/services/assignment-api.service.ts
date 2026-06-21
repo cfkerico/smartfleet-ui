@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Driver } from '../../models/driver.model';
 import { Vehicle } from '../../models/vehicle';
 import { VehicleAssignment } from '../../models/vehicle-assignment.model';
+import { PageResponse } from '../../models/page-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -34,4 +35,11 @@ export class AssignmentApiService {
   updateAssignment(id: number, payload: any): Observable<VehicleAssignment> {
     return this.http.put<VehicleAssignment>(`${this.assignmentUrl}/${id}`, payload);
   }
+
+  getAll(page: number, size: number): Observable<PageResponse<VehicleAssignment>> {
+      const params = new HttpParams()
+        .set('page', page)
+        .set('size', size);
+        return this.http.get<PageResponse<VehicleAssignment>>(this.assignmentUrl, {params});
+    }
 }

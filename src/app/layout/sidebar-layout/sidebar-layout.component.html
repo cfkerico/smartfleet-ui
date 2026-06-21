@@ -48,6 +48,14 @@
       }
     </a>
 
+    <!--  ASSIGNMENTS  -->
+    <a routerLink="/assignments" routerLinkActive="active" class="menu-item">
+      <mat-icon>assignment</mat-icon>
+      @if (!layoutStateService.sidebarCollapsed()) {
+        <span>Assignments</span>
+      }
+    </a>
+
     <!--  REPORTS -->
     <a routerLink="/reports" routerLinkActive="active" class="menu-item">
       <mat-icon>bar_chart</mat-icon>

@@ -10,7 +10,7 @@ export interface VehicleAssignment {
     type: string;
     status: string;
 
-    stardDate: string;
+    startDate: string;
     endDate?: string;
     reason?: string;
 }

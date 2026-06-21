@@ -32,6 +32,12 @@ export const routes: Routes = [
               import('./features/payment-history/payment-history.component').then(m => m.PaymentHistoryComponent)
           },
           {
+            path: 'assignments',
+            canActivate: [authGuard],
+            loadComponent: () =>
+              import('./features/assignment/assignment-list/assignment-list.component').then(m => m.AssignmentListComponent)
+          },
+          {
             path: '',
             redirectTo: 'dashboard',
             pathMatch: 'full'
