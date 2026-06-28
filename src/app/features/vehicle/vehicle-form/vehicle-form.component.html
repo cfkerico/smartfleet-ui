@@ -3,36 +3,40 @@
   <form [formGroup]="form" class="create-form-grid">
 
     <mat-form-field appearance="outline">
-      <input matInput formControlName="name" placeholder="Name">
-      @if (f.name.touched && f.name.invalid) {
+      <input matInput formControlName="brand" placeholder="Brand">
+      @if (f.brand.touched && f.brand.invalid) {
         <mat-error>Champ Obligatoire</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <input matInput formControlName="marque" placeholder="Marque">
-      @if (f.marque.touched && f.marque.invalid) {
+      <input matInput formControlName="model" placeholder="Modèle">
+      @if (f.model.touched && f.model.invalid) {
         <mat-error>Champ Obligatoire</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <input matInput formControlName="modele" placeholder="Modèle">
-      @if (f.modele.touched && f.modele.invalid) {
+      <input matInput formControlName="fuelType" placeholder="Fuel Type">
+      @if (f.fuelType.touched && f.fuelType.invalid) {
         <mat-error>Champ Obligatoire</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <input matInput formControlName="anneeFabrication" placeholder="Année Fabrication">
-      @if (f.anneeFabrication.touched && f.anneeFabrication.invalid) {
+      <input matInput formControlName="year" placeholder="Année Fabrication">
+      @if (f.year.touched && f.year.invalid) {
         <mat-error>Champ Obligatoire</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <input matInput formControlName="registration" placeholder="Matricule Véhicule">
-      @if (f.registration.touched && f.registration.invalid) {
+      <input matInput formControlName="vin" placeholder="Immatriculation">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <input matInput formControlName="registrationNumber" placeholder="Matricule Véhicule">
+      @if (f.registrationNumber.touched && f.registrationNumber.invalid) {
         <mat-error>Champ Obligatoire</mat-error>
       }
     </mat-form-field>

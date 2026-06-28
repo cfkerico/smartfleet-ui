@@ -3,7 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { NotificationWebSocketService} from './core/services/notification-web-socket.service';
 import { AppGlobalSpinnerComponent } from './shared/spinner/app-global-spinner.component';
 import { AuthService } from './core/auth/auth.service';
-import {NotificationStoreService} from './core/services/notification-store.service';
+import { NotificationStoreService } from './core/services/notification-store.service';
 
 @Component({
   selector: 'app-root',

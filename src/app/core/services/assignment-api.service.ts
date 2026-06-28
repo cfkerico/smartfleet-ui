@@ -10,8 +10,8 @@ import { PageResponse } from '../../models/page-response.model';
   providedIn: 'root',
 })
 export class AssignmentApiService {
-  private readonly driverUrl = 'http://localhost:8080/api/drivers';
-  private readonly vehicleUrl = 'http://localhost:8080/api/vehicles';
+  private readonly driverUrl = 'http://localhost:8080/api/drivers/driverstoassign';
+  private readonly vehicleUrl = 'http://localhost:8080/api/vehicles/vehiclestoassign';
   private readonly assignmentUrl = 'http://localhost:8080/api/assignments';
 
   constructor(private http: HttpClient) {}
@@ -25,15 +25,22 @@ export class AssignmentApiService {
   }
 
   findAssignments(): Observable<VehicleAssignment[]> {
-    return this.http.get<VehicleAssignment[]>(this.assignmentUrl);
+    const urltoassignments = 'http://localhost:8080/api/assignments/tolist';
+    return this.http.get<VehicleAssignment[]>(urltoassignments);
   }
 
   createAssignment(payload: any): Observable<number> {
+    console.log('************** createAssignment payload : ', payload);
     return this.http.post<number>(this.assignmentUrl, payload);
   }
 
-  updateAssignment(id: number, payload: any): Observable<VehicleAssignment> {
-    return this.http.put<VehicleAssignment>(`${this.assignmentUrl}/${id}`, payload);
+  pausedAssignment(id: number, reason: string): Observable<VehicleAssignment> {
+    const params = new HttpParams().set('reason', reason);
+    return this.http.put<VehicleAssignment>(`${this.assignmentUrl}/paused/${id}`, null, { params });
+  }
+
+  resumeAssignment(id: number): Observable<VehicleAssignment> {
+    return this.http.put<VehicleAssignment>(`${this.assignmentUrl}/resumed/${id}`, null);
   }
 
   getAll(page: number, size: number): Observable<PageResponse<VehicleAssignment>> {
@@ -42,4 +49,8 @@ export class AssignmentApiService {
         .set('size', size);
         return this.http.get<PageResponse<VehicleAssignment>>(this.assignmentUrl, {params});
     }
+
+  deleteAssignment(id: number): Observable<any> {
+    return this.http.delete(`${this.assignmentUrl}/${id}`);
+  }
 }

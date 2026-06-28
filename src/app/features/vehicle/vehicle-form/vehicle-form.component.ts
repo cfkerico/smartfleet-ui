@@ -34,11 +34,12 @@ export class VehicleFormComponent {
   private fb = inject(FormBuilder);
 
   form = this.fb.group({
-    name: ['', Validators.required],
-    marque: ['', Validators.required],
-    modele: ['', Validators.required],
-    anneeFabrication: ['', Validators.required],
-    registration: ['', Validators.required],
+    brand: ['', Validators.required],
+    model: ['', Validators.required],
+    year: ['', Validators.required],
+    fuelType: ['', Validators.required],
+    vin: [''],
+    registrationNumber: ['', Validators.required],
   });
 
   isEdit = false;
@@ -48,11 +49,12 @@ export class VehicleFormComponent {
       this.isEdit = true;
 
       this.form.patchValue({
-        name: data.name,
-        marque: data.marque,
-        modele: data.modele,
-        anneeFabrication: data.anneeFabrication,
-        registration: data.registration
+        brand: data.brand,
+        model: data.model,
+        year: data.year,
+        fuelType: data.fuelType,
+        vin: data.vin,
+        registrationNumber: data.registrationNumber
       });
     }
   }
