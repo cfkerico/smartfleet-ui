@@ -4,7 +4,8 @@
       Ajouter
     </button>
 
-    <mat-form-field appearance="outline" class="filter">      
+    <mat-form-field appearance="outline" class="filter">
+      <mat-label>Filtrer</mat-label>
 
       <input
         matInput
@@ -53,14 +54,26 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Actions</th>
         <td mat-cell *matCellDef="let a">
-          <button mat-button color="accent"
-                  (click)="editAssignment(a)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-button color="warn"
+            
+
+          @if (a.status !== 'PAUSED') {
+            <button mat-button color="warn"
+                    (click)="pauseAssignment(a)">
+              <mat-icon>pause</mat-icon>
+            </button>
+          } @else {
+            <button mat-button color="primary"
+                    (click)="resumeAssignment(a)">
+              <mat-icon>play_arrow</mat-icon>
+            </button>
+          }
+
+          <!-- Je commente le bouton de 'suppression' car on ne doit normalement pas delete une affectation de vehicle, on peut y
+            mettre fin mais jamais la supprimée -->
+          <!-- <button mat-button color="warn"
                   (click)="deleteAssignment(a)">
             <mat-icon>delete</mat-icon>
-          </button>
+          </button> -->
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

@@ -40,14 +40,6 @@
       }
     </a>
 
-    <!--  PAYMENTS  -->
-    <a routerLink="/revenues/payments" routerLinkActive="active" class="menu-item">
-      <mat-icon>payments</mat-icon>
-      @if (!layoutStateService.sidebarCollapsed()) {
-        <span>Recettes journalières</span>
-      }
-    </a>
-
     <!--  ASSIGNMENTS  -->
     <a routerLink="/assignments" routerLinkActive="active" class="menu-item">
       <mat-icon>assignment</mat-icon>
@@ -55,6 +47,14 @@
         <span>Assignments</span>
       }
     </a>
+
+    <!--  PAYMENTS  -->
+    <a routerLink="/revenues/payments" routerLinkActive="active" class="menu-item">
+      <mat-icon>payments</mat-icon>
+      @if (!layoutStateService.sidebarCollapsed()) {
+        <span>Recettes journalières</span>
+      }
+    </a>    
 
     <!--  REPORTS -->
     <a routerLink="/reports" routerLinkActive="active" class="menu-item">

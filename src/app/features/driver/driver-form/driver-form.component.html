@@ -1,72 +1,72 @@
 <h2 mat-dialog-title>Créer Driver</h2>
 <mat-dialog-content class="dialog-content">
-    <form [formGroup]="form" class="create-form-grid">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="create-form-grid">
 
         <mat-form-field appearance="outline">
-            <input matInput formControlName="civilite" placeholder="Civilité">
-            @if (f.civilite.touched && f.civilite.invalid) {
-                <mat-error>Champ obligtoire</mat-error>
-            }
+            <mat-label>Civilité</mat-label>
+            <mat-select formControlName="civilite">
+                @for (civilite of civilites; track civilite) {
+                    <mat-option [value]="civilite">
+                        {{ civilite }}
+                    </mat-option>
+                }
+            </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
+            <mat-label>Nom</mat-label>
             <input matInput formControlName="nom" placeholder="Nom">
-            @if (f.nom.touched && f.nom.invalid) {
-                <mat-error>Champ obligatoire (min 2 caractères)</mat-error>
-            }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
+            <mat-label>Prénom</mat-label>
             <input matInput formControlName="prenom" placeholder="Prénom">
-            @if (f.prenom.touched && f.prenom.invalid) {
-                <mat-error>Champ obligatoire (min 2 caractères)</mat-error>
-            }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
             <input matInput formControlName="email" placeholder="Email">
-            @if (f.email.touched && f.email.invalid) {
-                <mat-error>Email invalid</mat-error>
-            }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
+            <mat-label>Téléphone Mobile</mat-label>
             <input matInput formControlName="mobilePhoneNumber" placeholder="Téléphone Mobile">
-            @if (f.mobilePhoneNumber.touched && f.mobilePhoneNumber.invalid) {
-                <mat-error>Champ obligatoire</mat-error>
-            }
         </mat-form-field>
-
-        <!--<mat-form-field appearance="outline">
-            
-        <mat-label>Date d'embauche</mat-label>
-            <input matInput [matDatepicker]="picker" formControlName="hireDate">
-            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-
-            @if (f.hireDate.touched && f.hireDate.invalid) {
-                <mat-error>La date d'embauche est obligatoire</mat-error>
-            }
-        </mat-form-field> -->
 
         <mat-form-field appearance="outline">
-            <input matInput formControlName="workedDays"     placeholder="Worked Days">
-            @if (f.workedDays.touched && f.workedDays.invalid) {
-                <mat-error>Champ obligatoire</mat-error>
-            }
+            <mat-label>Worked Days</mat-label>
+            <input matInput formControlName="workedDays" placeholder="Worked Days">
         </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Numéro de permis</mat-label>
+            <input matInput formControlName="licenseNumber" placeholder="Numéro de permis">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Date d'expiration du permis</mat-label>
+            <input matInput [matDatepicker]="licensePicker" formControlName="licenseExpirationDate" placeholder="Date d'expiration du permis">
+            <mat-datepicker-toggle matIconSuffix [for]="licensePicker"></mat-datepicker-toggle>
+            <mat-datepicker #licensePicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Date d'embauche</mat-label>
+            <input matInput [matDatepicker]="hireDatePicker" formControlName="hireDate" placeholder="Date d'embauche">
+            <mat-datepicker-toggle matIconSuffix [for]="hireDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #hireDatePicker></mat-datepicker>
+        </mat-form-field>
+        
 
         <mat-form-field appearance="outline" class="full-width">
-            <input  matInput formControlName="adresse" placeholder="Adresse">
-            @if (f.adresse.touched && f.adresse.invalid) {
-                <mat-error>Champ obligatoire</mat-error>
-            }
+            <mat-label>Adresse</mat-label>
+            <input matInput formControlName="adresse" placeholder="Adresse">
         </mat-form-field>
 
 
         <mat-dialog-actions align="end">
-            <button mat-button (click)="cancel()">Annuler</button>
-            <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="save()">
+            <button mat-button (click)="onClose()">Annuler</button>
+            <button mat-raised-button color="primary" [disabled]="form.invalid" type="submit">
                 Save
             </button>
         </mat-dialog-actions>

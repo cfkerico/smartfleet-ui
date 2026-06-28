@@ -87,8 +87,10 @@ export class DriverListComponent implements OnInit, AfterViewInit {
 
   openForm() {
     const dialogRef = this.dialog.open(DriverFormComponent, {
-      width: '500px',
-      data: null
+      width: '800px',
+      data: {
+        mode: 'CREATE',
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -111,13 +113,15 @@ export class DriverListComponent implements OnInit, AfterViewInit {
   edit(driver: Driver) {
     console.log(driver);
     const dialogRef = this.dialog.open(DriverFormComponent, {
-      //width: '500px',
-      data: driver
+      width: '800px',
+      data: {
+        mode: 'EDIT',
+        driver: driver
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result && driver.id !== undefined) {
-        console.log("---------driver++---------- : ", JSON.stringify(driver));
         this.driverService.update(driver.id, result).subscribe({
           next: () => {
             this.notification.success('Driver modifié avec succès ✅');

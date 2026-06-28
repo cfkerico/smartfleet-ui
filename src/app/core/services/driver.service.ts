@@ -19,13 +19,12 @@ export class DriverService {
         return this.http.get<PageResponse<Driver>>(this.apiUrl, {params});
     }
 
-    create(driver: Driver): Observable<Driver> {
-        return this.http.post<Driver>(this.apiUrl, driver);
+    create(payload: any): Observable<Driver> {
+        return this.http.post<Driver>(this.apiUrl, payload);
     }
 
-    update(driverId: number ,driver: Driver): Observable<Driver> {
-      console.log('----------driver----------- ',JSON.stringify(driver));
-      return this.http.put<Driver>(`${this.apiUrl}/${driverId}`, driver);
+    update(driverId: number, payload: any): Observable<Driver> {
+      return this.http.put<Driver>(`${this.apiUrl}/${driverId}`, payload);
     }
 
     delete(driverId: number): Observable<any> {

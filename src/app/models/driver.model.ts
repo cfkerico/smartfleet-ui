@@ -1,5 +1,5 @@
 export interface Driver {
-  id?: number;
+  id: number;
   civilite: string;
   nom: string;
   prenom: string;
@@ -7,9 +7,8 @@ export interface Driver {
   mobilePhoneNumber: string;
   adresse: string;
   licenseNumber: string;
-  licenseExpirationDate: Date | null;
-  hireDate: Date | null;
+  licenseExpirationDate: string;
+  hireDate: string;
   status: string;
   workedDays: number;
-  companyId: number;
 }

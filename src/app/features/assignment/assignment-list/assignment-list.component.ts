@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { AssignmentApiService } from '../../../core/services/assignment-api.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { AssignmentFormComponent } from '../assignment-form/assignment-form.component';
 
 @Component({
   selector: 'app-assignment-list',
@@ -53,7 +54,6 @@ export class AssignmentListComponent implements OnInit, AfterViewInit {
   load() {
     this.assignmentService.getAll(this.pageIndex, this.pageSize).subscribe({
       next: (response) => {
-        console.log('************** assignments response : ', response);
         this.assigments.data = response.content;
         this.totalElements = response.totalElements;
       },
@@ -75,16 +75,65 @@ export class AssignmentListComponent implements OnInit, AfterViewInit {
     this.assigments.filter = filterValue.trim().toLowerCase();
   }
 
-  openForm() {
-    // Logic to open a form for creating a new assignment
+  openForm(): void {
+    const dialogRef = this.dialog.open(AssignmentFormComponent, {
+      width: '800px',
+      data: {
+        mode: 'CREATE',
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.load();
+      }
+    });
   }
 
-  editAssignment(assignment: VehicleAssignment) {
-    // Logic to edit the selected assignment
+  pauseAssignment(assignment: VehicleAssignment): void {
+    const dialogRef = this.dialog.open(AssignmentFormComponent, {
+      width: '800px',
+      data: {
+        mode: 'PAUSE',
+        assignment: assignment
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.load();
+      }
+    });
+  }
+
+  resumeAssignment(assignment: VehicleAssignment): void {
+    const dialogRef = this.dialog.open(AssignmentFormComponent, {
+      width: '800px',
+      data: {
+        mode: 'RESUME',
+        assignment: assignment
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.load();
+      }
+    });
   }
 
   deleteAssignment(assignment: VehicleAssignment) {
-    // Logic to delete the selected assignment
+    if (confirm(`Are you sure you want to delete the assignment for driver ${assignment.driverFullName} and vehicle ${assignment.vehicleLabel}?`)) {
+      this.assignmentService.deleteAssignment(assignment.id).subscribe({
+        next: () => {
+          this.notification.success('Assignment deleted successfully');
+          this.load(); // Reload the assignments after deletion
+        },
+        error: () => {
+          this.notification.error('Failed to delete assignment');
+        }
+      });
+    }
   } 
   
 }
