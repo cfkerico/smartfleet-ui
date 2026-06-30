@@ -9,9 +9,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
-
 import { formatDate } from '@angular/common';
-
 import { MatDialogRef, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { Driver } from '../../../models/driver.model';
@@ -73,15 +71,6 @@ export class DriverFormComponent implements OnInit{
   }
 
   private loadData() {
-    console.log('************** driver data : '); // --- IGNORE ---
-    /*this.DriverService.getAll(0, 100).subscribe({
-      next: (response) => {
-        this.drivers = response.content;
-      },
-      error: (error) => {
-        console.error('Error loading drivers:', error);
-      }
-    });*/
   }
 
   onSubmit() {

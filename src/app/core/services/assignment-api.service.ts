@@ -29,6 +29,7 @@ export class AssignmentApiService {
   }
 
   createAssignment(payload: any): Observable<number> {
+    console.log('************** createAssignment payload : ', payload);
     return this.http.post<number>(this.assignmentUrl, payload);
   }
 
