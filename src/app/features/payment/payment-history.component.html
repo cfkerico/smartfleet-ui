@@ -1,6 +1,17 @@
-<mat-card class="payment-history-card">
-    <mat-card-title>Historique des versements</mat-card-title>
-</mat-card>
+<h1>Recettes journalières</h1>
+
+<button mat-raised-button color="primary" (click)="openForm()">
+  Nouveau versement
+</button>
+
+<mat-form-field appearance="outline" class="filter">
+  <mat-label>Filtrer</mat-label>
+
+  <input
+    matInput
+    (keyup)="applyFilter($event)"
+    placeholder="Recherche...">
+</mat-form-field>
 
 <table mat-table [dataSource]="dataSource" class="payment-table">
     

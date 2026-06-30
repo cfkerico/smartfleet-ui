@@ -3,6 +3,7 @@ export interface Driver {
   civilite: string;
   nom: string;
   prenom: string;
+  fullName: string;
   email: string;
   mobilePhoneNumber: string;
   adresse: string;

@@ -10,6 +10,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 
+import { formatDate } from '@angular/common';
+
 import { MatDialogRef, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { Driver } from '../../../models/driver.model';
@@ -96,8 +98,8 @@ export class DriverFormComponent implements OnInit{
       mobilePhoneNumber: raw.mobilePhoneNumber,
       adresse: raw.adresse,
       licenseNumber: raw.licenseNumber,
-      licenseExpirationDate: this.toIsoDate(raw.licenseExpirationDate),
-      hireDate: this.toIsoDate(raw.hireDate),
+      licenseExpirationDate: formatDate(raw.licenseExpirationDate, 'yyyy-MM-dd', 'fr'),
+      hireDate: formatDate(raw.hireDate, 'yyyy-MM-dd', 'fr'),
       status: this.data.mode === 'EDIT' ? raw.status : null,
       workedDays: raw.workedDays
     }

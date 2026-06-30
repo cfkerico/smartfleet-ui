@@ -1,0 +1,78 @@
+@media (max-width: 600px) {
+  .client-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Container global du dialog */
+.mat-mdc-dialog-container {
+  border-radius: 16px !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+/* Titre */
+.mat-mdc-dialog-title {
+  font-size: 20px;
+  font-weight: 600;
+  padding: 20px 24px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Contenu */
+.dialog-content {
+  padding: 24px;
+}
+
+/* Champs Material */
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+/* Actions (boutons) */
+.mat-mdc-dialog-actions {
+  padding: 16px 24px;
+  border-top: 1px solid #eee;
+  display: flex;
+  gap: 12px;
+}
+
+/* Bouton primaire */
+button[mat-flat-button] {
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-weight: 500;
+}
+
+/* Bouton secondaire */
+button[mat-button] {
+  opacity: 0.8;
+}
+
+/* Hover effet */
+button:hover {
+  transform: translateY(-1px);
+  transition: 0.2s;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+.mat-column-actions {
+  width: 120px;
+  text-align: right;
+}
+
+button {
+  margin-left: 8px;
+}
+
+.warning-box {
+  grid-column: 1 / -1;
+  padding: 12px 16px;
+  border-radius: 6px;
+  background: #fff7ed;
+  color: #9a3412;
+  font-size: 14px;
+}

@@ -21,4 +21,8 @@ export class RevenuePaymentApiService {
 
       return this.http.get<PageResult<DriverPayment>>(this.apiUrl, {params});
   }
+
+  createPayment(payload: { driverId: number; vehicleId: number; paidAmount: number; paymentDate: string }) {
+    return this.http.post<void>(this.apiUrl, payload);
+  }
 }

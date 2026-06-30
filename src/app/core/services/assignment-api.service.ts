@@ -25,12 +25,10 @@ export class AssignmentApiService {
   }
 
   findAssignments(): Observable<VehicleAssignment[]> {
-    const urltoassignments = 'http://localhost:8080/api/assignments/tolist';
-    return this.http.get<VehicleAssignment[]>(urltoassignments);
+    return this.http.get<VehicleAssignment[]>(`${this.assignmentUrl}/tolist`);
   }
 
   createAssignment(payload: any): Observable<number> {
-    console.log('************** createAssignment payload : ', payload);
     return this.http.post<number>(this.assignmentUrl, payload);
   }
 
@@ -48,7 +46,11 @@ export class AssignmentApiService {
         .set('page', page)
         .set('size', size);
         return this.http.get<PageResponse<VehicleAssignment>>(this.assignmentUrl, {params});
-    }
+  }
+
+  findActiveAssignments(): Observable<VehicleAssignment[]> {
+    return this.http.get<VehicleAssignment[]>(`${this.assignmentUrl}/active `);
+  }
 
   deleteAssignment(id: number): Observable<any> {
     return this.http.delete(`${this.assignmentUrl}/${id}`);

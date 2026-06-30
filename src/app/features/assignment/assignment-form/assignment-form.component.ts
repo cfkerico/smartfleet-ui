@@ -10,6 +10,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
+import { formatDate } from '@angular/common';
 import { Driver } from '../../../models/driver.model';
 import { Vehicle } from '../../../models/vehicle';
 import { AssignmentStatus, AssignmentType, VehicleAssignment } from '../../../models/assignment.model';
@@ -116,9 +117,9 @@ export class AssignmentFormComponent implements OnInit {
       vehicleId: raw.vehicleId,
       type: raw.type,
       status: raw.status,
-      startDate: this.toIsoDate(raw.startDate),
+      startDate: formatDate(raw.startDate, 'yyyy-MM-dd', 'fr'),
       endDate: raw.endDate 
-        ? this.toIsoDate(raw.endDate)
+        ? formatDate(raw.endDate, 'yyyy-MM-dd', 'fr')
         : null,
       reason: this.data.mode === 'PAUSE' ? raw.reason : this.data.assignment?.reason
     };

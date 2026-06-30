@@ -29,7 +29,7 @@ export const routes: Routes = [
             path: 'revenues/payments',
             canActivate: [authGuard],
             loadComponent: () =>
-              import('./features/payment-history/payment-history.component').then(m => m.PaymentHistoryComponent)
+              import('./features/payment/payment-history.component').then(m => m.PaymentHistoryComponent)
           },
           {
             path: 'assignments',

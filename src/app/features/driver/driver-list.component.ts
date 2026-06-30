@@ -44,7 +44,7 @@ export class DriverListComponent implements OnInit, AfterViewInit {
   analysis?: DriverAnalysis;
 
   constructor (private driverService : DriverService, private dialog: MatDialog,
-    private cdr: ChangeDetectorRef, private notification: NotificationService) {}
+    private notification: NotificationService) {}
 
   ngAfterViewInit(): void {
     this.drivers.paginator = this.paginator;
@@ -57,6 +57,7 @@ export class DriverListComponent implements OnInit, AfterViewInit {
   load() {
     this.driverService.getAll(this.pageIndex, this.pageSize).subscribe({
       next: (response) => {
+        console.log('++++++++++++++++ ------------- +++++++++++++',JSON.stringify(response.content));
         this.drivers.data = response.content;
         this.totalElements = response.totalElements;
       },
@@ -64,12 +65,6 @@ export class DriverListComponent implements OnInit, AfterViewInit {
       error: () => {
         console.error('Error getting page');
       }
-
-      /*data => {
-      console.log('---------------------- ', JSON.stringify(data));
-      this.drivers.data = data["content"];
-
-      this.cdr.detectChanges();*/
     });
   }
 

@@ -1,0 +1,57 @@
+<<h2 mat-dialog-title>Nouveau versement</h2>
+
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <mat-form-field appearance="outline" class="create-form-grid">
+      <mat-label>Affectation active</mat-label>
+      <mat-select formControlName="assignmentId">
+        @for (assignment of assignments; track assignment.id) {
+          <mat-option [value]="assignment.id">
+            {{ assignment.driverFullName }}
+            - 
+            {{ assignment.vehicleLabel }}
+          </mat-option>
+        }
+      </mat-select>
+
+      @if (form.get('assignmentId')?.hasError('assignmentNotFound')) {
+        <mat-error>Affectation active inttrouvable.</mat-error>
+      }
+    </mat-form-field>
+
+    @if (assignments.length === 0) {
+      <div class="warning-box">
+        Aucun chauffeur n'est actuellement affecté à un véhicule. 
+        Veuillez créer une affectation avant d'enregistrer une recette.
+      </div>
+    }    
+
+    <mat-form-field appearance="outline">
+      <mat-label>Montant versé</mat-label>
+      <input matInput type="number" formControlName="paidAmount" placeholder="Montant versé">
+
+      @if (form.get('paidAmount')?.hasError('required')) {
+        <mat-error>Le montant versé est obligatoire.</mat-error>
+      }
+      @if (form.get('paidAmount')?.hasError('min')) {
+        <mat-error>Le montant versé doit être supérieur à zéro.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Date de versement</mat-label>
+      <input matInput [matDatepicker]="paymentPicker" formControlName="paymentDate" placeholder="Date de versement">
+      <mat-datepicker-toggle matSuffix [for]="paymentPicker"></mat-datepicker-toggle>
+      <mat-datepicker #paymentPicker></mat-datepicker>
+      @if (form.get('paymentDate')?.hasError('required')) {
+        <mat-error>La date de versement est obligatoire.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-dialog-actions align="end">
+      <button mat-raised-button color="warn" type="button" (click)="onClose()">Annuler</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="assignments.length === 0">Enregistrer</button>      
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>
