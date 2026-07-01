@@ -12,6 +12,19 @@ import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PaymentFormComponent } from './payment-form/payment-form.component';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
+
+import { AssignmentApiService } from '../../core/services/assignment-api.service';
+import { Driver } from '../../models/driver.model';
+import { Vehicle } from '../../models/vehicle';
+
+import { formatDate } from '@angular/common';
+
 
 @Component({
   standalone: true,
@@ -27,7 +40,14 @@ import { PaymentFormComponent } from './payment-form/payment-form.component';
     MatFormField,
     MatInput,
     MatIcon,
-    MatDialogModule
+    MatDialogModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatOptionModule
   ],
   templateUrl: './payment-history.component.html',
   styleUrl: './payment-history.component.scss',
@@ -44,10 +64,18 @@ export class PaymentHistoryComponent implements OnInit, AfterViewInit {
   pageSize = 10;
   pageIndex = 0;
 
+  filterForm!: FormGroup;
+  drivers: Driver[] = [];
+  vehicles: Vehicle[] = [];
 
-  constructor(private revenuePaymentApi: RevenuePaymentApiService, private dialog: MatDialog) {}
 
-  ngOnInit(): void {
+  constructor(private revenuePaymentApi: RevenuePaymentApiService, private dialog: MatDialog, 
+    private fb: FormBuilder, private assignmentService: AssignmentApiService
+  ) {}
+
+  ngOnInit(): void {    
+    this.initFilterForm();
+    this.loadFiltersData();
     this.loadPayments(this.pageIndex, this.pageSize);
   }
 
@@ -56,24 +84,61 @@ export class PaymentHistoryComponent implements OnInit, AfterViewInit {
   }
 
   loadPayments(page: number, size: number): void {
-    this.revenuePaymentApi.findPayments(page, size)
+
+    const raw = this.filterForm?.getRawValue();
+    console.log('----++++++++----- Raw Filter Form:', raw);
+
+    const filters = {
+      driverId: raw?.driverId ?? null,
+      vehicleId: raw?.vehicleId ?? null,
+      startDate: raw?.startDate ? formatDate(raw.startDate, 'yyyy-MM-dd', 'fr') : null,
+      endDate: raw?.endDate ? formatDate(raw.endDate, 'yyyy-MM-dd', 'fr') : null
+    };
+
+    this.revenuePaymentApi.findPayments(page, size, filters)
       .subscribe(result => {
         this.dataSource.data = result.content;
         this.totalElements = result.totalElements;
+        this.pageIndex = result.page;
+        this.pageSize = result.size;
       });
+  }
+
+  private initFilterForm(): void {
+    this.filterForm = this.fb.group({
+      driverId: [null],
+      vehicleId: [null],
+      startDate: [null],
+      endDate: [null]
+    });
+  }
+
+  private loadFiltersData(): void {
+    this.assignmentService.findDrivers().subscribe(drivers => {
+      this.drivers = drivers;
+    });
+
+    this.assignmentService.findVehicles().subscribe(vehicles => {      
+      this.vehicles = vehicles;
+    });
   }
 
   onPageChange(event: PageEvent): void {
     this.loadPayments(event.pageIndex, event.pageSize);
   }
 
-  applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  applyFilters(): void {
+    this.pageIndex = 0; 
+    this.loadPayments(0, this.pageSize);
 
-    /* if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    } */
+    //const filterValue = (event.target as HTMLInputElement).value;
+    //this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  resetFilters(): void {
+    this.filterForm.reset();
+    this.pageIndex = 0;
+    this.loadPayments(0, this.pageSize);
   }
 
   openForm(): void {

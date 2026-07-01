@@ -4,14 +4,64 @@
   Nouveau versement
 </button>
 
-<mat-form-field appearance="outline" class="filter">
+<!-- <mat-form-field appearance="outline" class="filter">
   <mat-label>Filtrer</mat-label>
 
   <input
     matInput
     (keyup)="applyFilter($event)"
     placeholder="Recherche...">
-</mat-form-field>
+</mat-form-field> -->
+
+<form class="filters" [formGroup]="filterForm">
+
+    <mat-form-field appearance="outline">
+        <mat-label>Chauffeur</mat-label>
+
+        <mat-select formControlName="driverId">
+            <mat-option value="null">Tous</mat-option>
+            @for (driver of drivers; track driver.id) {
+                <mat-option [value]="driver.id">
+                    {{ driver.fullName }}
+                </mat-option>
+            }
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Véhicule</mat-label>
+        <mat-select formControlName="vehicleId">
+            <mat-option value="">Tous</mat-option>
+            @for (vehicle of vehicles; track vehicle.id) {
+                <mat-option [value]="vehicle.id">
+                    <!-- {{ vehicle.brand }} {{ vehicle.model }} {{ vehicle.year }} {{ vehicle.fuelType }} ({{ vehicle.vin === null ? vehicle.registrationNumber : vehicle.vin }}) -->
+                    {{ vehicle.label }}
+                </mat-option>
+            }
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Date début</mat-label>
+
+        <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+        <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Date fin</mat-label>
+
+        <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+        <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+    </mat-form-field>
+
+    <div class="filter-actions">
+        <button mat-raised-button color="primary" type="button" (click)="applyFilters()">Filtrer</button>
+        <button mat-button type="button" (click)="resetFilters()">Réinitialiser</button>
+    </div>
+</form>
 
 <table mat-table [dataSource]="dataSource" class="payment-table">
     

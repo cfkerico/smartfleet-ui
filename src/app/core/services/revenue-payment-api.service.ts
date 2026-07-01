@@ -13,11 +13,33 @@ export class RevenuePaymentApiService {
 
   constructor(private http: HttpClient) {}
 
-  findPayments(page: number, size: number): Observable<PageResult<DriverPayment>> {
+  findPayments(page: number, size: number, filters?: {
+    driverId?: number | null; 
+    vehicleId?: number | null;
+    startDate?: string | null;
+    endDate?: string | null;
+  }): Observable<PageResult<DriverPayment>> {
 
-    const params = new HttpParams()
+    let params = new HttpParams()
       .set('page',page)
       .set('size', size);
+console.log('--------- avant Filters :', filters);
+      if (filters?.driverId) {
+        console.log('--------- Filters driverId:', filters.driverId);
+        params = params.set('driverId', filters.driverId);
+        console.log('--------- Filters driverId after set:', params);
+      }
+      if (filters?.vehicleId) {
+        params = params.set('vehicleId', filters.vehicleId);
+      }
+      if (filters?.startDate) {
+        params = params.set('startDate', filters.startDate);
+      }
+      if (filters?.endDate) {
+        params = params.set('endDate', filters.endDate);
+      }
+
+      console.log('--------- Filters:', filters);
 
       return this.http.get<PageResult<DriverPayment>>(this.apiUrl, {params});
   }
