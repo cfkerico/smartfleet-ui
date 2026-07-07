@@ -19,7 +19,7 @@
         <mat-label>Chauffeur</mat-label>
 
         <mat-select formControlName="driverId">
-            <mat-option value="null">Tous</mat-option>
+            <mat-option value="">Tous</mat-option>
             @for (driver of drivers; track driver.id) {
                 <mat-option [value]="driver.id">
                     {{ driver.fullName }}
@@ -63,6 +63,19 @@
     </div>
 </form>
 
+<div class="summary-cards">
+    <div class="summary-card">
+        <span>Versé</span>
+        <strong>{{ getTotalExpected() }}</strong>
+    </div>
+
+    <div class="summary-card">
+        <span>Ecart</span>
+        <strong [class]="getDifferenceClass(getTotalDifference())">{{ getTotalDifference() }}</strong>
+    </div>
+
+</div>
+
 <table mat-table [dataSource]="dataSource" class="payment-table">
     
     <ng-container matColumnDef="paymentDate">
@@ -92,12 +105,20 @@
 
     <ng-container matColumnDef="differenceAmount">
         <th mat-header-cell *matHeaderCellDef>Ecart</th>
-        <td mat-cell *matCellDef="let payment">{{ payment.differenceAmount }}</td>
+        <td mat-cell *matCellDef="let payment">
+            <span [class]="getDifferenceClass(payment.differenceAmount)">
+                {{ payment.differenceAmount }}
+            </span>
+        </td>
     </ng-container>
 
     <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef>Status</th>
-        <td mat-cell *matCellDef="let payment">{{ payment.status }}</td>
+        <td mat-cell *matCellDef="let payment">
+            <span [class]="getStatusClass(payment.status)">
+                {{ payment.status }}
+            </span>
+        </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

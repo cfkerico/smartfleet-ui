@@ -153,4 +153,31 @@ export class PaymentHistoryComponent implements OnInit, AfterViewInit {
     });
   }
 
+  getTotalPaid(): number {
+    return this.dataSource.data.reduce((total, payment) => total + payment.paidAmount, 0);
+  }
+
+  getTotalExpected(): number {
+    return this.dataSource.data.reduce((total, payment) => total + payment.expectedAmount, 0);
+  }
+
+  getTotalDifference(): number {
+    return this.dataSource.data.reduce((total, payment) => total + payment.differenceAmount, 0);
+  }
+
+  getStatusClass(status: string): string {
+    return `status-${status.toLowerCase()}`;
+  }
+
+  getDifferenceClass(value: number): string {
+    if (value < 0) {
+      return 'negative';
+    }
+
+    if (value > 0) {
+      return 'positive';
+    }
+
+    return 'neutral';
+  }
 }
