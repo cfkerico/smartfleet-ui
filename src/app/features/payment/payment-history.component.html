@@ -80,7 +80,7 @@
     
     <ng-container matColumnDef="paymentDate">
         <th mat-header-cell *matHeaderCellDef>Date</th>
-        <td mat-cell *matCellDef="let payment">{{ payment.paymentDate }}</td>
+        <td mat-cell *matCellDef="let payment">{{ payment.paymentDate | date:'dd/MM/yyyy' }}</td>
     </ng-container>
 
     <ng-container matColumnDef="driver">

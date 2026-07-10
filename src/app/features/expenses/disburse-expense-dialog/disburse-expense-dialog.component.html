@@ -1,0 +1,73 @@
+<h2 mat-dialog-title>Décaisser la dépense</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+
+    <mat-dialog-content class="dialog-content">
+        <div class="expense-summary">
+            <span>Véhicule</span>
+            <strong>{{ data.expense.vehicleLabel }}</strong>
+
+            <span>Montant demandé</span>
+            <strong>{{ data.expense.requestedAmount }}</strong>
+        </div>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Montant décaissé</mat-label>
+
+            <input matInput type="number" formControlName="paidAmount">
+
+            @if (form.get('paidAmount')?.hasError('required')) {
+                <mat-error>Le montant est obligatoire.</mat-error>
+            }
+
+            @if (form.get('paidAmount')?.hasError('min')) {
+                <mat-error>Le montant doit être supérieur à 0.</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Mode de paiement</mat-label>
+            <mat-select formControlName="paymentMethod">
+                @for (method of paymentMethods; track method) {
+                    <mat-option [value]="method">
+                        {{ method }}
+                    </mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Référence</mat-label>
+
+            <input matInput formControlName="referenceNumber">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Bénéficiaire</mat-label>
+
+            <input matInput formControlName="beneficiary">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Date de paiement</mat-label>
+
+            <input matInput [matDatepicker]="paymentPicker" formControlName="paymentDate">
+
+            <mat-datepicker-toggle matIconSuffix [for]="paymentPicker"></mat-datepicker-toggle>
+
+            <mat-datepicker #paymentPicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Commentaire</mat-label>
+
+            <textarea matInput rows="3" formControlName="comment"></textarea>
+        </mat-form-field>
+
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="close()">Annuler</button>
+        <button mat-raised-button color="primary" type="submit">Confirmer le décaissement</button>
+    </mat-dialog-actions>
+</form>

@@ -39,7 +39,6 @@ import { formatDate } from '@angular/common';
     MatLabel,
     MatFormField,
     MatInput,
-    MatIcon,
     MatDialogModule,
     ReactiveFormsModule,
     MatFormFieldModule,

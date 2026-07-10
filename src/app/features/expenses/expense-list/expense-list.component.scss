@@ -1,0 +1,97 @@
+.page {
+    padding: 24px 32px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 700;
+    }
+}
+
+.filter-card {
+    margin-bottom: 16px;
+    padding: 16px;
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(180px, 1fr)) auto;
+    gap: 16px;
+    align-items: center;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.table-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.expense-table {
+    width: 100%;
+}
+
+.status-badge,
+.priority-badge {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-requested {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-approved {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.status-disbursed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.status-cancelled {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.priority-low {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.priority-normal {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.priority-high {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.priority-urgent,
+.priority-critical {
+    background: #fee2e2;
+    color: #991b1b;
+}
+

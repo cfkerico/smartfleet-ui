@@ -38,6 +38,12 @@ export const routes: Routes = [
               import('./features/assignment/assignment-list/assignment-list.component').then(m => m.AssignmentListComponent)
           },
           {
+            path: 'expenses',
+            canActivate: [authGuard],
+            loadComponent: () =>
+              import('./features/expenses/expense-list/expense-list.component').then(m => m.ExpenseListComponent)
+          },
+          {
             path: '',
             redirectTo: 'dashboard',
             pathMatch: 'full'

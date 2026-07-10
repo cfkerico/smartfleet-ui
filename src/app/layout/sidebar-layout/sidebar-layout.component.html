@@ -54,7 +54,15 @@
       @if (!layoutStateService.sidebarCollapsed()) {
         <span>Recettes journalières</span>
       }
-    </a>    
+    </a>
+
+    <!--  EXPENSES  -->
+    <a routerLink="/expenses" routerLinkActive="active" class="menu-item">
+      <mat-icon>request_quote</mat-icon>
+      @if (!layoutStateService.sidebarCollapsed()) {
+        <span>Dépenses</span>
+      }
+    </a>
 
     <!--  REPORTS -->
     <a routerLink="/reports" routerLinkActive="active" class="menu-item">
