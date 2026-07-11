@@ -1,0 +1,228 @@
+<section class="page">
+    <div class="page-header">
+        <div class="header-left">
+            <button mat-icon-button type="button" (click)="backToList()">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+
+            <div>
+                <h1>
+                    Dépense
+                    @if (request) {
+                        #{{ request.id }}
+                    }
+                </h1>
+
+                @if (request) {
+                    <p>
+                        {{ request.vehicleLabel }}
+                        ·
+                        {{ request.expenseType }}
+                    </p>
+                }
+            </div>
+        </div>
+
+        @if (request) {
+            <div class="header-badges">
+                <span class="priority-badge" [ngClass]="getPriorityClass(request.priority)">{{ request.priority }}</span>
+                <span class="status-badge" [ngClass]="getStatusClass(request.status)">{{ request.status }}</span>
+            </div>
+        }
+    </div>
+
+    <!-- @if (loading) {
+        <mat-card class="loading-card">Chargement de la dépense...</mat-card>
+    } @else  -->
+    @if (expenseDetail && request) {
+        <div class="summary-grid">
+            <mat-card class="summary-card">
+                <span>Montant demandé</span>
+                <strong>{{ request.requestedAmount | number:'1.0-2' }}</strong>
+            </mat-card>
+
+            <mat-card class="summary-card">
+                <span>Reste à payer</span>
+                <strong>{{ expenseDetail.remainingAmount | number:'1.0-2' }}</strong>
+            </mat-card>
+
+            <mat-card class="summary-card">
+                <span>Décaissements</span>
+                <strong>{{ expenseDetail.disbursementCount }}</strong>
+            </mat-card>
+        </div>
+
+        <mat-card class="detail-card">
+            <mat-tab-group animationDuration="200ms">
+                <mat-tab label="Résumé">
+                    <div class="tab-content summary-content">
+                        <div class="detail-section">
+                            <h3>Informations générales</h3>
+
+                            <div class="detail-grid">
+                                <div>
+                                    <span>Véhicule</span>
+                                    <strong>{{ request.vehicleLabel }}</strong>
+                                </div>
+
+                                <div>
+                                    <span>Type</span>
+                                    <strong>{{ request.expenseType }}</strong>
+                                </div>
+
+                                <div>
+                                    <span>Priorité</span>
+                                    <strong>{{ request.priority }}</strong>
+                                </div>
+
+                                <div>
+                                    <span>Statut</span>
+                                    <strong>{{ request.status }}</strong>
+                                </div>
+
+                                <div>
+                                    <span>Demandée par</span>
+                                    <strong>{{ request.requestedBy }}</strong>
+                                </div>
+
+                                <div>
+                                    <span>Créée le</span>
+                                    <strong>{{ request.createdAt | date:'medium' }}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-section">
+                            <h3>Description</h3>
+
+                            <p class="description">{{ request.description || 'Aucune description.' }}</p>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <mat-tab label="Décaissements">
+                    <div class="tab-content">
+                        @if (expenseDetail.disbursements.length === 0) {
+                            <div class="empty-state">
+                                <mat-icon>payments</mat-icon>
+                                <h3>Aucun décaissements</h3>
+                                <p>
+                                    Aucun paiment n'a encore été enregistré pour cette dépense.
+                                </p>
+                            </div>
+                        } @else {
+                            <div class="table-wrapper">
+                                <table mat-table [dataSource]="expenseDetail.disbursements">
+                                    <ng-container matColumnDef="paymentDate">
+                                        <th mat-header-cell *matHeaderCellDef>Date</th>
+                                        <td mat-cell *matCellDef="let item">{{ item.paymentDate | date: 'short' }}</td>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="paidAmount">
+                                        <th mat-header-cell *matHeaderCellDef>Montant</th>
+                                        <td mat-cell *matCellDef="let item">{{ item.paidAmount | number:'1.0-2' }}</td>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="paymentMethod">
+                                        <th mat-header-cell *matHeaderCellDef>Mode</th>
+                                        <td mat-cell *matCellDef="let item">{{ item.paymentMethod }}</td>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="beneficiary">
+                                        <th mat-header-cell *matHeaderCellDef>Bénéficiaire</th>
+                                        <td mat-cell *matCellDef="let item">{{ item.beneficiary || '-' }}</td>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="referenceNumber">
+                                        <th mat-header-cell *matHeaderCellDef>Référence</th>
+                                        <td mat-cell *matCellDef="let item">{{ item.referenceNumber || '-' }}</td>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="createdBy">
+                                        <th mat-header-cell *matHeaderCellDef>Décaissé par</th>
+                                        <td mat-cell *matCellDef="let item">
+                                            {{ item.createdBy }}
+                                        </td>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="comment">
+                                        <th mat-header-cell *matHeaderCellDef>Commentaire</th>
+                                        <td mat-cell *matCellDef="let item">{{ item.comment || '-' }}</td>
+                                    </ng-container>
+
+                                    <tr mat-header-row *matHeaderRowDef="displayedDisbursementColumns"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: displayedDisbursementColumns;"></tr>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </mat-tab>
+
+                <mat-tab label="Historique">
+                    <div class="tab-content">
+                        @if (expenseDetail.timeline.length === 0 ) {
+                            <div class="empty-state">
+                                <mat-icon>history</mat-icon>
+                                <h3>Aucun historique</h3>
+                            </div>
+                        } @else {
+                            <div class="timeline">
+                                @for (item of expenseDetail.timeline; track item.date + item.title) {
+                                    <div class="timeline-item">
+                                        <div class="timeline-icon">
+                                            <mat-icon>{{ item.icon }}</mat-icon>
+                                        </div>
+
+                                        <div class="timeline-content">
+                                            <div class="timeline-header">
+                                                <strong>{{ item.title }}</strong>
+                                                <span>{{ item.date | date:'medium' }}</span>
+                                            </div>
+
+                                            <p>{{ item.description }}</p>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </mat-tab>
+
+                <mat-tab label="documents">
+                    <div class="tab-content">
+                        <div class="empty-state">
+                            <mat-icon>folder</mat-icon>
+                            <h3>Documents</h3>
+                            <p>Cet onglet sera connecté au futur module Documents.</p>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <mat-tab label="Commentaires">
+                    <div class="tab-content">
+                        <div class="empty-state">
+                            <mat-icon>comment</mat-icon>
+                            <h3>Commentaires</h3>
+                            <p>Les Commentaires internes seront ajoutés dans une prochaine version.</p>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <mat-tab label="Audit">
+                    <div class="tab-content">
+                        <div class="empty-state">
+                            <mat-icon>fact_check</mat-icon>
+                            <h3>Audit</h3>
+                            <p>Le journal d'audit sera réservé aux profils autorisés.</p>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </mat-card>
+    }
+     <!-- @else {
+        <mat-card class="error-card">
+            Impossible de charger la dépense.
+        </mat-card>
+    } -->
+</section>

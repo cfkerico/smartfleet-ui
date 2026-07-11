@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { ExpensePriority, ExpenseStatus, ExpenseRequest, ExpenseType, PaymentMethod } from '../../models/expense.model';
 import { PageResult } from '../../models/page-result.model';
 
+import { ExpenseDetailView } from '../../models/expense.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -82,7 +84,13 @@ export class ExpenseApiService {
     comments?: string | null;
     paymentDate?: string | null;
    }): Observable<void> {
-    console.log('----------------------------- ', payload);
     return this.http.patch<void>(`${this.apiUrl}/${id}/disburse`, payload);
   }
+
+  findExpenseDetail(id: number): Observable<ExpenseDetailView> {
+    return this.http.get<ExpenseDetailView>(`${this.apiUrl}/${id}`);
+  }
+
+
+
 }

@@ -44,3 +44,33 @@ export type PaymentMethod =
     requestedBy: string;
     createdAt: Date;
   }
+
+  export interface ExpenseDisbursementView {
+    id: number;
+    paidAmount: number;
+    paymentMethod: PaymentMethod;
+    beneficiary?: string | null;
+    referenceNumber?: string | null;
+    comment?: string | null;
+    paymentDate: string;
+    createdBy: string;
+    createdAt: string;
+  }
+
+  export interface ExpenseTimelineItemView {
+    date: string;
+    title: string;
+    description?: string | null;
+    icon: string;
+    color: string;
+  }
+
+  export interface ExpenseDetailView {
+    request: ExpenseRequest;
+    disbursements: ExpenseDisbursementView[];
+    totalPaid: number;
+    remainingAmount: number;
+    fullyPaid: boolean;
+    disbursementCount: number;
+    timeline: ExpenseTimelineItemView[];
+  }

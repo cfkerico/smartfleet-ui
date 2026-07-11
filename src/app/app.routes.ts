@@ -44,6 +44,12 @@ export const routes: Routes = [
               import('./features/expenses/expense-list/expense-list.component').then(m => m.ExpenseListComponent)
           },
           {
+            path: 'expenses/:id',
+            canActivate: [authGuard],
+            loadComponent: () => 
+              import('./features/expenses/expense-detail/expense-detail.component').then(m => m.ExpenseDetailComponent)
+          },
+          {
             path: '',
             redirectTo: 'dashboard',
             pathMatch: 'full'

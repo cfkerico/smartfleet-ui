@@ -14,7 +14,7 @@ import { ExpensePriority, ExpenseRequest, ExpenseStatus, ExpenseType } from '../
 import { Vehicle } from '../../../models/vehicle';
 import { ExpenseApiService } from '../../../core/services/expense-api.service';
 import { AssignmentApiService } from '../../../core/services/assignment-api.service';
-import { ɵEmptyOutletComponent } from "@angular/router";
+import { Router } from "@angular/router";
 import { CreateExpenseDialogComponent } from '../create-expense-dialog/create-expense-dialog.component';
 import { RejectExpenseDialogComponent } from '../reject-expense-dialog/reject-expense-dialog.component';
 import { DisburseExpenseDialogComponent } from '../disburse-expense-dialog/disburse-expense-dialog.component';
@@ -59,7 +59,7 @@ export class ExpenseListComponent implements OnInit {
   pageIndex = 0;
 
   constructor(private fb: FormBuilder,private expenseApi: ExpenseApiService, private assignmentApi: AssignmentApiService,
-     private dialog: MatDialog) {}
+     private dialog: MatDialog, private router: Router) {}
 
   ngOnInit(): void {
     this.initFilters();
@@ -183,7 +183,9 @@ export class ExpenseListComponent implements OnInit {
     return `priority-${priority.toLowerCase()}`;
   }
 
-
+  openDetail(expense: ExpenseRequest): void {
+    this.router.navigate(['/expenses', expense.id]);
+  }
 
 
 
