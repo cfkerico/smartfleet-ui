@@ -49,6 +49,13 @@
                             Décaisser
                         </button>
                     }
+
+                    @if (request.status === 'APPROVED' || request.status === 'REQUESTED') {
+                        <button mat-stroked-button color="warn" type="button" (click)="cancel()">
+                            <mat-icon>block</mat-icon>
+                            Annuler
+                        </button>
+                    }
                 </div>
             </div>
             

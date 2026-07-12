@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RejectExpenseDialogComponent } from './reject-expense-dialog.component';
+import { ExpenseReasonDialogComponent } from './expense-reason-dialog.component';
 
 describe('RejectExpenseDialogComponent', () => {
-  let component: RejectExpenseDialogComponent;
-  let fixture: ComponentFixture<RejectExpenseDialogComponent>;
+  let component: ExpenseReasonDialogComponent;
+  let fixture: ComponentFixture<ExpenseReasonDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RejectExpenseDialogComponent],
+      imports: [ExpenseReasonDialogComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(RejectExpenseDialogComponent);
+    fixture = TestBed.createComponent(ExpenseReasonDialogComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

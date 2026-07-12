@@ -9,14 +9,14 @@ import { Inject } from '@angular/core';
 import { ExpenseRequest } from '../../../models/expense.model';
 
 @Component({
-  selector: 'app-reject-expense-dialog',
+  selector: 'app-expense-reason-dialog',
   standalone: true,
   imports: [ReactiveFormsModule, MatDialogModule, MatButtonModule, MatFormFieldModule, MatInputModule],
 
-  templateUrl: './reject-expense-dialog.component.html',
-  styleUrl: './reject-expense-dialog.component.scss',
+  templateUrl: './expense-reason-dialog.component.html',
+  styleUrl: './expense-reason-dialog.component.scss',
 })
-export class RejectExpenseDialogComponent {
+export class ExpenseReasonDialogComponent {
 
   private readonly fb = inject(FormBuilder);
 
@@ -24,10 +24,14 @@ export class RejectExpenseDialogComponent {
     reason: ['', [Validators.required, Validators.minLength(5)]],
   });
 
-  constructor (private dialogRef: MatDialogRef<RejectExpenseDialogComponent>, 
+  constructor (private dialogRef: MatDialogRef<ExpenseReasonDialogComponent>, 
     @Inject(MAT_DIALOG_DATA)
     public data: {
-      expense: ExpenseRequest;
+      title: string;
+      message: string;
+      confirmLabel: string;
+      confirmColor: 'primary' | 'warn';
+      placeholderMotif: string;
     }
   ) {}
 

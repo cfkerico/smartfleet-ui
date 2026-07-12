@@ -118,17 +118,23 @@
                         <button mat-icon-button color="primary" (click)="approve(expense)">
                             <mat-icon>check_circle</mat-icon>
                         </button>
+
+                        <button mat-icon-button color="warn" (click)="reject(expense)">
+                            <mat-icon>cancel</mat-icon>
+                        </button>
                     }
-
-                    <button mat-icon-button color="warn" (click)="reject(expense)">
-                        <mat-icon>cancel</mat-icon>
-                    </button>
-
+                    
                     @if (expense.status === 'APPROVED' || expense.status === 'PARTIALLY_DISBURSED') {
                         <button mat-icon-button color="accent" (click)="disburse(expense)">
                             <mat-icon>payments</mat-icon>
                         </button>
                     }                   
+
+                    @if (expense.status === 'REQUESTED' || expense.status === 'APPROVED') {
+                        <button mat-icon-button color="warn" (click)="cancel(expense)">
+                            <mat-icon>block</mat-icon>
+                        </button>
+                    }
 
                 </td>
             </ng-container>

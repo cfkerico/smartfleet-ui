@@ -91,6 +91,10 @@ export class ExpenseApiService {
     return this.http.get<ExpenseDetailView>(`${this.apiUrl}/${id}`);
   }
 
+  cancelExpense(id: number, reason: string): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/${id}/cancel`, {reason});
+  }
+
 
 
 }

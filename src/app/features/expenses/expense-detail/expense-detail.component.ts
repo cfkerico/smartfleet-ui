@@ -14,8 +14,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { ExpenseDetailView, ExpenseRequest } from '../../../models/expense.model';
 import { ExpenseApiService } from '../../../core/services/expense-api.service';
 import { DisburseExpenseDialogComponent } from '../disburse-expense-dialog/disburse-expense-dialog.component';
-import { RejectExpenseDialogComponent } from '../reject-expense-dialog/reject-expense-dialog.component';
-import { CdkOverlayOrigin } from "@angular/cdk/overlay";
+import { ExpenseReasonDialogComponent } from '../expense-reason-dialog/expense-reason-dialog.component';
 
 @Component({
   selector: 'app-expense-detail',
@@ -106,11 +105,15 @@ export class ExpenseDetailComponent implements OnInit {
       return;
     }
 
-    const dialogRef = this.dialog.open(RejectExpenseDialogComponent, 
+    const dialogRef = this.dialog.open(ExpenseReasonDialogComponent, 
       {
         width:'520px',
         data: {
-          expense: this.request
+          title: 'Rejeter la demande',
+          message: 'Vous allez rejeter la demande de <strong>'+ this.request.requestedAmount + '</strong> pour le véhicule <strong>'+ this.request.vehicleLabel +'</strong>',
+          confirmLabel: "Confirmer le rejet",
+          confirmColor: 'warn',
+          placeholderMotif: 'Motif du rejet'
         }
       }
     );
@@ -124,6 +127,33 @@ export class ExpenseDetailComponent implements OnInit {
       });
     });
   }
+
+  cancel(): void{
+
+      if (!this.request) {
+        return;
+      }
+
+      const dialogRef = this.dialog.open(ExpenseReasonDialogComponent, {
+        width: '520px',
+        data: {
+          title: 'Annuler la depense',
+          message: 'Vous allez annuler la demande de <strong>'+ this.request.requestedAmount + '</strong> pour le véhicule <strong>'+ this.request.vehicleLabel +'</strong>',
+          confirmLabel: "Confirmer l'annulation",
+          confirmColor: 'warn',
+          placeholderMotif: "Motif de l'annulation"
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (!result?.reason) {
+          return;
+        }
+
+        this.expenseApi.cancelExpense(this.request!.id, result.reason).subscribe(() => {this.loadExpense(this.request!.id);
+        });
+      });
+    }
 
   disburse(): void {
     if (!this.request) {

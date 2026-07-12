@@ -16,8 +16,9 @@ import { ExpenseApiService } from '../../../core/services/expense-api.service';
 import { AssignmentApiService } from '../../../core/services/assignment-api.service';
 import { Router } from "@angular/router";
 import { CreateExpenseDialogComponent } from '../create-expense-dialog/create-expense-dialog.component';
-import { RejectExpenseDialogComponent } from '../reject-expense-dialog/reject-expense-dialog.component';
+import { ExpenseReasonDialogComponent } from '../expense-reason-dialog/expense-reason-dialog.component';
 import { DisburseExpenseDialogComponent } from '../disburse-expense-dialog/disburse-expense-dialog.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-expense-list',
@@ -135,20 +136,49 @@ export class ExpenseListComponent implements OnInit {
 
   reject(expense: ExpenseRequest): void {
     const dialogRef = this.dialog.open(
-      RejectExpenseDialogComponent,
+      ExpenseReasonDialogComponent,
       {
         width: '520px',
         data: {
-          expense
+          title: 'Rejeter la demande',
+          message: 'Vous allez rejeter la demande de <strong>'+ expense.requestedAmount + '</strong> pour le véhicule <strong>'+ expense.vehicleLabel +'</strong>',
+          confirmLabel: "Confirmer le rejet",
+          confirmColor: 'warn',
+          placeholderMotif: 'Motif du rejet'
         }
       }
-    );
+    );    
 
     dialogRef.afterClosed().subscribe(result => {
       if (!result?.reason) {
         return;
       }
       this.expenseApi.rejectExpense(expense.id, result.reason).subscribe(() => {
+        this.loadExpenses(this.pageIndex, this.pageSize);
+      });
+    });
+  }
+
+  cancel(expense: ExpenseRequest): void {
+    const dialogRef = this.dialog.open(
+      ExpenseReasonDialogComponent,
+      {
+        width: '520px',
+        data: {
+          title: 'Annuler la depense',
+          message: 'Vous allez annuler la demande de <strong>'+ expense.requestedAmount + '</strong> pour le véhicule <strong>'+ expense.vehicleLabel +'</strong>',
+          confirmLabel: "Confirmer l'annulation",
+          confirmColor: 'warn',
+          placeholderMotif: "Motif de l'annulation"
+        }
+      }
+    );    
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result?.reason) {
+        return;
+      }
+      this.expenseApi.cancelExpense(expense.id, result.reason).subscribe(() => {
         this.loadExpenses(this.pageIndex, this.pageSize);
       });
     });
