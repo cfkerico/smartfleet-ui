@@ -109,6 +109,11 @@
             <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef> Actions </th>
                 <td mat-cell *matCellDef="let expense">
+
+                    <button mat-icon-button type="button" (click)="openDetail(expense)">
+                        <mat-icon>visibility</mat-icon>
+                    </button>
+                    
                     @if (expense.status === 'REQUESTED') {
                         <button mat-icon-button color="primary" (click)="approve(expense)">
                             <mat-icon>check_circle</mat-icon>
@@ -123,11 +128,7 @@
                         <button mat-icon-button color="accent" (click)="disburse(expense)">
                             <mat-icon>payments</mat-icon>
                         </button>
-                    }
-
-                    <button mat-icon-button type="button" (click)="openDetail(expense)">
-                        <mat-icon>visibility</mat-icon>
-                    </button>
+                    }                   
 
                 </td>
             </ng-container>

@@ -24,10 +24,34 @@
         </div>
 
         @if (request) {
-            <div class="header-badges">
-                <span class="priority-badge" [ngClass]="getPriorityClass(request.priority)">{{ request.priority }}</span>
-                <span class="status-badge" [ngClass]="getStatusClass(request.status)">{{ request.status }}</span>
+            <div class="header-actions">                
+                <div class="header-badges">
+                    <span class="priority-badge" [ngClass]="getPriorityClass(request.priority)">{{ request.priority }}</span>
+                    <span class="status-badge" [ngClass]="getStatusClass(request.status)">{{ request.status }}</span>
+                </div>
+
+                <div class="action-buttons">
+                    @if (request.status === 'REQUESTED') {
+                        <button mat-raised-button color="primary" type="button" (click)="approve()">
+                            <mat-icon>check_circle</mat-icon>
+                            Approuver
+                        </button>
+
+                        <button mat-stroked-button color="warn" type="button" (click)="reject()">
+                            <mat-icon>cancel</mat-icon>
+                            Rejeter
+                        </button>
+                    }
+
+                    @if (request.status === 'APPROVED' || request.status === 'PARTIALLY_DISBURSED') {
+                        <button mat-raised-button color="accent" type="button" (click)="disburse()">
+                            <mat-icon>payments</mat-icon>
+                            Décaisser
+                        </button>
+                    }
+                </div>
             </div>
+            
         }
     </div>
 
@@ -111,6 +135,16 @@
                                 </p>
                             </div>
                         } @else {
+                            <div class="tab-toolbar">
+                                <h3>Historique des décaissements</h3>
+
+                                @if (request.status === 'APPROVED' || request.status === 'PARTIALLY_DISBURSED') {
+                                    <button mat-raised-button color="primary" type="button" (click)="disburse()">
+                                        <mat-icon>add</mat-icon>
+                                        Nouveau décaissement
+                                    </button>
+                                }
+                            </div>
                             <div class="table-wrapper">
                                 <table mat-table [dataSource]="expenseDetail.disbursements">
                                     <ng-container matColumnDef="paymentDate">
