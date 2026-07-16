@@ -32,6 +32,14 @@ export type PaymentMethod =
   | 'MOBILE_MONEY'
   | 'CARD';    
 
+  export type ExpenseTimelineType =
+  | 'CREATED'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'CANCELLED'
+  | 'PARTIALLY_DISBURSED'
+  | 'FULLY_DISBURSED';
+
   export interface ExpenseRequest {
     id: number;
     vehicleId: number;
@@ -59,10 +67,11 @@ export type PaymentMethod =
 
   export interface ExpenseTimelineItemView {
     date: string;
+    type: ExpenseTimelineType;
     title: string;
     description?: string | null;
     icon: string;
-    color: string;
+    actorId?: string | null;
   }
 
   export interface ExpenseDetailView {
