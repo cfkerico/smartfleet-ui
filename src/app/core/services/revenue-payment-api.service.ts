@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PageResult } from '../../models/page-result.model';
 import { DriverPayment } from '../../models/payment.model';
+import { API_ENDPOINTS } from '../config/api-endpoints';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RevenuePaymentApiService {
 
-  private readonly apiUrl = 'http://localhost:8080/api/revenues/payments';
+  private readonly apiUrl = API_ENDPOINTS.payments;
 
   constructor(private http: HttpClient) {}
 

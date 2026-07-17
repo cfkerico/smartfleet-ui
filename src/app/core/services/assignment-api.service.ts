@@ -5,14 +5,15 @@ import { Driver } from '../../models/driver.model';
 import { Vehicle } from '../../models/vehicle';
 import { VehicleAssignment } from '../../models/vehicle-assignment.model';
 import { PageResponse } from '../../models/page-response.model';
+import { API_ENDPOINTS } from '../config/api-endpoints';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AssignmentApiService {
-  private readonly driverUrl = 'http://localhost:8080/api/drivers/driverstoassign';
-  private readonly vehicleUrl = 'http://localhost:8080/api/vehicles/vehiclestoassign';
-  private readonly assignmentUrl = 'http://localhost:8080/api/assignments';
+  private readonly driverUrl = API_ENDPOINTS.driversToAssign;
+  private readonly vehicleUrl = API_ENDPOINTS.vehiclesToAssign;
+  private readonly assignmentUrl = API_ENDPOINTS.assignments;
 
   constructor(private http: HttpClient) {}
 

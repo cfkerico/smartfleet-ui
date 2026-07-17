@@ -5,13 +5,14 @@ import { ExpensePriority, ExpenseStatus, ExpenseRequest, ExpenseType, PaymentMet
 import { PageResult } from '../../models/page-result.model';
 
 import { ExpenseDetailView } from '../../models/expense.model';
+import { API_ENDPOINTS } from '../config/api-endpoints';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ExpenseApiService {
 
-  private readonly apiUrl = 'http://localhost:8080/api/expenses';
+  private readonly apiUrl = API_ENDPOINTS.expenses;
 
   constructor(private http: HttpClient) {}
 

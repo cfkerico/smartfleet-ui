@@ -50,6 +50,12 @@ export const routes: Routes = [
               import('./features/expenses/expense-detail/expense-detail.component').then(m => m.ExpenseDetailComponent)
           },
           {
+            path: 'administration/document-types',
+            canActivate: [authGuard],
+            loadComponent: () => 
+              import('./features/administration/documents/pages/document-type-list/document-type-list.component').then(m => m.DocumentTypeListComponent)
+          },
+          {
             path: '',
             redirectTo: 'dashboard',
             pathMatch: 'full'

@@ -4,11 +4,12 @@ import { Observable } from 'rxjs';
 import { Driver } from '../../models/driver.model';
 import { PageResponse} from '../../models/page-response.model';
 import {DriverAnalysis} from '../../models/driver-analysis.model';
+import { API_ENDPOINTS } from '../config/api-endpoints';
 
 @Injectable({ providedIn: 'root' })
 export class DriverService {
 
-    private apiUrl = 'http://localhost:8080/api/drivers';
+    private apiUrl = API_ENDPOINTS.drivers;
 
     constructor(private http: HttpClient) {}
 

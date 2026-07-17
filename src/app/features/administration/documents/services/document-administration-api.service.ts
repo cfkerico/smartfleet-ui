@@ -11,6 +11,8 @@ import {
   UpdateDocumentRequirementPayload,
   UpdateDocumentTypePayload
  } from '../models/document-admin.model';
+import { environment } from '../../../../../environments/environment.development';
+import { API_ENDPOINTS } from '../../../../core/config/api-endpoints';
 
 
 @Injectable({
@@ -18,7 +20,9 @@ import {
 })
 export class DocumentAdministrationApiService {
 
-  private readonly apiUrl = 'http://localhost:8080/api/document-admin';
+  //private readonly apiUrl = 'http://localhost:8080/api/document-admin';
+  //private readonly apiUrl = `${environment.apiBaseUrl}/api/document-admin`;
+  private readonly apiUrl =API_ENDPOINTS.documentAdmin;
 
   constructor(private readonly http: HttpClient) {}
 

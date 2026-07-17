@@ -1,0 +1,54 @@
+<h2 mat-dialog-title>
+    {{ data.mode === 'CREATE' ? 'Nouveau type de document' : 'Modifier le type de document' }}
+</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+
+    <mat-dialog-content class="dialog-content">
+        <mat-form-field appearance="outline">
+            <mat-label>Code</mat-label>
+
+            <input matInput formControlName="code" placeholder="VEHICLE_INSURANCE">
+
+            <mat-hint>Le code sera normalisé automatiquement.</mat-hint>
+
+            @if (form.get('code')?.hasError('required')) {
+                <mat-error>Le code est obligatoire</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Propriétaire</mat-label>
+
+            <mat-select formControlName="applicableOwnerType">
+                @for (ownerType of ownerTypes; track ownerType) {
+                    <mat-option [value]="ownerType">{{ ownerType }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Libellé</mat-label>
+
+            <input matInput formControlName="label">
+
+            @if (form.get('label')?.hasError('required')) {
+                <mat-error>Le libellé est obligatoire.</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+
+            <textarea matInput rows="4" formControlName="description"></textarea>
+        </mat-form-field>
+
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+
+        <button mat-button type="button" (click)="close()">Annuler</button>
+        <button mat-raised-button color="primary" type="submit">Enregistrer</button>
+
+    </mat-dialog-actions>
+</form>

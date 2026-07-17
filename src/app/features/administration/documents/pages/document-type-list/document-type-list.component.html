@@ -1,1 +1,111 @@
-<p>document-type-list works!</p>
+<section class="page">
+
+    <div class="page-header">
+        <div>
+            <h1>Types de documents</h1>
+
+            <p>Configurez les catégories documentaires disponibles dans la compagnie.</p>
+        </div>
+
+        <button mat-raised-button color="primary" type="button" (click)="openCreateDialog()">
+            <mat-icon>add</mat-icon>
+            Nouveau type
+        </button>
+    </div>
+
+    <mat-card class="filter-card">
+        <mat-form-field appearance="outline">
+            
+            <mat-label>Propriétaire</mat-label>
+
+            <mat-select [formControl]="ownerTypeControl">
+                @for (ownerType of ownerTypes; track ownerType) {
+                    <mat-option [value]="ownerType">{{ ownerType }}</mat-option>
+                }
+            </mat-select>
+
+        </mat-form-field>
+    </mat-card>
+
+    <mat-card class="table-card">
+
+        <table mat-table [dataSource]="dataSource">
+            <ng-container matColumnDef="code">
+                <th mat-header-cell *matHeaderCellDef>Code</th>
+                <td mat-cell *matCellDef="let item">
+                    <code>{{ item.code }}</code>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="label">
+                <th mat-header-cell *matHeaderCellDef>Libellé</th>
+                <td mat-cell *matCellDef="let item">
+                    <strong>{{ item.label }}</strong>
+
+                    @if (item.description) {
+                        <small>{{ item.description }}</small>
+                    }
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="ownerType">
+                <th mat-header-cell *matHeaderCellDef>Propriétaire</th>
+                <td mat-cell *matCellDef="let item">{{ item.applicableOwnerType }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="systemType">
+                <th mat-header-cell *matHeaderCellDef>Origine</th>                
+                <td mat-cell *matCellDef="let item">
+                    <span class="badge" [class.system-badge]="item.systemType" [class.company-badge]="!item.systemType">
+                        {{ item.systemType ? 'SmartFleet' : 'Compagnie' }}
+                    </span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="active">
+                <th mat-header-cell *matHeaderCellDef>Statut</th>                
+                <td mat-cell *matCellDef="let item">
+                    <span class="badge" [class.active-badge]="item.active" [class.inactive-badge]="!item.active">
+                        {{ item.active ? 'Actif' : 'Inactif' }}
+                    </span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="updatedAt">
+                <th mat-header-cell *matHeaderCellDef>Dernière modification</th>
+                <td mat-cell *matCellDef="let item">
+                    {{ (item.updatedAt || item.createdAt) | date: 'short' }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>                
+                <td mat-cell *matCellDef="let item">
+                    <button 
+                        mat-icon-button 
+                        color="primary" 
+                        type="button" 
+                        aria-label="Modifier le type"
+                        (click)="openEditDialog(item)">
+
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        @if (dataSource.data.length === 0) {
+            <div class="empty-state">
+                <mat-icon>folder_off</mat-icon>
+
+                <h3>Aucun type de document</h3>
+
+                <p>Aucun type actif n'est configuré pour ce propriéraire.</p>
+            </div>
+        }
+    </mat-card>
+
+</section>

@@ -1,84 +1,128 @@
-<aside class="sidebar" [class.collapsed]="layoutStateService.sidebarCollapsed()">
+<aside
+  class="sidebar"
+  [class.collapsed]="layoutStateService.sidebarCollapsed()">
 
-  <!--  LOGO  -->
   <div class="sidebar-logo">
+    <div class="logo-mark">
+      <mat-icon>local_shipping</mat-icon>
+    </div>
 
-    <mat-icon class="logo-icon">
-      local_shipping
-    </mat-icon>
     @if (!layoutStateService.sidebarCollapsed()) {
-      <span class="logo-text">SmartFleet</span>
+      <div class="logo-content">
+        <span class="logo-text">SmartFleet</span>
+        <span class="logo-subtitle">Fleet management</span>
+      </div>
     }
-
   </div>
 
-  <!--  MENU  -->
-  <nav class="sidebar-menu">
-    <!--  DASHBOARD -->
-    <a routerLink="/dashboard" routerLinkActive="active" class="menu-item">
-      <mat-icon>
-        dashboard
-      </mat-icon>
-      @if (!layoutStateService.sidebarCollapsed()) {
-        <span>Dashboard</span>
-      }
-    </a>
+  <nav class="sidebar-menu" aria-label="Navigation principale">
 
-    <!--  DRIVERS -->
-    <a routerLink="/drivers" routerLinkActive="active" class="menu-item">
-      <mat-icon>people</mat-icon>
+    <section class="menu-section">
       @if (!layoutStateService.sidebarCollapsed()) {
-        <span>Drivers</span>
+        <span class="menu-section-title">Vue générale</span>
       }
-    </a>
 
-    <!--  VEHICLES  -->
-    <a routerLink="/vehicles" routerLinkActive="active" class="menu-item">
-      <mat-icon>directions_car</mat-icon>
-      @if (!layoutStateService.sidebarCollapsed()) {
-        <span>Vehicles</span>
-      }
-    </a>
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="menu-item"
+        title="Dashboard">
+        <mat-icon>dashboard</mat-icon>
+        @if (!layoutStateService.sidebarCollapsed()) {
+          <span>Dashboard</span>
+        }
+      </a>
+    </section>
 
-    <!--  ASSIGNMENTS  -->
-    <a routerLink="/assignments" routerLinkActive="active" class="menu-item">
-      <mat-icon>assignment</mat-icon>
+    <section class="menu-section">
       @if (!layoutStateService.sidebarCollapsed()) {
-        <span>Assignments</span>
+        <span class="menu-section-title">Exploitation</span>
       }
-    </a>
 
-    <!--  PAYMENTS  -->
-    <a routerLink="/revenues/payments" routerLinkActive="active" class="menu-item">
-      <mat-icon>payments</mat-icon>
-      @if (!layoutStateService.sidebarCollapsed()) {
-        <span>Recettes journalières</span>
-      }
-    </a>
+      <a routerLink="/drivers" routerLinkActive="active" class="menu-item" title="Chauffeurs">
+        <mat-icon>people</mat-icon>
+        @if (!layoutStateService.sidebarCollapsed()) {
+          <span>Chauffeurs</span>
+        }
+      </a>
 
-    <!--  EXPENSES  -->
-    <a routerLink="/expenses" routerLinkActive="active" class="menu-item">
-      <mat-icon>request_quote</mat-icon>
-      @if (!layoutStateService.sidebarCollapsed()) {
-        <span>Dépenses</span>
-      }
-    </a>
+      <a routerLink="/vehicles" routerLinkActive="active" class="menu-item" title="Véhicules">
+        <mat-icon>directions_car</mat-icon>
+        @if (!layoutStateService.sidebarCollapsed()) {
+          <span>Véhicules</span>
+        }
+      </a>
 
-    <!--  REPORTS -->
-    <a routerLink="/reports" routerLinkActive="active" class="menu-item">
-      <mat-icon>bar_chart</mat-icon>
-      @if (!layoutStateService.sidebarCollapsed()) {
-        <span>Reports</span>
-      }
-    </a>
+      <a routerLink="/assignments" routerLinkActive="active" class="menu-item" title="Affectations">
+        <mat-icon>assignment</mat-icon>
+        @if (!layoutStateService.sidebarCollapsed()) {
+          <span>Affectations</span>
+        }
+      </a>
 
-    <!--  SETTINGS  -->
-    <a routerLink="/settings" routerLinkActive="active" class="menu-item">
-      <mat-icon>settings</mat-icon>
+      <a routerLink="/revenues/payments" routerLinkActive="active" class="menu-item" title="Recettes journalières">
+        <mat-icon>payments</mat-icon>
+        @if (!layoutStateService.sidebarCollapsed()) {
+          <span>Recettes journalières</span>
+        }
+      </a>
+
+      <a routerLink="/expenses" routerLinkActive="active" class="menu-item" title="Dépenses">
+        <mat-icon>request_quote</mat-icon>
+        @if (!layoutStateService.sidebarCollapsed()) {
+          <span>Dépenses</span>
+        }
+      </a>
+    </section>
+
+    <section class="menu-section">
       @if (!layoutStateService.sidebarCollapsed()) {
-        <span>Settings</span>
+        <span class="menu-section-title">Administration</span>
       }
-    </a>
+
+      <a
+        routerLink="/administration/document-types"
+        routerLinkActive="active"
+        class="menu-item"
+        title="Types de documents">
+        <mat-icon>folder_copy</mat-icon>
+        @if (!layoutStateService.sidebarCollapsed()) {
+          <span>Types de documents</span>
+        }
+      </a>
+
+      <a
+        routerLink="/administration/document-requirements"
+        routerLinkActive="active"
+        class="menu-item"
+        title="Exigences documentaires">
+        <mat-icon>fact_check</mat-icon>
+        @if (!layoutStateService.sidebarCollapsed()) {
+          <span>Exigences documentaires</span>
+        }
+      </a>
+
+      <a routerLink="/settings" routerLinkActive="active" class="menu-item" title="Paramètres">
+        <mat-icon>settings</mat-icon>
+        @if (!layoutStateService.sidebarCollapsed()) {
+          <span>Paramètres</span>
+        }
+      </a>
+    </section>
+
+    <section class="menu-section">
+      @if (!layoutStateService.sidebarCollapsed()) {
+        <span class="menu-section-title">Pilotage</span>
+      }
+
+      <a routerLink="/reports" routerLinkActive="active" class="menu-item" title="Rapports">
+        <mat-icon>bar_chart</mat-icon>
+        @if (!layoutStateService.sidebarCollapsed()) {
+          <span>Rapports</span>
+        }
+      </a>
+    </section>
+
   </nav>
-
 </aside>
