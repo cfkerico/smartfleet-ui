@@ -4,14 +4,14 @@ import { Observable } from 'rxjs';
 import { 
   ConfigureDocumentRequirementPayload, 
   CreateDocumentTypePayload,
-  DocumentOwnerType,
   DocumentRequirementView,
   DocumentTypeView,
   IdResponse,
   UpdateDocumentRequirementPayload,
   UpdateDocumentTypePayload
  } from '../models/document-admin.model';
-import { environment } from '../../../../../environments/environment.development';
+import { DocumentOwnerType } from '../../../../shared/models/document-owner-type.model';
+
 import { API_ENDPOINTS } from '../../../../core/config/api-endpoints';
 
 

@@ -1,6 +1,6 @@
 <section class="page">
 
-    <div class="page-header">
+    <!-- <div class="page-header">
         <div>
             <h1>Types de documents</h1>
 
@@ -11,7 +11,21 @@
             <mat-icon>add</mat-icon>
             Nouveau type
         </button>
-    </div>
+    </div> -->
+    <sf-page-header
+        title="Types de documents",
+        description = "Configurez les catégories documentaires disponibles dans la compagnie.",
+        icon="folder_copy">
+        
+        <div sfPageHeaderActions>
+            <button mat-raised-button color="primary" type="button" (click)="openCreateDialog()">
+
+                <mat-icon>add</mat-icon>
+                Nouveau type
+            </button>
+        </div>
+
+    </sf-page-header>
 
     <mat-card class="filter-card">
         <mat-form-field appearance="outline">
@@ -50,7 +64,10 @@
 
             <ng-container matColumnDef="ownerType">
                 <th mat-header-cell *matHeaderCellDef>Propriétaire</th>
-                <td mat-cell *matCellDef="let item">{{ item.applicableOwnerType }}</td>
+                <!-- <td mat-cell *matCellDef="let item">{{ item.applicableOwnerType }}</td> -->
+                 <td mat-cell *matCellDef="let item">
+                    <sf-owner-chip [ownerType]="item.applicableOwnerType"/>
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="systemType">
@@ -64,10 +81,16 @@
 
             <ng-container matColumnDef="active">
                 <th mat-header-cell *matHeaderCellDef>Statut</th>                
-                <td mat-cell *matCellDef="let item">
+                <!-- <td mat-cell *matCellDef="let item">
                     <span class="badge" [class.active-badge]="item.active" [class.inactive-badge]="!item.active">
                         {{ item.active ? 'Actif' : 'Inactif' }}
                     </span>
+                </td> -->
+                <td mat-cell *matCellDef="let item">
+                    <sf-status-badge 
+                        [label]="item.active ? 'Actif' : 'Inactif'"
+                        [variant]="item.active ? 'success' : 'neutral'"
+                        [icon]="item.active ? 'check_circle' : 'pause_circle'"/>
                 </td>
             </ng-container>
 
@@ -98,13 +121,20 @@
         </table>
 
         @if (dataSource.data.length === 0) {
-            <div class="empty-state">
+            <!-- <div class="empty-state">
                 <mat-icon>folder_off</mat-icon>
 
                 <h3>Aucun type de document</h3>
 
                 <p>Aucun type actif n'est configuré pour ce propriéraire.</p>
-            </div>
+            </div> -->
+
+            <sf-empty-state
+                icon="folder_off"
+                title="Aucun type de document"
+                description="Aucun type actif n’est configuré pour ce propriétaire."
+                actionLabel="Créer un type"
+                (action)="openCreateDialog()"/>
         }
     </mat-card>
 

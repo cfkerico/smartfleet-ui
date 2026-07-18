@@ -1,0 +1,15 @@
+<span
+  class="status-badge"
+  [class.status-badge--success]="variant() === 'success'"
+  [class.status-badge--warning]="variant() === 'warning'"
+  [class.status-badge--danger]="variant() === 'danger'"
+  [class.status-badge--info]="variant() === 'info'"
+  [class.status-badge--neutral]="variant() === 'neutral'">
+
+  @if (icon()) {
+    <mat-icon>{{ icon() }}</mat-icon>
+  }
+
+  <span>{{ label() }}</span>
+
+</span>

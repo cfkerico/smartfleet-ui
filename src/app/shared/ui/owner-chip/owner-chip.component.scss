@@ -1,0 +1,23 @@
+:host {
+  display: inline-flex;
+}
+
+.owner-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border: 1px solid #dbe3ef;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+
+  mat-icon {
+    width: 17px;
+    height: 17px;
+    font-size: 17px;
+    color: #52627a;
+  }
+}

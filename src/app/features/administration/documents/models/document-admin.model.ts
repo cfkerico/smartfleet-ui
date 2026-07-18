@@ -1,9 +1,4 @@
-export type DocumentOwnerType =
-  | 'DRIVER'
-  | 'VEHICLE'
-  | 'EXPENSE'
-  | 'MAINTENANCE'
-  | 'COMPANY';
+import { DocumentOwnerType } from "../../../../shared/models/document-owner-type.model"; 
 
 export interface DocumentTypeView {
     id: number;

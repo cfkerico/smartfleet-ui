@@ -1,0 +1,19 @@
+<section 
+    class="info-panel"
+    [class.info-panel--info]="variant() === 'info'"
+    [class.info-panel--success]="variant() === 'success'"
+    [class.info-panel--warning]="variant() === 'warning'"
+    [class.info-panel--danger]="variant() === 'danger'">
+
+    <mat-icon class="info-panel__icon">{{ icon() }}</mat-icon>
+
+    <div class="info-panel__content">
+
+        <h4>{{ title() }}</h4>
+
+        <div class="info-panel__body">
+            <ng-content/>
+        </div>
+    </div>
+
+</section>

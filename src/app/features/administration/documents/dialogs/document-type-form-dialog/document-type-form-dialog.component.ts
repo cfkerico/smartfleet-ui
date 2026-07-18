@@ -9,7 +9,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 
-import { DocumentOwnerType, DocumentTypeView } from '../../models/document-admin.model';
+import { DocumentTypeView } from '../../models/document-admin.model';
+import { DocumentOwnerType } from '../../../../../shared/models/document-owner-type.model'; 
 
 import { DocumentAdministrationApiService } from '../../services/document-administration-api.service';
 

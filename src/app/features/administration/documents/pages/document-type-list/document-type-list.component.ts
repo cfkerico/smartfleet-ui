@@ -11,10 +11,16 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 
-import { DocumentOwnerType, DocumentTypeView } from '../../models/document-admin.model';
+import { DocumentTypeView } from '../../models/document-admin.model';
+import { DocumentOwnerType } from '../../../../../shared/models/document-owner-type.model';
 
 import { DocumentAdministrationApiService } from '../../services/document-administration-api.service';
 import { DocumentTypeFormDialogComponent } from '../../dialogs/document-type-form-dialog/document-type-form-dialog.component';
+
+import { PageHeaderComponent } from '../../../../../shared/ui/page-header/page-header.component';
+import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
+import { StatusBadgeComponent } from '../../../../../shared/ui/status-badge/status-badge.component';
+import { OwnerChipComponent } from '../../../../../shared/ui/owner-chip/owner-chip.component';
 
 
 @Component({
@@ -23,6 +29,12 @@ import { DocumentTypeFormDialogComponent } from '../../dialogs/document-type-for
   imports: [
     CommonModule,
     ReactiveFormsModule,
+
+    PageHeaderComponent,
+    EmptyStateComponent,
+    StatusBadgeComponent,
+    OwnerChipComponent,
+
     MatButtonModule,
     MatCardModule,
     MatDialogModule,
@@ -30,7 +42,7 @@ import { DocumentTypeFormDialogComponent } from '../../dialogs/document-type-for
     MatIconModule,
     MatOptionModule,
     MatSelectModule,
-    MatTableModule
+    MatTableModule    
   ],
   templateUrl: './document-type-list.component.html',
   styleUrl: './document-type-list.component.scss',
