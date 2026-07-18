@@ -3,17 +3,18 @@
 }
 
 .info-panel {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 16px;
-  border: 1px solid;
-  border-radius: 12px;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
 }
 
 .info-panel__icon {
-  flex-shrink: 0;
-  margin-top: 1px;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  font-size: 22px;
+  line-height: 22px;
 }
 
 .info-panel__content {

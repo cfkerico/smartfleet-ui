@@ -1,0 +1,122 @@
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding-top: 10px;
+}
+
+.context-section {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+  }
+}
+
+.section-label {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.configuration-section {
+  h3 {
+    margin: 0 0 14px;
+    color: #1e293b;
+    font-size: 16px;
+  }
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 18px;
+
+  mat-checkbox {
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+  }
+}
+
+.checkbox-help {
+  display: block;
+  margin-top: 3px;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.values-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.document-option {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+
+  small {
+    color: #64748b;
+  }
+}
+
+.consequence-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    align-items: start;
+    column-gap: 8px;
+  }
+
+  mat-icon {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    font-size: 20px;
+    line-height: 20px;
+  }
+
+  span {
+    line-height: 20px;
+  }
+}
+
+@media (max-width: 650px) {
+  .context-section {
+    flex-direction: column;
+  }
+
+  .checkbox-grid,
+  .values-section {
+    grid-template-columns: 1fr;
+  }
+}

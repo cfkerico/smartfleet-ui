@@ -51,7 +51,7 @@ export class DocumentAdministrationApiService {
     return this.http.post<IdResponse>(`${this.apiUrl}/document-requirements`, payload);
   }
 
-  updateDocumentRequirements(id: number, payload: UpdateDocumentRequirementPayload): Observable<void> {
+  updateDocumentRequirement(id: number, payload: UpdateDocumentRequirementPayload): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/document-requirements/${id}`, payload);
   }
 

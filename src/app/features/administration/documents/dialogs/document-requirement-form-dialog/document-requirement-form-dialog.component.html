@@ -1,1 +1,157 @@
-<p>document-requirement-form-dialog works!</p>
+<h2 mat-dialog-title>
+    {{ data.mode === 'CREATE' ? 'Configurer une exigence documentaire' : `Modifier l'exigence documentaire` }}
+</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+
+    <mat-dialog-content class="dialog-content">
+
+        <section class="'context-section">
+
+            <div>
+                <span class="section-label">Propriétaire concerné</span>
+
+                <sf-owner-chip [ownerType]="ownerType"/>
+            </div>
+
+            @if (data.mode === 'EDIT') {
+                <div>
+                    <span class="section-label">Document</span>
+
+                    <strong>{{ data.requirement?.documentTypeLabel }}</strong>
+                </div>
+            }
+            
+        </section>
+
+        @if (data.mode === 'CREATE') {
+
+            <mat-form-field appearance="outline" class="full-width">
+
+                <mat-label>Type de document</mat-label>
+
+                <mat-select formControlName="documentTypeId">
+                    @for (documentType of documentTypes; track documentType.id) {
+                        <mat-option [value]="documentType.id">
+
+                            <div class="document-option">
+                                <strong>{{ documentType.label  }}</strong>  
+
+                                <small>{{ documentType.code }}</small>
+                            </div>
+
+                        </mat-option>
+                    }
+
+                </mat-select>
+
+                @if (form.controls.documentTypeId.hasError('required')) {
+                    <mat-error>Le type de document est obligatoire.</mat-error>
+                }
+
+            </mat-form-field>
+        }
+
+        <section class="configuration-section">
+
+            <h3>Règles de conformité</h3>
+
+            <div class="checkbox-grid">
+
+                <mat-checkbox formControlName="required">
+                    Docuement obligatoire 
+
+                    <span class="checkbox-help">Le propriétaire doit disposer de ce document.</span>
+
+                </mat-checkbox>
+
+                <mat-checkbox formControlName="expirationRequired">
+                    Date d'expiration obligatoire
+
+                    <span class="checkbox-help">Une date d'expiration devra être renseignée.</span>
+                </mat-checkbox>
+
+                <mat-checkbox formControlName="blockWhenMissing" [disabled]="!form.controls.required.value">
+                    Bloquer si le document est absent
+
+                    <span class="checkbox-help">
+                        L'absence déclenchera une non-conformité bloquante.
+                    </span>
+                </mat-checkbox>
+
+                <mat-checkbox formControlName="blockWhenExpired" [disabled]="!form.controls.expirationRequired.value">
+                    Bloquer si le document est expiré
+
+                    <span class="checkbox-help">
+                        L'expiration déclenchera une non-conformité bloquante.
+                    </span>
+
+                </mat-checkbox>
+
+            </div>
+
+        </section>
+
+        <section class="values-section">
+
+            <mat-form-field appearance="outline">
+
+                <mat-label>Alerte avant expiration</mat-label>
+
+                <input matInput type="number" min="0", max="365" formControlName="warningDaysBeforeExpiration">
+
+                <span matTextSuffix>jours</span>
+
+                <mat-hint>0 signifie aucune alerte.</mat-hint>
+
+                @if (form.controls.warningDaysBeforeExpiration.hasError('min')) {
+                    <mat-error>Le nombre de jours ne peut pas être négatif.</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+
+                <mat-label>Ordre d'affichage</mat-label>
+
+                <input matInput type="number" min="0"  formControlName="displayOrder">
+
+                <mat-hint>Les plus petites valeurs apparaissent en premier.</mat-hint>
+
+            </mat-form-field>
+
+        </section>
+
+        <sf-info-panel
+            title="Conséquence métier"
+            [variant]="form.controls.blockWhenMissing.value || form.controls.blockWhenExpired.value ? 'warning' : 'info'"
+            icon="policy">
+            
+            <ul class="conséquense-list">
+
+                @for (consequence of consequences; track consequence) {
+                    <li>
+                        <mat-icon>check_circle</mat-icon>
+                        <span>{{ consequence }}</span>
+                    </li>
+                }
+            </ul>
+
+        </sf-info-panel>
+
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+
+        <button mat-button type="button" [disabled]="saving" (click)="close()">Annuler</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="saving">
+
+            @if (saving) {
+                Enregistremnet...
+            } @else {
+                Enregistrer
+            }
+        </button>
+
+    </mat-dialog-actions>
+
+</form>

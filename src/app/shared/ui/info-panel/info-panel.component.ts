@@ -8,15 +8,15 @@ export type InfoPanelVariant =
   | 'danger';
 
 @Component({
-  selector: 'sf-info-pannel',
+  selector: 'sf-info-panel',
   standalone: true,
   imports: [
     MatIconModule
   ],
-  templateUrl: './info-pannel.component.html',
-  styleUrl: './info-pannel.component.scss',
+  templateUrl: './info-panel.component.html',
+  styleUrl: './info-panel.component.scss',
 })
-export class InfoPannelComponent {
+export class InfoPanelComponent {
 
   readonly title = input.required<string>();
   readonly variant = input<InfoPanelVariant>('info');
