@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -22,6 +22,7 @@ interface DocumentRequirementDialogData {
   mode: 'CREATE' | 'EDIT';
   ownerType?: DocumentOwnerType;
   requirement?: DocumentRequirementView;
+  configuredDocumentTypeIds?: number[];
 }
 
 @Component({
@@ -30,10 +31,8 @@ interface DocumentRequirementDialogData {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-
     InfoPanelComponent,
     OwnerChipComponent,
-
     MatButtonModule,
     MatCheckboxModule,
     MatDialogModule,
@@ -42,7 +41,7 @@ interface DocumentRequirementDialogData {
     MatInputModule,
     MatOptionModule,
     MatSelectModule
-  ],
+],
   templateUrl: './document-requirement-form-dialog.component.html',
   styleUrl: './document-requirement-form-dialog.component.scss',
 })
@@ -51,12 +50,15 @@ export class DocumentRequirementFormDialogComponent {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(DocumentAdministrationApiService);
   private readonly dialogRef = inject(MatDialogRef<DocumentRequirementFormDialogComponent>);
+  private readonly cdr = inject(ChangeDetectorRef);
   
   readonly data = inject<DocumentRequirementDialogData>(MAT_DIALOG_DATA);
 
   readonly ownerType = this.data.requirement?.ownerType ?? this.data.ownerType ?? 'VEHICLE';
   
   documentTypes: DocumentTypeView[] = [];
+
+  errorMessage: string | null = null;
 
   loadingDocumentTypes = false;
   saving = false;
@@ -170,6 +172,9 @@ export class DocumentRequirementFormDialogComponent {
   }
 
   submit(): void {
+
+    this.errorMessage = null;
+
     if (this.form.invalid || this.saving) {
       this.form.markAllAsTouched();
       return;
@@ -194,8 +199,11 @@ export class DocumentRequirementFormDialogComponent {
         next: () => {
           this.dialogRef.close(true);
         },
-        error: () => {
+        error: error => {
           this.saving = false;
+
+          this.errorMessage = error?.error?.message ?? `Une erreur est survenue pendant l'enregistrement.`;
+          this.cdr.detectChanges();
         }
       });
 
@@ -217,8 +225,10 @@ export class DocumentRequirementFormDialogComponent {
         next: () => { 
           this.dialogRef.close(true); 
         },
-        error: () => {
+        error: error => {
           this.saving = false;
+          this.errorMessage = error?.error?.message ?? `Une erreur est survenue pendant la mise à jour.`;
+          this.cdr.detectChanges();
         }
       });
   }
@@ -227,7 +237,15 @@ export class DocumentRequirementFormDialogComponent {
     this.dialogRef.close(false);
   }
 
+  isDocumentTypeAlreadyConfigured (documentTypeId: number): boolean {    
+    //console.log ('++++++++++++++++++ : ', JSON.stringify(this.data));
+    //console.log('-----documentTypeId------ : ', documentTypeId);
+    return this.data.configuredDocumentTypeIds?.includes(documentTypeId) ?? false;
+  }
 
+  get availableDocumentTypes(): DocumentTypeView[] {
+    return this.documentTypes.filter(documentType => !this.isDocumentTypeAlreadyConfigured(documentType.id));
+  }
 
 
 

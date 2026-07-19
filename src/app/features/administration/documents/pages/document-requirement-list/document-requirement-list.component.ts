@@ -22,7 +22,9 @@ import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-
 import { OwnerChipComponent } from '../../../../../shared/ui/owner-chip/owner-chip.component';
 import { StatusBadgeComponent, StatusBadgeVariant } from '../../../../../shared/ui/status-badge/status-badge.component';
 import { DialogRef } from '@angular/cdk/dialog';
-import { CdkAriaLive } from "../../../../../../../node_modules/@angular/cdk/types/_a11y-module-chunk";
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-document-requirement-list',
@@ -42,7 +44,9 @@ import { CdkAriaLive } from "../../../../../../../node_modules/@angular/cdk/type
     MatOptionModule,
     MatSelectModule,
     MatTableModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule
 ],
   templateUrl: './document-requirement-list.component.html',
   styleUrl: './document-requirement-list.component.scss',
@@ -53,6 +57,7 @@ export class DocumentRequirementListComponent implements OnInit, OnDestroy {
   private readonly dialog = inject(MatDialog);
   private readonly destroy$ = new Subject<void>();
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly snackBar = inject(MatSnackBar);
 
   readonly ownerTypes: DocumentOwnerType[] = [
     'DRIVER',
@@ -99,6 +104,7 @@ export class DocumentRequirementListComponent implements OnInit, OnDestroy {
         this.dataSource.data = requirements;
         this.loading = false;
         this.cdr.detectChanges();
+        console.log('================== requirements : ', JSON.stringify(requirements));
       },
       error: () => {
         this.loading = false;
@@ -107,13 +113,16 @@ export class DocumentRequirementListComponent implements OnInit, OnDestroy {
   }
 
   openCreateDialog(): void {
+    console.log('----------- open : ', JSON.stringify(this.dataSource.data));
     const dialogRef = this.dialog.open(DocumentRequirementFormDialogComponent,
       {
         width: '760px',
         maxWidth: '95vw',
+        disableClose: true,
         data: {
           mode: 'CREATE',
-          ownerType: this.ownerTypeControl.value
+          ownerType: this.ownerTypeControl.value,
+          configuredDocumentTypeIds: this.dataSource.data.map(requirement => requirement.documentTypeId)
         }
       }
     );
@@ -121,6 +130,15 @@ export class DocumentRequirementListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().pipe(takeUntil(this.destroy$))
       .subscribe(result => {
         if (result === true) {
+          this.snackBar.open(
+            'Exigence documentaire enregistrée avec succès.',
+            'Fermer',
+            {
+              duration: 3500,
+              horizontalPosition: 'end',
+              verticalPosition: 'top'
+            }
+          );
           this.loadRequirements();
         }
       });
@@ -141,6 +159,15 @@ export class DocumentRequirementListComponent implements OnInit, OnDestroy {
     dialorRef.afterClosed().pipe(takeUntil(this.destroy$))
       .subscribe(result => {
         if (result === true) {
+          this.snackBar.open(
+            'Exigence documentaire mise à jour.',
+            'Fermer',
+            {
+              duration: 3500,
+              horizontalPosition: 'end',
+              verticalPosition: 'top'
+            }
+          )
           this.loadRequirements();
         }
       });
@@ -196,5 +223,17 @@ export class DocumentRequirementListComponent implements OnInit, OnDestroy {
     }
 
     return 'success';
+  }
+
+  ownerTypeLabel(ownerType: DocumentOwnerType): string {
+    const labels: Record<DocumentOwnerType, string> = {
+      DRIVER: 'chauffeur',
+      VEHICLE: 'Vehicule',
+      EXPENSE: 'Dépense',
+      MAINTENANCE: 'Maintenance',
+      COMPANY: 'Companie'
+    };
+
+    return labels[ownerType];
   }
 }

@@ -24,6 +24,19 @@
             
         </section>
 
+        @if (data.mode === 'CREATE' && !loadingDocumentTypes && availableDocumentTypes.length === 0) {
+            <sf-info-panel
+                title="Configuration complète"
+                variant="success"
+                icon="task_alt">
+
+                <p>
+                    Tous les types de documents disponibles pour ce propriétaire possèdent déjà une exigence documentaire.
+                </p>
+                
+            </sf-info-panel>
+        }
+
         @if (data.mode === 'CREATE') {
 
             <mat-form-field appearance="outline" class="full-width">
@@ -32,12 +45,17 @@
 
                 <mat-select formControlName="documentTypeId">
                     @for (documentType of documentTypes; track documentType.id) {
-                        <mat-option [value]="documentType.id">
+                        <mat-option [value]="documentType.id" [disabled]="isDocumentTypeAlreadyConfigured(documentType.id)">
 
                             <div class="document-option">
                                 <strong>{{ documentType.label  }}</strong>  
 
-                                <small>{{ documentType.code }}</small>
+                                <small>{{ documentType.code }}
+
+                                    @if (isDocumentTypeAlreadyConfigured(documentType.id)) {
+                                        — déjà configuré
+                                    }
+                                </small>
                             </div>
 
                         </mat-option>
@@ -121,6 +139,18 @@
 
         </section>
 
+        @if (errorMessage) {
+            <sf-info-panel 
+                title="Enregistrement impossible"
+                variant="danger"
+                icon="error">
+
+                <p>{{ errorMessage }}</p>
+                
+            
+            </sf-info-panel>
+        }
+
         <sf-info-panel
             title="Conséquence métier"
             [variant]="form.controls.blockWhenMissing.value || form.controls.blockWhenExpired.value ? 'warning' : 'info'"
@@ -143,7 +173,7 @@
     <mat-dialog-actions align="end">
 
         <button mat-button type="button" [disabled]="saving" (click)="close()">Annuler</button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="saving">
+        <button mat-raised-button color="primary" type="submit" [disabled]="saving || (data.mode === 'CREATE' && availableDocumentTypes.length === 0)">
 
             @if (saving) {
                 Enregistremnet...

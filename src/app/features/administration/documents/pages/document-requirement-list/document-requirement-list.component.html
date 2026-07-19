@@ -23,7 +23,7 @@
 
                 <mat-select [formControl]="ownerTypeControl">
                     @for (ownerType of ownerTypes; track ownerType) {
-                        <mat-option [value]="ownerType">{{ ownerType }}</mat-option>
+                        <mat-option [value]="ownerType">{{ ownerTypeLabel(ownerType) }}</mat-option>
                     }
                 </mat-select>
             </mat-form-field>
@@ -154,7 +154,7 @@
             }
         } @else {
             <div class="loading-state">
-                <mat-icon>hourglass_top</mat-icon>
+                <mat-spinner diameter="34"/>
                 <span>Chargement des exigences...</span>
             </div>
         }
