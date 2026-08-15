@@ -22,7 +22,7 @@ export class DocumentAdministrationApiService {
 
   //private readonly apiUrl = 'http://localhost:8080/api/document-admin';
   //private readonly apiUrl = `${environment.apiBaseUrl}/api/document-admin`;
-  private readonly apiUrl =API_ENDPOINTS.documentAdmin;
+  private readonly apiUrl = API_ENDPOINTS.documentAdmin;
 
   constructor(private readonly http: HttpClient) {}
 
