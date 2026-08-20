@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { AnalyseIaComponent } from './analyse-ia.component';
 
@@ -9,6 +10,10 @@ describe('AnalyseIaComponentComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AnalyseIaComponent],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: {} },
+        { provide: MatDialogRef, useValue: { close: () => undefined } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AnalyseIaComponent);

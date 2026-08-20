@@ -13,6 +13,8 @@ describe('InfoPannelComponent', () => {
 
     fixture = TestBed.createComponent(InfoPanelComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('title', 'Information');
+    fixture.detectChanges();
     await fixture.whenStable();
   });
 

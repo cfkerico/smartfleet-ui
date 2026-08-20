@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { DisburseExpenseDialogComponent } from './disburse-expense-dialog.component';
 
@@ -9,6 +10,13 @@ describe('DisburseExpenseDialogComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [DisburseExpenseDialogComponent],
+      providers: [
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: { expense: { vehicleLabel: 'Véhicule test', requestedAmount: 1000 } },
+        },
+        { provide: MatDialogRef, useValue: { close: () => undefined } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DisburseExpenseDialogComponent);

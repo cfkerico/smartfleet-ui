@@ -13,6 +13,8 @@ describe('OwnerChipComponent', () => {
 
     fixture = TestBed.createComponent(OwnerChipComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('ownerType', 'VEHICLE');
+    fixture.detectChanges();
     await fixture.whenStable();
   });
 

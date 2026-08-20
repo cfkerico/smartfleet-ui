@@ -13,6 +13,8 @@ describe('PageHeaderComponent', () => {
 
     fixture = TestBed.createComponent(PageHeaderComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('title', 'Titre de page');
+    fixture.detectChanges();
     await fixture.whenStable();
   });
 
