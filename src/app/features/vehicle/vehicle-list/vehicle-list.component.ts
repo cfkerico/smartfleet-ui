@@ -14,6 +14,11 @@ import {NotificationService} from '../../../core/services/notification.service';
 import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {MatIcon} from '@angular/material/icon';
 
+import {
+  OwnerDocumentListDialogComponent,
+  OwnerDocumentListDialogData,
+} from '../../documents/dialogs/owner-document-list-dialog/owner-document-list-dialog.component';
+
 @Component({
   standalone: true,
   selector: 'app-vehicle-list',
@@ -127,4 +132,22 @@ export class VehicleListComponent implements OnInit, AfterViewInit {
       });
     }
   }
+
+  openDocuments(vehicle: Vehicle): void {
+    const data: OwnerDocumentListDialogData = {
+      ownerType: 'VEHICLE',
+      ownerId: vehicle.id,
+      ownerDisplayName: vehicle.label || vehicle.registrationNumber,
+    };
+
+    this.dialog.open(OwnerDocumentListDialogComponent, {
+      width: '1100px',
+      maxWidth: '96vw',
+      maxHeight: '90vh',
+      data,
+    });
+  }
+
+
+
 }

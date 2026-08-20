@@ -8,72 +8,57 @@ export type DocumentStatus =
   | 'ARCHIVED';
 
 
-export interface OwnerDocumentView {
-    id: number;
+export type DocumentComplianceStatus = 
+  | 'MISSING'
+  | 'DRAFT'
+  | 'INCOMPLETE'
+  | 'VALID'
+  | 'EXPIRING_SOON'
+  | 'EXPIRED'
+  | 'REJECTED';
 
-    ownerType: DocumentOwnerType;
-    ownerId: IdleDeadline;
 
+export interface DocumentComplianceItem {
+    requirementId: number;
     documentTypeId: number;
     documentTypeCode: string;
     documentTypeLabel: string;
 
-    documentNumber?: string;
-
-    issuedDate?: string;
-    expirationDate?: string;
-
-    fileName?: string;
-    contentType?: string;
-    fileSize?: number;
-
-    status: DocumentStatus;
-
     required: boolean;
     expirationRequired: boolean;
-    blockWhenMissing: boolean;
-    blockWhenExpired: boolean;
+    displayOrder: number;
 
-    archived: boolean;
+    complianceStatus: DocumentComplianceStatus;
+    blocking: boolean;
 
-    createdAt: string;
-    updatedAt?: string;
+    documentId: number | null;
+    documentTitle: string | null;
+    activeVersionId: number | null;
+    currentVersionNumber: number | null;
+    issuedDate: string | null;
+    expirationDate: string | null;
+    daysUntilExpiration: number | null;
 }
 
-
-export interface MissingDocumentView {
-    documentTypeId: number;
-    documentTypeCode: string;
-    documentTypeLabel: string;
-
-    ownerType: DocumentOwnerType;
-
-    required: boolean;
-    expirationRequired: boolean;
-    blockWhenMissing: boolean;
-    blockWhenExpired: boolean;
-
-    warningDaysBeforeExpiration: number;
-}
-
-
-export interface OwnerDocumentComplianceView {
+export interface OwnerDocumentCompliance {
     ownerType: DocumentOwnerType;
     ownerId: number;
-    ownerDisplayName: string;
+    referenceDate: string;
+
+    totalRequired: number;
+    compliantRequired: number;
+    missingRequired: number;
+    expiredRequired: number;
+    expiringSoon: number;
 
     compliant: boolean;
     blocked: boolean;
 
-    requiredDocumentCount: number;
-    validDocumentCount: number;
-    missingDocumentCount: number;
-    expiredDocumentCount: number;
-    expiringSoonDocumentCount: number;
+    items: DocumentComplianceItem[];
 
-    documents: OwnerDocumentView[];
-    missingDocuments: MissingDocumentView[];
 }
+
+
 
 export interface CreateDocumentMetadata {
     documentTypeId: number;

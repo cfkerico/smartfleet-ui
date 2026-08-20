@@ -15,7 +15,7 @@ import {
   DocumentSummary,
   DocumentVersion,
   FindDocumentsByOwnerCriteria,
-  OwnerDocumentView
+  OwnerDocumentCompliance
 } from '../models/document.model';
 
 import { PageResult } from '../../../models/page-result.model';
@@ -91,6 +91,14 @@ export class DocumentApiService {
 
   archive(documentId: number, request: ArchiveDocumentRequest): Observable<ArchiveDocumentResponse> {
     return this.http.patch<ArchiveDocumentResponse>(`${this.apiUrl}/${documentId}/archive`, request);
+  }
+
+  findCompliance(ownerType: string, ownerId: number): Observable<OwnerDocumentCompliance> {
+    const params = new HttpParams()
+      .set('ownerType', ownerType)
+      .set('ownerId', ownerId);
+
+    return this.http.get<OwnerDocumentCompliance>(`${this.apiUrl}/compliance`, { params });
   }
 
 

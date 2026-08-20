@@ -1,0 +1,233 @@
+<section class="compliance-dashboard">
+
+    @if (loading()) {
+        <div class="state-container" aria-live="polite">
+            <mat-spinner diameter="42"/>
+            <p>Chargement de la conformité documentaire...</p>
+        </div>
+    } @else if (error()) {
+        <mat-card class="state-card error-state">
+            <mat-icon>error_outline</mat-icon>
+
+            <div>
+                <h3>Chargement impossible</h3>
+                <p>{{ error() }}</p>
+            </div>
+
+            <button
+                mat-stroked-button
+                type="button"
+                (click)="reload()">
+                <mat-icon>refresh</mat-icon>
+                Réessayer
+            </button>
+        </mat-card>
+    } @else if (compliance(); as data) {
+
+        <mat-card 
+            class="summary-card"
+            [class.summary-compliant]="data.compliant"
+            [class.summary-blocked]="data.blocked">
+
+            <div class="summary-header">
+                <div class="summary-title">
+                    <div class="summary-icon">
+                        <mat-icon>{{ data.compliant ? 'verified' : 'fact_check' }}</mat-icon>
+                    </div>
+
+                    <div>
+                        <h2>Conformité documentaire</h2>
+                        <p>Etat calculé au {{ data.referenceDate | date:'dd/MM/yyyy':'UTC' }}</p>
+                    </div>
+                </div>
+
+                <div class="summary-score">
+                    <strong>
+                        {{ data.compliantRequired }}
+                        /
+                        {{ data.totalRequired }}
+                    </strong>
+                    <span>documents conformes</span>
+                </div>
+            </div>
+
+            <mat-progress-bar 
+                mode="determinate"
+                [value]="compliancePercentage()"
+                [color]="data.compliant ? 'primary' : 'warn'"
+            />
+
+            <div class="summary-metrics">
+                <div class="metric">
+                    <strong>{{ compliancePercentage() }} %</strong>
+                    <span>Conformité</span>
+                </div>
+
+                <div class="metric">
+                    <strong>{{ data.missingRequired }}</strong>
+                    <span>Manquants</span>
+                </div>
+
+                <div class="metric">
+                    <strong>{{ data.expiredRequired }}</strong>
+                    <span>Expirés</span>
+                </div>
+
+                <div class="metric">
+                    <strong>{{ data.expiringSoon }}</strong>
+                    <span>A renouveler bientôt</span>
+                </div>
+            </div>
+
+            @if (data.blocked) {
+                <div class="blocking-alert">
+                    <mat-icon>block</mat-icon>
+
+                    <div>
+                        <strong>Situation documentaire bloquante</strong>
+                        <span>Au moins une exigence bloquante n'est pas satisfait.</span>
+                    </div>
+                </div>
+            }
+        </mat-card>
+
+        @if (missingItems().length > 0) {
+            <section class="document-section">
+                <header class="section-header">
+                    <div>
+                        <h2>Documents manquants</h2>
+                        <p>Documents attendus mais absents du dossier.</p>
+                    </div>
+
+                    <span class="section-count">{{ missingItems().length }}</span>
+                </header>
+
+                <div class="document-list">
+                    @for (item of missingItems(); track item.documentTypeId) {
+                        <article class="document-row missing-row">
+                            <div class="document-main">
+                                <div class="document-icon missiong-icon">
+                                    <mat-icon>description</mat-icon>
+                                </div>
+
+                                <div class="document-identity">
+                                    <div class="document-title-line">
+                                        <h3>{{ item.documentTypeLabel }}</h3>
+
+                                        @if (item.required) {
+                                            <span class="required-label">Obligatoire</span>
+                                        } @else {
+                                            <span class="optional-label">Facultatif</span>
+                                        }
+                                    </div>
+
+                                    <p>{{ item.documentTypeCode }}</p>
+                                </div>
+                            </div>
+
+                            <div class="document-state">
+                                <span class="status-badge" [ngClass]="statusClass(item.complianceStatus)">
+                                    <mat-icon>{{ statusIcon(item.complianceStatus) }}</mat-icon>
+                                    {{ statusLabel(item.complianceStatus) }}
+                                </span>
+
+                                @if (item.blocking) {
+                                    <span class="blocking-label">Bloquant</span>
+                                }
+                            </div>
+
+                            <div class="document-actions">
+                                <button 
+                                    mat-flat-button
+                                    type="button"
+                                    (click)="addRequested.emit(item)">
+                                    <mat-icon>upload_file</mat-icon>
+                                    Ajouter
+                                </button>
+                            </div>
+                        </article>
+                    }
+                </div>
+            </section>
+        }
+
+        <section class="document-section">
+            <header class="section-header">
+                <div>
+                    <h2>Documents disponibles</h2>
+                    <p>Documents actuellement présents dans le dossier.</p>
+                </div>                
+
+                <span class="section-count"> {{ availableItems().length }} </span>
+            </header>
+
+            @if (availableItems().length > 0) {
+                <div class="document-list">
+                    @for (item of availableItems(); track item.documentTypeId) {
+                        <article class="document-row">
+                            <div class="document-main">
+                                <div class="document-icon">
+                                    <mat-icon>description</mat-icon>
+                                </div>
+
+                                <div class="document-identity">
+                                    <div class="document-title-line">
+                                        <h3> {{ item.documentTypeLabel }} </h3>
+
+                                        @if (item.required) {
+                                            <span class="required-label">Obligatoire</span>
+                                        }
+                                    </div>
+
+                                    <p> {{ item.documentTitle || item.documentTypeCode }} </p>
+                                </div>
+                            </div>
+
+                            <div class="document-expiration">
+                                <strong> {{ expirationLabel(item) }} </strong>
+
+                                @if (item.expirationDate) {
+                                    <span>Echéance : {{ item.expirationDate | date:'dd/MM/yyyy':'UTC' }} </span>
+                                }
+                            </div>
+
+                            <div class="document-state">
+                                <span class="status-badge" [ngClass]="statusClass(item.complianceStatus)">
+                                    <mat-icon> {{ statusIcon(item.complianceStatus) }} </mat-icon>
+                                    {{ statusLabel(item.complianceStatus) }}
+                                </span>
+                            </div>
+
+                            <div class="document-actions">
+                                <button
+                                    mat-stroked-button
+                                    type="button"
+                                    matTooltip="Consulter le document"
+                                    (click)="viewRequested.emit(item)">
+                                    <mat-icon>visibility</mat-icon>
+                                    Voir
+                                </button>
+
+                                <button
+                                    mat-button
+                                    type="button"
+                                    matTooltip="Ajouter une nouvelle version"
+                                    (click)="replaceRequested.emit(item)">
+                                    <mat-icon>published_with_changes</mat-icon>
+                                    Remplacer
+                                </button>
+                            </div>
+                        </article>
+                    }
+                </div>
+            } @else {
+                <div class="empty-state">
+                    <mat-icon>folder_off</mat-icon>
+                    <h3>Aucun document disponible</h3>
+
+                    <p> Aucun document n'a encore été ajouté à ce dossier.</p>
+                </div>
+            }
+        </section>
+    }
+</section>

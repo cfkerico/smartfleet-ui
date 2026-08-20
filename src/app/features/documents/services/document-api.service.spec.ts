@@ -13,6 +13,7 @@ import { API_ENDPOINTS } from '../../../core/config/api-endpoints';
 import {
   CreateDocumentMetadata,
   CreateDocumentResponse,
+  OwnerDocumentCompliance,
 } from '../models/document.model';
 import { DocumentApiService } from './document-api.service';
 
@@ -354,7 +355,84 @@ describe('DocumentApiService', () => {
     });
   });
 
+  it('should find documment compliance by owner', () => {
+    const response: OwnerDocumentCompliance = {
+      ownerType: 'VEHICLE',
+      ownerId: 10,
+      referenceDate: '2026-08-18',
 
+      totalRequired: 2,
+      compliantRequired: 1,
+      missingRequired: 1,
+      expiredRequired: 0,
+      expiringSoon: 1,
 
+      compliant: false,
+      blocked: true,
+
+      items: [
+        {
+          requirementId: 100,
+          documentTypeId: 200,
+          documentTypeCode: 'VEHICLE_INSURANCE',
+          documentTypeLabel: 'Assurance automobile',
+
+          required: true,
+          expirationRequired: true,
+          displayOrder: 1,
+
+          complianceStatus: 'EXPIRING_SOON',
+          blocking: false,
+          
+          documentId: 300,
+          documentTitle: 'Assurance 2026',
+          activeVersionId: 400,
+          currentVersionNumber: 1,
+          issuedDate: '2026-01-01',
+          expirationDate: '2026-08-28',
+          daysUntilExpiration: 10,
+        },
+        {
+          requirementId: 101,
+          documentTypeId: 201,
+          documentTypeCode: 'TECHNICAL_TEST',
+          documentTypeLabel: 'Contrôle technique',
+          
+          required: true,
+          expirationRequired: true,
+          displayOrder: 2,
+
+          complianceStatus: 'MISSING',
+          blocking: true,
+
+          documentId: null,
+          documentTitle: null,
+          activeVersionId: null,
+          currentVersionNumber: null,
+          issuedDate: null,
+          expirationDate: null,
+          daysUntilExpiration: null,
+        },
+      ],
+    };
+
+    service.findCompliance('VEHICLE', 10)
+      .subscribe(result => {
+        expect(result).toEqual(response);
+        expect(result.items).toHaveLength(2);
+        expect(result.items[1].complianceStatus)
+          .toBe('MISSING');
+      });
+
+    const request = httpTestingController.expectOne(candidate =>
+      candidate.url === `${API_ENDPOINTS.documents}/compliance`
+      && candidate.params.get('ownerType') === 'VEHICLE'
+      && candidate.params.get('ownerId') === '10'
+    );
+
+    expect(request.request.method).toBe('GET');
+
+    request.flush(response);
+  });
 
 });
