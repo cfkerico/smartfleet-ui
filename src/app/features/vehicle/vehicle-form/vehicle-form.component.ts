@@ -36,7 +36,7 @@ export class VehicleFormComponent {
   form = this.fb.group({
     brand: ['', Validators.required],
     model: ['', Validators.required],
-    year: ['', Validators.required],
+    year: [0, Validators.required],
     fuelType: ['', Validators.required],
     vin: [''],
     registrationNumber: ['', Validators.required],

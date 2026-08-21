@@ -1,0 +1,80 @@
+<section class="vehicle-document-page">
+
+    <header class="page-toolbar">
+        <a 
+            mat-button
+            routerLink="/vehicles"
+            aria-label="Retour à la liste des véhicules">
+            <mat-icon>arrow_back</mat-icon>
+            Retour aux véhicules
+        </a>
+    </header>
+
+    @if (loading()) {
+        <div class="page-state" aria-live="polite">
+            <mat-spinner diameter="44"/>
+            <p>Chargement du véhicule...</p>
+        </div>
+    } @else if (error()) {
+        <div class="page-state error-state" role="alert">
+            <mat-icon>error_outline</mat-icon>
+
+            <div>
+                <h1>Véhicule indisponible</h1>
+                <p> {{ error() }} </p>
+            </div>
+
+            <a mat-stroked-button routerLink="/vehicles">
+                Revenir à la liste
+            </a>
+        </div>
+    } @else if (vehicle(); as currentVehicle) {
+        <header class="vehicle-header">
+            <div class="vehicle-icon" aria-hidden="true">
+                <mat-icon>directions_car</mat-icon>
+            </div>
+
+            <div class="vehicle-identity">
+                <span class="page-eyebrow">
+                    Dossier documentaire
+                </span>
+
+                <h1>
+                    {{ currentVehicle.brand }}
+                    {{ currentVehicle.model }}
+                </h1>
+
+                <div class="vehicle-metadata">
+                    <span>
+                        <mat-icon>pin</mat-icon>
+                        {{ currentVehicle.registrationNumber }}
+                    </span>
+
+                    <span>
+                        <mat-icon>calendar_month</mat-icon>
+                        {{ currentVehicle.year }}
+                    </span>
+
+                    <span>
+                        <mat-icon>local_gas_station</mat-icon>
+                        {{ currentVehicle.fuelType }}
+                    </span>
+                </div>
+            </div>
+
+            <span 
+                class="vehicle-status"
+                [class.vehicle-status-active]="currentVehicle.vehicleStatus === 'ACTIVE'">
+                {{ currentVehicle.vehicleStatus }}
+            </span>
+        </header>
+
+        @if (vehicleId(); as id) {
+            <app-owner-document-compliance 
+                [ownerType]="'VEHICLE'"
+                [ownerId]="id"
+            />
+        }
+    }
+    
+</section>

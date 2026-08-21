@@ -20,6 +20,13 @@ export const routes: Routes = [
               import('./features/driver/driver-list.component').then(m => m.DriverListComponent)
           },
           {
+            path: 'vehicles/:vehicleId/documents',
+            canActivate: [authGuard],
+            loadComponent: () => 
+              import('./features/vehicle/vehicle-document-page/vehicle-document-page.component')
+            .then(module => module.VehicleDocumentPageComponent),
+          },
+          {
             path: 'vehicles',
             canActivate: [authGuard],
             loadComponent: () =>

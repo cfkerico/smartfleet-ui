@@ -18,6 +18,10 @@ export class VehicleService {
       .set('size', size);
     return this.http.get<PageResponse<Vehicle>>(`${this.baseUrl}`, {params});
   }
+  
+  getById(vehicleId: number): Observable<Vehicle> {
+    return this.http.get<Vehicle>(`${this.baseUrl}/${vehicleId}`);
+  }
 
   create(vehicle: Vehicle): Observable<Vehicle> {
     return this.http.post<Vehicle>(`${this.baseUrl}`, vehicle);
@@ -31,4 +35,5 @@ export class VehicleService {
   delete(vehicleId: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${vehicleId}`);
   }
+
 }

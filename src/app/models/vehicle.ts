@@ -3,7 +3,7 @@ export interface Vehicle {
   brand: string;
   model: string;
   label: string;
-  year: string;
+  year: number;
   vehicleStatus: string;
   fuelType: string;
   vin: string;
