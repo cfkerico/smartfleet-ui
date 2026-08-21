@@ -1,28 +1,27 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { VehicleService } from '../../../core/services/vehicle.service';
 import { Vehicle } from '../../../models/vehicle';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {MatPaginator, MatPaginatorModule, PageEvent} from '@angular/material/paginator';
-import {CommonModule} from '@angular/common';
+import {MatTableDataSource, MatTableModule } from '@angular/material/table';
+import {MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import {CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { ChangeDetectorRef} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {VehicleFormComponent} from '../vehicle-form/vehicle-form.component';
-import {NotificationService} from '../../../core/services/notification.service';
-import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
-import {MatIcon} from '@angular/material/icon';
+import { ChangeDetectorRef } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { VehicleFormComponent } from '../vehicle-form/vehicle-form.component';
+import { NotificationService } from '../../../core/services/notification.service';
+import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
+import { MatIcon } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 
-import {
-  OwnerDocumentListDialogComponent,
-  OwnerDocumentListDialogData,
-} from '../../documents/dialogs/owner-document-list-dialog/owner-document-list-dialog.component';
 
 @Component({
   standalone: true,
   selector: 'app-vehicle-list',
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
+    RouterLink,
     MatTableModule,
     MatButtonModule,
     MatProgressSpinnerModule,
@@ -133,20 +132,6 @@ export class VehicleListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openDocuments(vehicle: Vehicle): void {
-    const data: OwnerDocumentListDialogData = {
-      ownerType: 'VEHICLE',
-      ownerId: vehicle.id,
-      ownerDisplayName: vehicle.label || vehicle.registrationNumber,
-    };
-
-    this.dialog.open(OwnerDocumentListDialogComponent, {
-      width: '1100px',
-      maxWidth: '96vw',
-      maxHeight: '90vh',
-      data,
-    });
-  }
 
 
 

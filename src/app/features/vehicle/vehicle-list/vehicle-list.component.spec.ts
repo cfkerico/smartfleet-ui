@@ -5,6 +5,9 @@ import { VehicleService } from '../../../core/services/vehicle.service';
 
 import { VehicleListComponent } from './vehicle-list.component';
 
+import { provideRouter } from '@angular/router';
+
+
 describe('VehicleListComponent', () => {
   let component: VehicleListComponent;
   let fixture: ComponentFixture<VehicleListComponent>;
@@ -13,6 +16,7 @@ describe('VehicleListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [VehicleListComponent],
       providers: [
+        provideRouter([]),
         {
           provide: VehicleService,
           useValue: { getAll: () => of({ content: [], totalElements: 0 }) },
