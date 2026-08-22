@@ -16,6 +16,7 @@ import { finalize } from 'rxjs';
 import { VehicleService } from '../../../core/services/vehicle.service';
 import { Vehicle } from '../../../models/vehicle';
 import { OwnerDocumentComplianceComponent } from '../../documents/components/owner-document-compliance/owner-document-compliance.component';
+import { AddDocumentVersionDialogComponent, AddDocumentVersionDialogData } from '../../documents/dialogs/add-document-version-dialog/add-document-version-dialog.component';
 
 @Component({
   selector: 'app-vehicle-document-page',
@@ -105,6 +106,36 @@ export class VehicleDocumentPageComponent implements OnInit {
       }
 
       this.notification.success('Document ajouté avec succès.');
+
+      this.complianceComponent()?.reload();
+    });
+  }
+
+  replaceDocument(item: DocumentComplianceItem): void {
+    if (item.documentId === null) {
+      this.notification.error('Aucun document ne peut être remplacé.');
+      return;
+    }
+
+    const data: AddDocumentVersionDialogData = { 
+      item
+    };
+
+    const dialogRef = this.dialog.open(AddDocumentVersionDialogComponent, 
+      {
+        width: '720px',
+        maxWidth: '96vw',
+        maxHeight: '92vh',
+        data
+      }
+    );
+
+    dialogRef.afterClosed().subscribe(created => {
+      if (!created) {
+        return;
+      }
+
+      this.notification.success('Nouvelle version ajoutée avec succès.');
 
       this.complianceComponent()?.reload();
     });

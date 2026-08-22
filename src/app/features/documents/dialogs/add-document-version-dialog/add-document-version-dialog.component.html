@@ -1,0 +1,124 @@
+<form class="version-form" [formGroup]="form" (ngSubmit)="submit()">
+
+    <header class="dialog-header">
+        <div>
+            <h2 mat-dialog-title>
+                Ajouter une nouvelle version
+            </h2>
+
+            <p>{{ data.item.documentTypeLabel }}</p>
+
+            @if (data.item.currentVersionNumber; as version) {
+                <span class="current-version">
+                    Version actuelle : {{ version }}
+                </span>
+            }
+        </div>
+
+        <button 
+            mat-icon-button
+            type="button"
+            aria-label="Fermer"
+            [disabled]="submitting()"
+            (click)="cancel()">
+            <mat-icon>Close</mat-icon>
+        </button>
+    </header>
+
+    <mat-dialog-content>
+        <div class="renewal-information">
+            <mat-icon>history</mat-icon>
+
+            <p>
+                La version actuelle sera conservée dans
+                l'historique. Le nouveau fichier deviendra
+                la version active.
+            </p>
+        </div>
+
+        <div class="form-grid">
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nouveau numéro du document</mat-label>
+
+                <input matInput formControlName="documentNumber">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Date d'émission</mat-label>
+
+                <input matInput type="date" formControlName="issuedDate">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Nouvelle date d'expiration</mat-label>
+
+                <input matInput type="date" formControlName="expirationDate">
+
+                @if (form.controls.expirationDate.hasError('required')) {
+                    <mat-error>
+                        La date d'expiration est obligatoire.
+                    </mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Commentaire de version</mat-label>
+
+                <textarea matInput rows="3" formControlName="comment"></textarea>
+            </mat-form-field>
+
+            <div class="file-field full-width">
+                <label for="version-file">Nouveau fichier</label>
+
+                <input 
+                    id="version-file"
+                    type="file"
+                    [disabled]="submitting()"
+                    (change)="onFileSelected($event)">
+
+                @if (form.controls.file.value; as file) {
+                    <div class="selected-file">
+                        <mat-icon>description</mat-icon>
+
+                        <span>{{ file.name }}</span>
+
+                        <small>{{ file.size / 1024 | number:'1.0-1' }}ko</small>
+                    </div>
+                }
+
+                @if (form.controls.file.touched && form.controls.file.hasError('required')) {
+                    <span class="field-error">Le nouveau fichier est obligatoire.</span>
+                }
+            </div>
+
+            @if (error()) {
+                <div class="submission-error full-width" role="alert">
+                    <mat-icon>error_outline</mat-icon>
+                    <span>{{ error() }}</span>
+                </div>
+            }
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button 
+            mat-button
+            type="button"
+            [disabled]="submitting()"
+            (click)="cancel()">
+            Annuler
+        </button>
+
+        <button 
+            mat-flat-button
+            type="submit"
+            [disabled]="submitting()">
+            @if (submitting()) {
+                <mat-icon>published_with_changes</mat-icon>
+            }
+
+            Ajouter la version
+        </button>            
+    </mat-dialog-actions>
+</form>
