@@ -1,11 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog } from '@angular/material/dialog';
+import { NotificationService } from '../../../core/services/notification.service';
+import { DocumentComplianceItem } from '../../documents/models/document.model';
+import { CreateOwnerDocumentDialogComponent, CreateOwnerDocumentDialogData } from '../../documents/dialogs/create-owner-document-dialog/create-owner-document-dialog.component';
 
 import { finalize } from 'rxjs';
 
@@ -31,6 +35,9 @@ export class VehicleDocumentPageComponent implements OnInit {
 
   private readonly route = inject(ActivatedRoute);
   private readonly vehicleService = inject(VehicleService);
+  private readonly dialog = inject(MatDialog);
+  private readonly notification = inject(NotificationService);
+  private readonly complianceComponent = viewChild(OwnerDocumentComplianceComponent)
 
   readonly vehicleId = signal<number | null>(null);
   readonly vehicle = signal<Vehicle | null>(null);
@@ -67,6 +74,40 @@ export class VehicleDocumentPageComponent implements OnInit {
           this.error.set('Impossible de charger les informations du véhicule.');
         },
       });
+  }
+
+  addDocument(item: DocumentComplianceItem): void {
+    const ownerId = this.vehicleId();
+
+    if (ownerId === null) {
+      return;
+    }
+
+    const data: CreateOwnerDocumentDialogData = {
+      ownerType: 'VEHICLE',
+      ownerId,
+      item
+    };
+
+    const dialogRef = this.dialog.open(
+      CreateOwnerDocumentDialogComponent,
+      {
+        width: '720px',
+        maxWidth: '96vw',
+        maxHeight: '92vh',
+        data
+      }
+    );
+
+    dialogRef.afterClosed().subscribe(created => {
+      if (!created) {
+        return;
+      }
+
+      this.notification.success('Document ajouté avec succès.');
+
+      this.complianceComponent()?.reload();
+    });
   }
 
 

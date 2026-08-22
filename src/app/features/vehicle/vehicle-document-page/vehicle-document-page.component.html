@@ -73,6 +73,7 @@
             <app-owner-document-compliance 
                 [ownerType]="'VEHICLE'"
                 [ownerId]="id"
+                (addRequested)="addDocument($event)"
             />
         }
     }

@@ -1,0 +1,115 @@
+<form class="document-form" [formGroup]="form" (ngSubmit)="submit()">
+
+    <header class="dialog-header">
+        <div>
+            <h2 mat-dialog-title>Ajouter un document</h2>
+
+            <p>{{ data.item.documentTypeLabel }}</p>
+        </div>
+
+        <button 
+            mat-icon-button 
+            type="button"
+            aria-label="Fermer"
+            [disabled]="submitting()"
+            (click)="cancel()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </header>
+
+    <mat-dialog-content>
+        <div class="form-grid">
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Titre</mat-label>
+
+                <input matInput formControlName="title" maxlength="150">
+
+                @if (form.controls.title.hasError('required')) {
+                    <mat-error>Le titre est obligatoire.</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Numéro du document</mat-label>
+
+                <input matInput formControlName="documentNumber">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Date d'émission</mat-label>
+
+                <input matInput type="date" formControlName="issuedDate">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>D'ate d'expiration</mat-label>
+
+                <input matInput type="date" formControlName="expirationDate">
+
+                @if (form.controls.expirationDate.hasError('required')) {
+                    <mat-error>La date d'expiration est obligatoire.</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Commentaire</mat-label>
+
+                <textarea matInput rows="3" formControlName="comment"></textarea>
+            </mat-form-field>
+
+            <div class="file-field full-width">
+                <label for="document-file">Fichier</label>
+
+                <input id="document-file" type="file" [disabled]="submitting()" (change)="onFileSelected($event)">
+
+                @if (form.controls.file.value; as file) {
+                    <div class="selected-file">
+                        <mat-icon>description</mat-icon>
+
+                        <span>{{ file.name }}</span>
+
+                        <small>
+                            {{ file.size / 1024 | number: '1.0-1' }}
+                            ko
+                        </small>
+                    </div>
+                }
+
+                @if (form.controls.file.touched && form.controls.file.hasError('required')) {
+                    <span class="field-error">Le fichier est obligatoire.</span>
+                }
+            </div>
+
+            @if (error()) {
+                <div class="submission-error full-width" role="alert">
+                    <mat-icon>error_outline</mat-icon>
+                    <span>{{ error() }}</span>
+                </div>
+            }
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button 
+            mat-button
+            type="button"
+            [disabled]="submitting()"
+            (click)="cancel()">
+            Annuler
+        </button>
+
+        <button 
+            mat-flat-button
+            type="submit"
+            [disabled]="submitting()">
+            @if (submitting()) {
+                <mat-spinner diameter="18"/>
+            } @else {
+                <mat-icon>upload_file</mat-icon>
+            }
+            Enregistrer
+        </button>
+    </mat-dialog-actions>
+    
+</form>

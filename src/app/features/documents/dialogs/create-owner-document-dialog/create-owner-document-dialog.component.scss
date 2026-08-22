@@ -1,0 +1,169 @@
+:host {
+  display: block;
+}
+
+.document-form {
+  width: min(680px, 92vw);
+}
+
+.dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 20px 20px 10px;
+
+  h2 {
+    margin: 0;
+    color: #172b3f;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: #607386;
+  }
+}
+
+mat-dialog-content {
+  padding-top: 12px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 16px;
+
+  padding-top: 4px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.file-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  padding: 16px;
+
+  border: 1px dashed #aab8c5;
+  border-radius: 10px;
+  background: #f8fafc;
+
+  label {
+    color: #34495e;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  input[type='file'] {
+    max-width: 100%;
+    color: #526577;
+  }
+
+  input[type='file']::file-selector-button {
+    margin-right: 12px;
+    padding: 8px 14px;
+
+    color: #1f5f8b;
+    background: #e7f1f8;
+    border: 0;
+    border-radius: 7px;
+
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  input[type='file']::file-selector-button:hover {
+    background: #d8eaf5;
+  }
+}
+
+.selected-file {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 12px;
+
+  color: #34495e;
+  background: #ffffff;
+  border: 1px solid #e0e7ee;
+  border-radius: 8px;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  small {
+    color: #718194;
+  }
+
+  mat-icon {
+    color: #1f5f8b;
+  }
+}
+
+.field-error {
+  color: #b3261e;
+  font-size: 0.75rem;
+}
+
+.submission-error {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-top: 8px;
+  padding: 12px 14px;
+
+  color: #8a1c15;
+  background: #fcebea;
+  border: 1px solid #f4c7c3;
+  border-radius: 8px;
+
+  mat-icon {
+    flex: 0 0 auto;
+  }
+}
+
+mat-dialog-actions {
+  padding: 12px 20px 20px;
+
+  button[mat-flat-button] {
+    min-width: 132px;
+  }
+
+  mat-spinner {
+    display: inline-block;
+    margin-right: 8px;
+  }
+}
+
+@media (max-width: 620px) {
+  .document-form {
+    width: 100%;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width {
+    grid-column: auto;
+  }
+
+  .selected-file {
+    grid-template-columns: auto minmax(0, 1fr);
+
+    small {
+      grid-column: 2;
+    }
+  }
+}
