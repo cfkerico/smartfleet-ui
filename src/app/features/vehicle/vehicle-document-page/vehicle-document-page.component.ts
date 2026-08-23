@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NotificationService } from '../../../core/services/notification.service';
 import { DocumentComplianceItem } from '../../documents/models/document.model';
 import { CreateOwnerDocumentDialogComponent, CreateOwnerDocumentDialogData } from '../../documents/dialogs/create-owner-document-dialog/create-owner-document-dialog.component';
+import { DocumentDetailDialogComponent, DocumentDetailDialogData } from '../../documents/dialogs/document-detail-dialog/document-detail-dialog.component';
 
 import { finalize } from 'rxjs';
 
@@ -90,8 +91,7 @@ export class VehicleDocumentPageComponent implements OnInit {
       item
     };
 
-    const dialogRef = this.dialog.open(
-      CreateOwnerDocumentDialogComponent,
+    const dialogRef = this.dialog.open(CreateOwnerDocumentDialogComponent,
       {
         width: '720px',
         maxWidth: '96vw',
@@ -139,6 +139,27 @@ export class VehicleDocumentPageComponent implements OnInit {
 
       this.complianceComponent()?.reload();
     });
+  }
+
+  viewDocument(item: DocumentComplianceItem): void {
+    if (item.documentId === null) {
+      this.notification.error('Aucun document ne peut être consulté.');
+      return;
+    }
+
+    const data: DocumentDetailDialogData = {
+      documentId: item.documentId,
+      documentTypeLabel: item.documentTypeLabel
+    };
+
+    this.dialog.open(DocumentDetailDialogComponent,
+      {
+        width: '1000px',
+        maxWidth: '96vw',
+        maxHeight: '92vh',
+        data,
+      }
+    );
   }
 
 

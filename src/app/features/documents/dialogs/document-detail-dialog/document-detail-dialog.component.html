@@ -1,1 +1,179 @@
-<p>document-detail-dialog works!</p>
+<header class="dialog-header">
+    <div>
+        <h2 mat-dialog-title>Détail du document</h2>
+
+        <p>{{ data.documentTypeLabel }}</p>
+    </div>
+
+    <button 
+        mat-icon-button
+        type="button"
+        aria-label="Fermer"
+        (click)="close()">
+        <mat-icon>close</mat-icon>
+    </button>
+</header>
+
+<mat-dialog-content>
+
+    @if (loading()) {
+        <div class="dialog-state" aria-live="polite">
+            <mat-spinner diameter="42"/>
+            <p>chargement du document...</p>
+        </div>
+    } @else if (error()) {
+        <div class="dialog-state error-state" role="alert">
+            <mat-icon>error_outline</mat-icon>
+
+            <div>
+                <strong>Chargement impossible</strong>
+                <p>{{ error() }}</p>
+            </div>
+
+            <button
+                mat-stroked-button
+                type="button"
+                (click)="load()">
+                <mat-icon>refresh</mat-icon>
+                Réessayer
+            </button>
+        </div>
+    } @else if (detail(); as documentDetail) {
+
+        <section class="document-summary">
+            <div class="summary-heading">
+                <div>
+                    <span class="section-eyebrow">{{ documentDetail.documentTypeCode }}</span>
+
+                    <h3>{{ documentDetail.title }}</h3>
+
+                    @if (documentDetail.documentTypeDescription) {
+                        <p>{{ documentDetail.documentTypeDescription }}</p>
+                    }
+                </div>
+
+                <span class="status-badge" [class]="'status-badge status-' + documentDetail.status.toLowerCase()">{{ documentDetail.status }}</span>
+            </div>
+
+            <dl class="detail-grid">
+                <div>
+                    <dt>Numéro</dt>
+                    <dd>{{ documentDetail.documentNumber || 'Non renseigné' }}</dd>
+                </div>
+
+                <div>
+                    <dt>Version active</dt>
+                    <dd>{{ documentDetail.currentVersionNumber }}</dd>
+                </div>
+
+                <div>
+                    <dt>Date d'émission</dt>
+                    <dd>{{ documentDetail.issuedDate ? (documentDetail.issuedDate | date: 'dd/MM/yyyy':'UTC') : 'Non renseignée' }}</dd>
+                </div>
+
+                <div>
+                    <dt>Date d'expiration</dt>
+                    <dd>{{ documentDetail.expirationDate ? (documentDetail.expirationDate | date: 'dd/MM/yyyy':'UTC') : 'Sans expiration' }}</dd>
+                </div>
+
+                <div>
+                    <dt>Fichier actif</dt>
+                    <dd>{{ documentDetail.originalFileName || 'Aucun fichier actif' }}</dd>
+                </div>
+
+                <div>
+                    <dt>Taille</dt>
+                    <dd>
+                        @if (documentDetail.fileSize !== null) {
+                            {{ documentDetail.fileSize / 1024 | number:'1.0-1' }}ko
+                        } @else {
+                            Non renseignée
+                        }
+                    </dd>
+                </div>
+            </dl>
+
+            @if (documentDetail.comment) {
+                <div class="document-comment">
+                    <strong>Commentaire</strong>
+                    <p>{{ documentDetail.comment }}</p>
+                </div>
+            }
+        </section>
+
+        <section class="history-section">
+            <header class="section-header">
+                <div>
+                    <h3>Historique des versions</h3>
+                    <p>Les anciennes versions sont conservées pour assurer la traçabilité.</p>
+                </div>
+
+                <span class="version-count">{{ versions().length }}</span>
+            </header>
+
+            @if (versions().length > 0) {
+                <div class="version-list">
+
+                    @for (version of versions(); track version.versionId) {
+                        <article class="version-row" [class.active-version]="version.active">
+
+                            <div class="version-identity">
+                                <div class="version-number">
+                                    <mat-icon>{{ version.active ? 'verified' : 'history' }}</mat-icon>
+
+                                    <strong> Version {{ version.versionNumber }}</strong>
+
+                                    @if (version.active) {
+                                        <span>Active</span>
+                                    }
+                                </div>
+
+                                <p>{{ version.originalFileName }}</p>
+                            </div>
+
+                            <div class="version-dates">
+                                <span>Emise : {{ version.issuedDate ? (version.issuedDate | date:'dd/MM/yyyy':'UTC') : '—' }}</span>
+
+                                <span>Expire : {{ version.expirationDate ? (version.expirationDate | date:'dd/MM/yyyy':'UTC') : 'Sans expiration' }}</span>
+                            </div>
+
+                            <div class="version-author">
+                                <span>Ajoutée le {{ version.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                                <small>{{ version.createdBy }}</small>
+                            </div>
+
+                            <button 
+                                mat-stroked-button
+                                type="button"
+                                [disabled]="downloadingVersionId() !== null"
+                                (click)="download(version)">
+
+                                @if (downloadingVersionId() === version.versionId) {
+                                    <mat-spinner diameter="18"/>
+                                } @else {
+                                    <mat-icon>download</mat-icon>
+                                }
+
+                                Télécharger
+                            </button>
+                        </article>
+                    }
+                </div>
+            } @else {
+                <div class="empty-history">
+                    <mat-icon>history_toggle_off</mat-icon>
+                    <p>Aucune version disponible.</p>
+                </div>
+            }
+        </section>
+    }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button 
+        mat-button
+        type="button"
+        (click)="close()">
+        Fermer
+    </button>
+</mat-dialog-actions>
