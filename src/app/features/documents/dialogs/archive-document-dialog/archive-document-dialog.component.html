@@ -1,0 +1,87 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+    <header class="dialog-header">
+        <div class="dialog-title">
+            <mat-icon>archive</mat-icon>
+
+            <div>
+                <h2 mat-dialog-title>Archiver le document</h2>
+                <p>{{ data.documentTypeLabel }}</p>
+            </div>
+        </div>
+
+        <button 
+            mat-icon-button
+            type="button"
+            aria-label="Fermer"
+            [disabled]="submitting()"
+            (click)="cancel()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </header>
+
+    <mat-dialog-content>
+        <div class="warning-message">
+            <mat-icon>warning</mat-icon>
+
+            <p>
+                Ce document ne sera plus considéré comme actif après son archivage.
+                Son historique restera toutefois disponible.
+            </p>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Motif de l'archivage</mat-label>
+
+            <textarea 
+                matInput
+                formControlName="reason"
+                rows="4"
+                maxlength="500"
+                placeholder="Indiquez pourquoi ce document doit être archivé">
+            </textarea>
+
+            <mat-hint align="end">
+                {{ form.controls.reason.value.length }} / 500
+            </mat-hint>
+
+            @if (form.controls.reason.hasError('required')) {
+                <mat-error>Le motif d'archivage est obligatoire.</mat-error>
+            }
+
+            @if (form.controls.reason.hasError('maxlength')) {
+                <mat-error>Le motif ne peut pas dépasser 500 caractères.</mat-error>
+            }
+        </mat-form-field>
+
+        @if (error(); as errorMessage) {
+            <div class="error-message" role="alert">
+                <mat-icon>error</mat-icon>
+                <span>{{ errorMessage }}</span>
+            </div>
+        }
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button 
+            mat-button
+            type="button"
+            [disabled]="submitting()"
+            (click)="cancel()">
+            Annuler
+        </button>
+
+        <button 
+            mat-flat-button
+            type="submit"
+            class="archive-button"
+            [disabled]="submitting()">
+            @if (submitting()) {
+                <mat-spinner diameter="18"></mat-spinner>
+            } @else {
+                <mat-icon>archive</mat-icon>
+            }
+
+            Archiver
+        </button>
+    </mat-dialog-actions>
+</form>

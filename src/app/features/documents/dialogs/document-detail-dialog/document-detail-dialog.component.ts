@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -11,6 +11,7 @@ import { finalize, forkJoin } from 'rxjs';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { DocumentDetail, DocumentVersion } from '../../models/document.model';
 import { DocumentApiService } from '../../services/document-api.service';
+import { ArchiveDocumentDialogComponent, ArchiveDocumentDialogData } from '../archive-document-dialog/archive-document-dialog.component';
 
 export interface DocumentDetailDialogData {
   documentId: number;
@@ -34,7 +35,8 @@ export class DocumentDetailDialogComponent implements OnInit {
 
   readonly data = inject<DocumentDetailDialogData>(MAT_DIALOG_DATA);
 
-  private readonly dialogRef = inject<MatDialogRef<DocumentDetailDialogComponent>>(MatDialogRef);
+  private readonly dialog = inject(MatDialog);
+  private readonly dialogRef = inject<MatDialogRef<DocumentDetailDialogComponent, boolean>>(MatDialogRef);
 
   private readonly documentApi = inject(DocumentApiService);
   private readonly notification = inject(NotificationService);
@@ -99,6 +101,33 @@ export class DocumentDetailDialogComponent implements OnInit {
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  archiveDocument(): void {
+    const documentDetail = this.detail();
+
+    if (documentDetail === null || documentDetail.status === 'ARCHIVED') {
+      return;
+    }
+
+    const dialogData: ArchiveDocumentDialogData = {
+      documentId: documentDetail.documentId,
+      documentTypeLabel: documentDetail.documentTypeLabel
+    };
+
+    this.dialog.open<ArchiveDocumentDialogComponent, ArchiveDocumentDialogData, boolean>(ArchiveDocumentDialogComponent, {
+      width: '520px',
+      maxWidth: '95vw',
+      disableClose: true,
+      data: dialogData
+      }
+    )
+    .afterClosed()
+    .subscribe(archived => {
+      if (archived === true) {
+        this.dialogRef.close(true);
+      }
+    });
   }
 
   private saveFile(content: Blob, fileName: string): void {

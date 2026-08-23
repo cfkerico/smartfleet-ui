@@ -152,14 +152,28 @@ export class VehicleDocumentPageComponent implements OnInit {
       documentTypeLabel: item.documentTypeLabel
     };
 
-    this.dialog.open(DocumentDetailDialogComponent,
-      {
-        width: '1000px',
-        maxWidth: '96vw',
-        maxHeight: '92vh',
-        data,
+    const dialogRef = this.dialog.open<
+      DocumentDetailDialogComponent, 
+      DocumentDetailDialogData, 
+      boolean
+      >(
+        DocumentDetailDialogComponent,
+        {
+          width: '1000px',
+          maxWidth: '96vw',
+          maxHeight: '92vh',
+          data
+        }
+      );
+
+    dialogRef.afterClosed().subscribe(archived => {
+      if (archived !== true) {
+        return;
       }
-    );
+
+      this.notification.success('Document archivé avec succès.');
+      this.complianceComponent()?.reload();
+    });
   }
 
 

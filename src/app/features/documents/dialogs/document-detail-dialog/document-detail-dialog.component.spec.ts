@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { DocumentDetailDialogComponent, DocumentDetailDialogData } from './document-detail-dialog.component';
 import { of } from 'rxjs';
 
 import { NotificationService } from '../../../../core/services/notification.service';
 import { DocumentApiService } from '../../services/document-api.service';
+import { ArchiveDocumentDialogComponent } from '../archive-document-dialog/archive-document-dialog.component';
 
 describe('DocumentDetailDialogComponent', () => {
   let component: DocumentDetailDialogComponent;
@@ -27,6 +28,14 @@ describe('DocumentDetailDialogComponent', () => {
   const dialogData: DocumentDetailDialogData = {
     documentId: 300,
     documentTypeLabel: 'Assurance automobile'
+  };
+
+  const archiveDialogRefMock = {
+    afterClosed: vi.fn()
+  };
+
+  const matDialogMock = {
+    open: vi.fn()
   };
 
   beforeEach(async () => {
@@ -91,6 +100,9 @@ describe('DocumentDetailDialogComponent', () => {
       }
     ]));
 
+    archiveDialogRefMock.afterClosed.mockReturnValue(of(true));
+    matDialogMock.open.mockReturnValue(archiveDialogRefMock);
+
     await TestBed.configureTestingModule({
       imports: [DocumentDetailDialogComponent],
       providers: [
@@ -111,6 +123,15 @@ describe('DocumentDetailDialogComponent', () => {
           useValue: documentApiMock
         }
       ]
+    }).overrideComponent(DocumentDetailDialogComponent, {
+      add: {
+        providers: [
+          {
+            provide: MatDialog,
+            useValue: matDialogMock
+          }
+        ]
+      }
     }).compileComponents();
 
     fixture = TestBed.createComponent(DocumentDetailDialogComponent);
@@ -140,4 +161,44 @@ describe('DocumentDetailDialogComponent', () => {
 
     expect(content).toContain('Version 1');
   });
+
+  it('should open the archive dialog and propagate a successful archival', () => {
+    component.archiveDocument();
+
+    expect(matDialogMock.open).toHaveBeenCalledWith(
+      ArchiveDocumentDialogComponent,
+      expect.objectContaining({
+        width: '520px',
+        maxWidth: '95vw',
+        disableClose: true,
+        data: {
+          documentId: 300,
+          documentTypeLabel: 'Assurance automobile'
+        }
+      })
+    );
+
+    expect(dialogRefMock.close).toHaveBeenCalledWith(true);
+  });
+  
+  it('should not open the archive dialog for an archived document', () => {
+    const documentDetail = component.detail();
+
+    if (documentDetail === null) {
+      throw new Error('The document detail should have been loaded');
+    }
+
+    component.detail.set({
+      ...documentDetail,
+      status: 'ARCHIVED'
+    });
+
+    component.archiveDocument();
+
+    expect(matDialogMock.open).not.toHaveBeenCalled();
+  });
+
+
+
+
 });

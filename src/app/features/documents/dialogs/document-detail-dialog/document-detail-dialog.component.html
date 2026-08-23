@@ -170,6 +170,19 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
+    @if (detail(); as documentDetail) {
+        @if (documentDetail.status !== 'ARCHIVED') {
+            <button 
+                mat-stroked-button
+                type="button"
+                class="archive-action"
+                (click)="archiveDocument()">
+                <mat-icon>archive</mat-icon>
+                Archiver
+            </button>
+        }
+    }
+    
     <button 
         mat-button
         type="button"
