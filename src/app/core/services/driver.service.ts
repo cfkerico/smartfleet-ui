@@ -20,6 +20,10 @@ export class DriverService {
         return this.http.get<PageResponse<Driver>>(this.apiUrl, {params});
     }
 
+    getById(driverId: number): Observable<Driver> {
+      return this.http.get<Driver>(`${this.apiUrl}/${driverId}`);
+    }
+
     create(payload: any): Observable<Driver> {
         return this.http.post<Driver>(this.apiUrl, payload);
     }
@@ -29,12 +33,10 @@ export class DriverService {
     }
 
     delete(driverId: number): Observable<any> {
-      console.log('************** drivers_id : ', driverId);
       return this.http.delete<Driver>(`${this.apiUrl}/${driverId}`);
     }
 
     analyse(id: number) {
-      console.log('************** analysis drivers_id : '+`${this.apiUrl}/${id}/analyse`, id);
       return this.http.get<DriverAnalysis>(`${this.apiUrl}/${id}/analyse`);
     }
 }
