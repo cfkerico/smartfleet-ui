@@ -144,6 +144,12 @@
   }
 }
 
+.document-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 @media (max-width: 720px) {
   .vehicle-document-page {
     padding: 16px;

@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NotificationService } from '../../../core/services/notification.service';
 import { DocumentDetailDialogComponent } from '../../documents/dialogs/document-detail-dialog/document-detail-dialog.component';
 import { OwnerDocumentComplianceComponent } from '../../documents/components/owner-document-compliance/owner-document-compliance.component';
+import { OwnerArchivedDocumentListComponent } from '../../documents/components/owner-archived-document-list/owner-archived-document-list.component';
 import { By } from '@angular/platform-browser';
 
 describe('VehicleDocumentPageComponent', () => {
@@ -23,6 +24,7 @@ describe('VehicleDocumentPageComponent', () => {
 
   const documentApiServiceMock = {
     findCompliance: vi.fn(),
+    findByOwner: vi.fn()
   };
 
   const detailDialogRefMock = {
@@ -64,6 +66,15 @@ describe('VehicleDocumentPageComponent', () => {
       compliant: true,
       blocked: false,
       items: []
+    }));
+
+    documentApiServiceMock.findByOwner.mockReturnValue(of({
+      content: [],
+      page: 0,
+      size: 10,
+      totalElements: 0,
+      totalPages: 0,
+      last: true
     }));
 
     detailDialogRefMock.afterClosed.mockReturnValue(of(true));
@@ -111,7 +122,7 @@ describe('VehicleDocumentPageComponent', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-  })
+  });
 
   it('should load the vehicle and its document compliance', () => {
     expect(vehicleServiceMock.getById).toHaveBeenCalledWith(10);
@@ -127,6 +138,14 @@ describe('VehicleDocumentPageComponent', () => {
     expect(content).toContain('Toyota');
     expect(content).toContain('Corolla');
     expect(content).toContain('Conformité documentaire');
+
+    expect(documentApiServiceMock.findByOwner).toHaveBeenCalledWith({
+      ownerType: 'VEHICLE',
+      ownerId: 10,
+      status: 'ARCHIVED',
+      page: 0,
+      size: 10
+    });
   });
 
   it('should notify and reload compliance after archiving a document', () => {
@@ -135,7 +154,13 @@ describe('VehicleDocumentPageComponent', () => {
         By.directive(OwnerDocumentComplianceComponent)
       ).componentInstance as OwnerDocumentComplianceComponent;
 
+    const archivedDocumentListComponent = 
+      fixture.debugElement.query(
+        By.directive(OwnerArchivedDocumentListComponent)
+      ).componentInstance as OwnerArchivedDocumentListComponent;
+
     const reloadSpy = vi.spyOn(complianceComponent, 'reload');
+    const archiveReloadSpy = vi.spyOn(archivedDocumentListComponent, 'reload');
 
     component.viewDocument({
       requirementId: 100,
@@ -170,6 +195,7 @@ describe('VehicleDocumentPageComponent', () => {
       .toHaveBeenCalledWith('Document archivé avec succès.');
 
     expect(reloadSpy).toHaveBeenCalled();
+    expect(archiveReloadSpy).toHaveBeenCalled();
   });
 
 });

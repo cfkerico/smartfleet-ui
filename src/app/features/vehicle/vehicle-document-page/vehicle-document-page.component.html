@@ -70,13 +70,21 @@
         </header>
 
         @if (vehicleId(); as id) {
-            <app-owner-document-compliance 
-                [ownerType]="'VEHICLE'"
-                [ownerId]="id"
-                (addRequested)="addDocument($event)"
-                (viewRequested)="viewDocument($event)"
-                (replaceRequested)="replaceDocument($event)"
-            />
+            <div class="document-sections">
+                <app-owner-document-compliance 
+                    [ownerType]="'VEHICLE'"
+                    [ownerId]="id"
+                    (addRequested)="addDocument($event)"
+                    (viewRequested)="viewDocument($event)"
+                    (replaceRequested)="replaceDocument($event)"
+                />
+
+                <app-owner-archived-document-list 
+                    [ownerType]="'VEHICLE'"
+                    [ownerId]="id"
+                    (viewRequested)="viewArchivedDocument($event)"
+                />
+            </div>
         }
     }
     

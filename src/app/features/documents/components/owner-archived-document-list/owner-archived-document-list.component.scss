@@ -1,0 +1,169 @@
+:host {
+  display: block;
+}
+
+.archive-section {
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+
+  h2 {
+    margin: 0.25rem 0;
+    color: #0f172a;
+    font-size: 1.25rem;
+  }
+
+  p {
+    margin: 0;
+    color: #64748b;
+  }
+}
+
+.section-eyebrow {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.archive-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.625rem;
+  color: #475569;
+  background: #f1f5f9;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.state-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 10rem;
+  padding: 2rem;
+  color: #64748b;
+  text-align: center;
+
+  p {
+    margin: 0;
+  }
+}
+
+.error-state {
+  color: #b91c1c;
+
+  div {
+    text-align: left;
+  }
+}
+
+.empty-state {
+  flex-direction: column;
+
+  > mat-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    color: #94a3b8;
+    font-size: 2.5rem;
+  }
+}
+
+.archive-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.archive-row {
+  display: grid;
+  grid-template-columns:
+    auto minmax(12rem, 1.6fr) minmax(10rem, 1fr) auto auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+
+  &:hover {
+    background: #f8fafc;
+  }
+}
+
+.document-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: #64748b;
+  background: #f1f5f9;
+  border-radius: 0.5rem;
+}
+
+.document-identity,
+.document-metadata {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.document-identity strong,
+.file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.document-type {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.file-name,
+.document-metadata {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.archive-status {
+  padding: 0.25rem 0.625rem;
+  color: #475569;
+  background: #e2e8f0;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+mat-paginator {
+  border-top: 1px solid #e2e8f0;
+}
+
+@media (max-width: 800px) {
+  .archive-row {
+    grid-template-columns: auto 1fr;
+  }
+
+  .document-metadata,
+  .archive-status,
+  .archive-row > button {
+    grid-column: 2;
+    justify-self: start;
+  }
+}

@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { NotificationService } from '../../../core/services/notification.service';
-import { DocumentComplianceItem } from '../../documents/models/document.model';
+import { DocumentComplianceItem, DocumentSummary } from '../../documents/models/document.model';
 import { CreateOwnerDocumentDialogComponent, CreateOwnerDocumentDialogData } from '../../documents/dialogs/create-owner-document-dialog/create-owner-document-dialog.component';
 import { DocumentDetailDialogComponent, DocumentDetailDialogData } from '../../documents/dialogs/document-detail-dialog/document-detail-dialog.component';
 
@@ -18,6 +18,7 @@ import { VehicleService } from '../../../core/services/vehicle.service';
 import { Vehicle } from '../../../models/vehicle';
 import { OwnerDocumentComplianceComponent } from '../../documents/components/owner-document-compliance/owner-document-compliance.component';
 import { AddDocumentVersionDialogComponent, AddDocumentVersionDialogData } from '../../documents/dialogs/add-document-version-dialog/add-document-version-dialog.component';
+import { OwnerArchivedDocumentListComponent } from '../../documents/components/owner-archived-document-list/owner-archived-document-list.component';
 
 @Component({
   selector: 'app-vehicle-document-page',
@@ -28,7 +29,8 @@ import { AddDocumentVersionDialogComponent, AddDocumentVersionDialogData } from 
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    OwnerDocumentComplianceComponent
+    OwnerDocumentComplianceComponent,
+    OwnerArchivedDocumentListComponent
   ],
   templateUrl: './vehicle-document-page.component.html',
   styleUrl: './vehicle-document-page.component.scss',
@@ -39,7 +41,8 @@ export class VehicleDocumentPageComponent implements OnInit {
   private readonly vehicleService = inject(VehicleService);
   private readonly dialog = inject(MatDialog);
   private readonly notification = inject(NotificationService);
-  private readonly complianceComponent = viewChild(OwnerDocumentComplianceComponent)
+  private readonly complianceComponent = viewChild(OwnerDocumentComplianceComponent);
+  private readonly archivedDocumentListComponent = viewChild(OwnerArchivedDocumentListComponent);
 
   readonly vehicleId = signal<number | null>(null);
   readonly vehicle = signal<Vehicle | null>(null);
@@ -147,9 +150,17 @@ export class VehicleDocumentPageComponent implements OnInit {
       return;
     }
 
+    this.openDocumentDetail(item.documentId, item.documentTypeLabel);
+  }
+
+  viewArchivedDocument(document: DocumentSummary): void {
+    this.openDocumentDetail(document.documentId, document.documentTypeLabel);
+  }
+
+  private openDocumentDetail(documentId: number, documentTypeLabel: string): void {
     const data: DocumentDetailDialogData = {
-      documentId: item.documentId,
-      documentTypeLabel: item.documentTypeLabel
+      documentId,
+      documentTypeLabel
     };
 
     const dialogRef = this.dialog.open<
@@ -173,6 +184,7 @@ export class VehicleDocumentPageComponent implements OnInit {
 
       this.notification.success('Document archivé avec succès.');
       this.complianceComponent()?.reload();
+      this.archivedDocumentListComponent()?.reload();
     });
   }
 

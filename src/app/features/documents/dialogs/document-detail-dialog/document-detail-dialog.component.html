@@ -99,6 +99,38 @@
                     <p>{{ documentDetail.comment }}</p>
                 </div>
             }
+
+            @if (documentDetail.status === 'ARCHIVED') {
+                <div class="archive-information">
+                    <div class="archive-information-title">
+                        <mat-icon>inventory_2</mat-icon>
+                        <strong>Informations d'archivage</strong>
+                    </div>
+
+                    <dl>
+                        <div>
+                            <dt>Archivé le</dt>
+                            <dd>
+                                {{
+                                    documentDetail.archivedAt ? (documentDetail.archivedAt | date:'dd/MM/yyyy HH:mm') : 'Non renseigné'
+                                }}
+                            </dd>
+                        </div>
+
+                        <div>
+                            <dt>Archivé par</dt>
+                            <dd>{{ documentDetail.archivedBy || 'Non renseigné' }}</dd>
+                        </div>
+                    </dl>
+
+                    <div class="archive-reason">
+                        <strong>Motif</strong>
+                        <p>
+                            {{ documentDetail.archiveReason || 'Aucun motif renseigné' }}
+                        </p>
+                    </div>
+                </div>
+            }
         </section>
 
         <section class="history-section">

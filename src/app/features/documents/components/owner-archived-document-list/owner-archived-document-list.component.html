@@ -1,0 +1,103 @@
+<section class="archive-section">
+    <header class="section-header">
+        <div>
+            <span class="section-eyebrow">Historique documentaire</span>
+            <h2>Documents archivés</h2>
+            <p>Les documents archivés restent disponibles pour assurer la traçabilité.</p>
+        </div>
+
+        @if (!loading() && totalElements() > 0) {
+            <span class="archive-count">{{ totalElements() }}</span>
+        }
+    </header>
+
+    @if (loading()) {
+        <div class="state-container" aria-live="polite">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Chargement des archives...</p>
+        </div>
+    } @else if (error(); as errorMessage) {
+        <div class="state-container error-state" role="alert">
+            <mat-icon>error_outline</mat-icon>
+
+            <div>
+                <strong>Chargement impossible</strong>
+                <p>{{ errorMessage }}</p>
+            </div>
+
+            <button 
+                mat-stroked-button
+                type="button"
+                (click)="load()">
+                <mat-icon>refresh</mat-icon>
+                Réessayer
+            </button>
+        </div>
+    } @else if (documents().length === 0) {
+        <div class="state-container empty-state">
+            <mat-icon>inventory_2</mat-icon>
+            <strong>Aucun document archivé</strong>
+            <p>Les documents archivés apparaîtront ici.</p>
+        </div>
+    } @else {
+        <div class="archive-list">
+            @for (document of documents(); track document.documentId) {
+                <article class="archive-row">
+                    <div class="document-icon" aria-hidden="true">
+                        <mat-icon>description</mat-icon>
+                    </div>
+
+                    <div class="document-identity">
+                        <span class="document-type">
+                            {{ document.documentTypeLabel }}
+                        </span>
+
+                        <strong>{{ document.title }}</strong>
+
+                        <span class="file-name">
+                            {{ document.originalFileName || 'Aucun fichier renseigné' }}
+                        </span>
+                    </div>
+
+                    <div class="document-metadata">
+                        <span>
+                            Version {{ document.currentVersionNumber }}
+                        </span>
+
+                        <span>
+                            @if (document.expirationDate) {
+                                Expiration :  
+                                {{ document.expirationDate | date:'dd/MM/yyyy':'UTC' }}
+                            } @else {
+                                Sans date d'expiration
+                            }
+                        </span>
+                    </div>
+
+                    <span class="archive-status">
+                        Archivé
+                    </span>
+
+                    <button 
+                        mat-stroked-button
+                        type="button"
+                        aria-label="Voir le document archivé"
+                        (click)="view(document)">
+                        <mat-icon>visibility</mat-icon>
+                        Voir
+                    </button>
+                </article>
+            }
+        </div>
+
+        <mat-paginator 
+            [length]="totalElements()"
+            [pageIndex]="page()"
+            [pageSize]="pageSize()"
+            [pageSizeOptions]="[5, 10, 20]"
+            [showFirstLastButtons]="true"
+            aria-label="Pagination des documents archivés"
+            (page)="onPageChange($event)">
+        </mat-paginator>
+    }
+</section>

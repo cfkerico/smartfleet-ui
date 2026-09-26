@@ -199,6 +199,34 @@ describe('DocumentDetailDialogComponent', () => {
   });
 
 
+  it('should display archival information for an archived document', () => {
+    const documentDetail = component.detail();
+
+    if (documentDetail === null) {
+      throw new Error('The document detail should have been loaded');
+    }
+
+    component.detail.set({
+      ...documentDetail,
+      status: 'ARCHIVED',
+      archivedBy: 'user-1',
+      archivedAt: '2026-08-23T10:00:00Z',
+      archiveReason: 'Document remplacé'
+    });
+
+    fixture.detectChanges();
+
+    const content = fixture.nativeElement.textContent as string;
+    const archiveButton =
+      fixture.nativeElement.querySelector('.archive-action');
+
+    expect(content).toContain(`Informations d'archivage`);
+    expect(content).toContain('user-1');
+    expect(content).toContain('Document remplacé');
+    expect(archiveButton).toBeNull();
+  });
+
+
 
 
 });
