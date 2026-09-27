@@ -1,0 +1,71 @@
+<section class="driver-document-page">
+    <header class="page-toolbar">
+        <a mat-button routerLink="/drivers">
+            <mat-icon>arrow_back</mat-icon>
+            Retour aux chauffeurs
+        </a>
+    </header>
+
+    @if (loading()) {
+        <div class="page-state" aria-live="polite">
+            <mat-spinner diameter="44" />
+            <p>Chargement du chauffeur...</p>
+        </div>
+    } @else if (error()) {
+        <div class="page-state error-state" role="alert">
+            <mat-icon>error_outline</mat-icon>
+
+            <div>
+                <h1>Chauffeur indisponible</h1>
+                <p>{{ error() }}</p>
+            </div>
+
+            <a mat-stroked-button routerLink="/drivers">
+                Revenir à la liste
+            </a>
+        </div>
+    } @else if (driver(); as currentDriver) {
+        <header class="driver-header">
+            <div class="driver-icon" aria-hidden="true">
+                <mat-icon>person</mat-icon>
+            </div>
+
+            <div class="driver-identity">
+                <span class="page-eyebrow">Dossier documentaire</span>
+                <h1>{{ currentDriver.fullName }}</h1>
+
+                <div class="driver-metadata">
+                    <span>
+                        <mat-icon>badge</mat-icon>
+                        Permis: {{ currentDriver.licenseNumber || 'Non renseigné' }}
+                    </span>
+
+                    @if (currentDriver.mobilePhoneNumber) {
+                        <span>
+                            <mat-icon>phone</mat-icon>
+                            {{ currentDriver.mobilePhoneNumber }}
+                        </span>
+                    }
+                </div>
+            </div>
+        </header>
+
+        @if (driverId(); as id) {
+            <div class="document-sections">
+                <app-owner-document-compliance
+                    [ownerType]="'DRIVER'"
+                    [ownerId]="id"
+                    (addRequested)="addDocument($event)"
+                    (viewRequested)="viewDocument($event)"
+                    (replaceRequested)="replaceDocument($event)"
+                />
+
+                <app-owner-archived-document-list
+                    [ownerType]="'DRIVER'"
+                    [ownerId]="id"
+                    (viewRequested)="viewArchivedDocument($event)"
+                />
+            </div>
+        }
+    }
+</section>
