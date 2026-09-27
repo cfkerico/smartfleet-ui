@@ -1,82 +1,98 @@
-<h1>Vehicles</h1>
+<section class="page">
+  <header class="page-header">
+    <h1>Véhicules</h1>
+    <button mat-raised-button color="primary" type="button" (click)="openForm()">
+      <mat-icon>add</mat-icon>
+      Nouveau véhicule
+    </button>
+  </header>
 
-<button mat-raised-button color="primary" (click)="openForm()">
-  Ajouter
-</button>
+  <div class="list-search">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Rechercher sur cette page</mat-label>
 
-<mat-form-field appearance="outline" class="filter">
-  <mat-label>Filtrer</mat-label>
+      <input matInput (input)="applyFilter($event)" placeholder="Recherche..." />
+    </mat-form-field>
+  </div>
 
-  <input
-    matInput
-    (keyup)="applyFilter($event)"
-    placeholder="Recherche..."
-  >
-</mat-form-field>
+  <mat-card class="table-card">
+    <div class="table-scroll">
+      <table mat-table [dataSource]="vehicles">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Véhicule</th>
+          <td mat-cell *matCellDef="let d">{{ d.label }}</td>
+        </ng-container>
 
-<table mat-table [dataSource]="vehicles">
+        <ng-container matColumnDef="marque">
+          <th mat-header-cell *matHeaderCellDef>Marque</th>
+          <td mat-cell *matCellDef="let d">{{ d.brand }}</td>
+        </ng-container>
 
-  <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef>Name</th>
-    <td mat-cell *matCellDef="let d">{{ d.label }}</td>
-  </ng-container>
+        <ng-container matColumnDef="modele">
+          <th mat-header-cell *matHeaderCellDef>Modèle</th>
+          <td mat-cell *matCellDef="let d">{{ d.model }}</td>
+        </ng-container>
 
-  <ng-container matColumnDef="marque">
-    <th mat-header-cell *matHeaderCellDef>Marque</th>
-    <td mat-cell *matCellDef="let d">{{ d.brand }}</td>
-  </ng-container>
+        <ng-container matColumnDef="anneeFabrication">
+          <th mat-header-cell *matHeaderCellDef>Année de fabrication</th>
+          <td mat-cell *matCellDef="let d">{{ d.year }}</td>
+        </ng-container>
 
-  <ng-container matColumnDef="modele">
-    <th mat-header-cell *matHeaderCellDef>Modele</th>
-    <td mat-cell *matCellDef="let d">{{ d.model }}</td>
-  </ng-container>
+        <ng-container matColumnDef="registration">
+          <th mat-header-cell *matHeaderCellDef>Immatriculation</th>
+          <td mat-cell *matCellDef="let d">{{ d.registrationNumber }}</td>
+        </ng-container>
 
-  <ng-container matColumnDef="anneeFabrication">
-    <th mat-header-cell *matHeaderCellDef>Année Fabrication</th>
-    <td mat-cell *matCellDef="let d">{{ d.year }}</td>
-  </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let d">
+            <a
+              mat-icon-button
+              color="primary"
+              [routerLink]="['/vehicles', d.id, 'documents']"
+              [attr.aria-label]="'Documents du véhicule ' + (d.label || d.registrationNumber)"
+            >
+              <mat-icon>folder</mat-icon>
+            </a>
 
-  <ng-container matColumnDef="registration">
-    <th mat-header-cell *matHeaderCellDef>Immatriculation</th>
-    <td mat-cell *matCellDef="let d">{{ d.registrationNumber }}</td>
-  </ng-container>
+            <button
+              mat-icon-button
+              color="primary"
+              aria-label="Modifier le véhicule"
+              matTooltip="Modifier"
+              (click)="edit(d)"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
 
-  <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef>Actions</th>
-    <td mat-cell *matCellDef="let d">
-      <a 
-        mat-icon-button
-        color="primary"
-        [routerLink]="['/vehicles', d.id, 'documents']"
-        [attr.aria-label]="'Documents du véhicule '+ (d.label || d.registrationNumber)">
-        <mat-icon>folder</mat-icon>
-    </a>
+            <button
+              mat-icon-button
+              color="warn"
+              aria-label="Supprimer le véhicule"
+              matTooltip="Supprimer"
+              (click)="delete(d)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
 
-      <button
-        mat-icon-button
-        color="primary"
-        (click)="edit(d)">
-        <mat-icon>edit</mat-icon>
-      </button>
-
-      <button
-        mat-icon-button
-        color="warn"
-        (click)="delete(d)">
-        <mat-icon>delete</mat-icon>
-      </button>
-    </td>
-
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="columns"></tr>
-  <tr mat-row *matRowDef="let row; columns: columns;"></tr>
-</table>
-
-<mat-paginator
-  [length]="totalElements"
-  [pageSize]="pageSize"
-  [pageIndex]="pageIndex"
-  [pageSizeOptions]="[5, 10, 20]"
-  (page)="onPageChange($event)">
-</mat-paginator>
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="empty-state" [attr.colspan]="columns.length">
+            {{ vehicles.filter ? 'Aucun résultat sur cette page.' : 'Aucun élément à afficher.' }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    <mat-paginator
+      [length]="totalElements"
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex"
+      [pageSizeOptions]="[5, 10, 20]"
+      (page)="onPageChange($event)"
+    >
+    </mat-paginator>
+  </mat-card>
+</section>

@@ -1,26 +1,29 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Component, OnInit } from '@angular/core';
 import { DriverService } from '../../core/services/driver.service';
 import { Driver } from '../../models/driver.model';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {MatPaginator, MatPaginatorModule, PageEvent} from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DriverFormComponent } from './driver-form/driver-form.component';
-import { ChangeDetectorRef } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { NotificationService } from '../../core/services/notification.service';
-import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
-import {MatIcon} from '@angular/material/icon';
-import {DriverAnalysis} from '../../models/driver-analysis.model';
-import {AnalyseIaComponent} from '../analyse-ia/analyse-ia.component';
+import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
+import { MatIcon } from '@angular/material/icon';
+import { DriverAnalysis } from '../../models/driver-analysis.model';
+import { AnalyseIaComponent } from '../analyse-ia/analyse-ia.component';
 
 @Component({
   standalone: true,
   selector: 'app-driver-list',
   imports: [
     CommonModule,
+    MatCardModule,
+    MatTooltipModule,
     MatButtonModule,
     MatTableModule,
     MatProgressSpinnerModule,
@@ -29,26 +32,33 @@ import {AnalyseIaComponent} from '../analyse-ia/analyse-ia.component';
     MatLabel,
     MatFormField,
     MatInput,
-    MatIcon
+    MatIcon,
   ],
   templateUrl: './driver-list.component.html',
   styleUrl: './driver-list.component.scss',
 })
-export class DriverListComponent implements OnInit, AfterViewInit {
+export class DriverListComponent implements OnInit {
   drivers = new MatTableDataSource<Driver>([]);
-  columns = ['civilite', 'nom', 'prenom', 'email', 'mobilePhoneNumber', 'adresse', 'workedDays', 'actions'];
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  columns = [
+    'civilite',
+    'nom',
+    'prenom',
+    'email',
+    'mobilePhoneNumber',
+    'adresse',
+    'workedDays',
+    'actions',
+  ];
   totalElements = 0;
   pageSize = 5;
   pageIndex = 0;
   analysis?: DriverAnalysis;
 
-  constructor (private driverService : DriverService, private dialog: MatDialog,
-    private notification: NotificationService) {}
-
-  ngAfterViewInit(): void {
-    this.drivers.paginator = this.paginator;
-    }
+  constructor(
+    private driverService: DriverService,
+    private dialog: MatDialog,
+    private notification: NotificationService,
+  ) {}
 
   ngOnInit(): void {
     this.load();
@@ -57,14 +67,17 @@ export class DriverListComponent implements OnInit, AfterViewInit {
   load() {
     this.driverService.getAll(this.pageIndex, this.pageSize).subscribe({
       next: (response) => {
-        console.log('++++++++++++++++ ------------- +++++++++++++',JSON.stringify(response.content));
+        console.log(
+          '++++++++++++++++ ------------- +++++++++++++',
+          JSON.stringify(response.content),
+        );
         this.drivers.data = response.content;
         this.totalElements = response.totalElements;
       },
 
       error: () => {
         console.error('Error getting page');
-      }
+      },
     });
   }
 
@@ -85,24 +98,22 @@ export class DriverListComponent implements OnInit, AfterViewInit {
       width: '800px',
       data: {
         mode: 'CREATE',
-      }
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.driverService.create(result).subscribe({
           next: () => {
-            this.notification.success('Driver créé avec succès ✅');
+            this.notification.success('Chauffeur créé avec succès ✅');
             this.load();
           },
           error: () => {
             this.notification.error('Erreur lors de la création ❌');
-          }
-
+          },
         });
       }
     });
-
   }
 
   edit(driver: Driver) {
@@ -111,23 +122,23 @@ export class DriverListComponent implements OnInit, AfterViewInit {
       width: '800px',
       data: {
         mode: 'EDIT',
-        driver: driver
-      }
+        driver: driver,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result && driver.id !== undefined) {
         this.driverService.update(driver.id, result).subscribe({
           next: () => {
-            this.notification.success('Driver modifié avec succès ✅');
+            this.notification.success('Chauffeur modifié avec succès ✅');
             this.load();
           },
           error: () => {
             this.notification.error('Erreur lors de la modification ❌');
-          }
+          },
         });
       }
-    })
+    });
   }
 
   delete(driver: Driver) {
@@ -135,12 +146,12 @@ export class DriverListComponent implements OnInit, AfterViewInit {
     if (driver.id !== undefined) {
       this.driverService.delete(driver.id).subscribe({
         next: () => {
-          this.notification.success('Driver supprimé avec succès ✅');
+          this.notification.success('Chauffeur supprimé avec succès ✅');
           this.load();
         },
         error: () => {
           this.notification.error('Erreur lors de la modification ❌');
-        }
+        },
       });
     }
   }
@@ -148,18 +159,16 @@ export class DriverListComponent implements OnInit, AfterViewInit {
   analyse(id: number) {
     this.driverService.analyse(id).subscribe({
       next: (response) => {
-        console.log('++++++++++++++++ ------------- +++++++++++++',response);
+        console.log('++++++++++++++++ ------------- +++++++++++++', response);
         this.analysis = response;
         this.dialog.open(AnalyseIaComponent, {
           width: '500px',
-          data: response
+          data: response,
         });
       },
       error: () => {
         console.error('Error getting analyse id', id);
-      }
-    })
+      },
+    });
   }
-
-
 }

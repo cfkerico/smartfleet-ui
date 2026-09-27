@@ -1,6 +1,8 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { VehicleAssignment } from '../../../models/vehicle-assignment.model';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,6 +20,8 @@ import { AssignmentFormComponent } from '../assignment-form/assignment-form.comp
   standalone: true,
   imports: [
     CommonModule,
+    MatCardModule,
+    MatTooltipModule,
     MatButtonModule,
     MatTableModule,
     MatProgressSpinnerModule,
@@ -26,26 +30,33 @@ import { AssignmentFormComponent } from '../assignment-form/assignment-form.comp
     MatLabel,
     MatFormField,
     MatInput,
-    MatIcon
+    MatIcon,
   ],
   templateUrl: './assignment-list.component.html',
   styleUrl: './assignment-list.component.scss',
 })
-export class AssignmentListComponent implements OnInit, AfterViewInit {
-
+export class AssignmentListComponent implements OnInit {
   assigments = new MatTableDataSource<VehicleAssignment>([]);
-  displayedColumns = ['driver', 'vehicle', 'type', 'status', 'startDate', 'endDate', 'reason', 'actions'];
+  displayedColumns = [
+    'driver',
+    'vehicle',
+    'type',
+    'status',
+    'startDate',
+    'endDate',
+    'reason',
+    'actions',
+  ];
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
   totalElements = 0;
   pageSize = 5;
   pageIndex = 0;
 
-  constructor(private assignmentService: AssignmentApiService, private dialog: MatDialog, private notification: NotificationService) {}
-
-  ngAfterViewInit(): void {
-    this.assigments.paginator = this.paginator;
-  }
+  constructor(
+    private assignmentService: AssignmentApiService,
+    private dialog: MatDialog,
+    private notification: NotificationService,
+  ) {}
 
   ngOnInit(): void {
     this.load();
@@ -60,7 +71,7 @@ export class AssignmentListComponent implements OnInit, AfterViewInit {
       error: () => {
         console.error('Failed to load assignments');
         this.notification.error('Failed to load assignments');
-      }
+      },
     });
   }
 
@@ -80,10 +91,10 @@ export class AssignmentListComponent implements OnInit, AfterViewInit {
       width: '800px',
       data: {
         mode: 'CREATE',
-      }
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.load();
       }
@@ -95,11 +106,11 @@ export class AssignmentListComponent implements OnInit, AfterViewInit {
       width: '800px',
       data: {
         mode: 'PAUSE',
-        assignment: assignment
-      }
+        assignment: assignment,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.load();
       }
@@ -111,11 +122,11 @@ export class AssignmentListComponent implements OnInit, AfterViewInit {
       width: '800px',
       data: {
         mode: 'RESUME',
-        assignment: assignment
-      }
+        assignment: assignment,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.load();
       }
@@ -123,7 +134,11 @@ export class AssignmentListComponent implements OnInit, AfterViewInit {
   }
 
   deleteAssignment(assignment: VehicleAssignment) {
-    if (confirm(`Are you sure you want to delete the assignment for driver ${assignment.driverFullName} and vehicle ${assignment.vehicleLabel}?`)) {
+    if (
+      confirm(
+        `Are you sure you want to delete the assignment for driver ${assignment.driverFullName} and vehicle ${assignment.vehicleLabel}?`,
+      )
+    ) {
       this.assignmentService.deleteAssignment(assignment.id).subscribe({
         next: () => {
           this.notification.success('Assignment deleted successfully');
@@ -131,9 +146,8 @@ export class AssignmentListComponent implements OnInit, AfterViewInit {
         },
         error: () => {
           this.notification.error('Failed to delete assignment');
-        }
+        },
       });
     }
-  } 
-  
+  }
 }

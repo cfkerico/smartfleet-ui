@@ -1,87 +1,107 @@
-<h1>Assignments</h1>
-
-    <button mat-raised-button color="primary" (click)="openForm()">
-      Ajouter
+<section class="page">
+  <header class="page-header">
+    <h1>Affectations</h1>
+    <button mat-raised-button color="primary" type="button" (click)="openForm()">
+      <mat-icon>add</mat-icon>
+      Nouvelle affectation
     </button>
+  </header>
 
-    <mat-form-field appearance="outline" class="filter">
-      <mat-label>Filtrer</mat-label>
+  <div class="list-search">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Rechercher sur cette page</mat-label>
 
-      <input
-        matInput
-        (keyup)="applyFilter($event)"
-        placeholder="Recherche..."
-      >
+      <input matInput (input)="applyFilter($event)" placeholder="Recherche..." />
     </mat-form-field>
+  </div>
 
-    <table mat-table [dataSource]="assigments">      
-        
-      <ng-container matColumnDef="driver">
-        <th mat-header-cell *matHeaderCellDef>Driver</th>
-        <td mat-cell *matCellDef="let a">{{ a.driverFullName }}</td>
-      </ng-container>
+  <mat-card class="table-card">
+    <div class="table-scroll">
+      <table mat-table [dataSource]="assigments">
+        <ng-container matColumnDef="driver">
+          <th mat-header-cell *matHeaderCellDef>Chauffeur</th>
+          <td mat-cell *matCellDef="let a">{{ a.driverFullName }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="vehicle">
-        <th mat-header-cell *matHeaderCellDef>Vehicle</th>
-        <td mat-cell *matCellDef="let a">{{ a.vehicleLabel }}</td>
-      </ng-container>
+        <ng-container matColumnDef="vehicle">
+          <th mat-header-cell *matHeaderCellDef>Véhicule</th>
+          <td mat-cell *matCellDef="let a">{{ a.vehicleLabel }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="type">
-        <th mat-header-cell *matHeaderCellDef>Type</th>
-        <td mat-cell *matCellDef="let a">{{ a.type }}</td>
-      </ng-container>
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>Type</th>
+          <td mat-cell *matCellDef="let a">{{ a.type }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Status</th>
-        <td mat-cell *matCellDef="let a">{{ a.status }}</td>
-      </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Statut</th>
+          <td mat-cell *matCellDef="let a">{{ a.status }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="startDate">
-        <th mat-header-cell *matHeaderCellDef>Start Date</th>
-        <td mat-cell *matCellDef="let a">{{ a.startDate | date:'dd/MM/yyyy' }}</td>
-      </ng-container>
+        <ng-container matColumnDef="startDate">
+          <th mat-header-cell *matHeaderCellDef>Date de début</th>
+          <td mat-cell *matCellDef="let a">{{ a.startDate | date: 'dd/MM/yyyy' }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="endDate">
-        <th mat-header-cell *matHeaderCellDef>End Date</th>
-        <td mat-cell *matCellDef="let a">{{ a.endDate | date:'dd/MM/yyyy' }}</td>
-      </ng-container>
+        <ng-container matColumnDef="endDate">
+          <th mat-header-cell *matHeaderCellDef>Date de fin</th>
+          <td mat-cell *matCellDef="let a">{{ a.endDate | date: 'dd/MM/yyyy' }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="reason">
-        <th mat-header-cell *matHeaderCellDef>Reason</th>
-        <td mat-cell *matCellDef="let a">{{ a.reason }}</td>
-      </ng-container>
+        <ng-container matColumnDef="reason">
+          <th mat-header-cell *matHeaderCellDef>Motif</th>
+          <td mat-cell *matCellDef="let a">{{ a.reason }}</td>
+        </ng-container>
 
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Actions</th>
-        <td mat-cell *matCellDef="let a">
-            
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let a">
+            @if (a.status !== 'PAUSED') {
+              <button
+                mat-icon-button
+                color="warn"
+                aria-label="Suspendre l’affectation"
+                matTooltip="Suspendre"
+                (click)="pauseAssignment(a)"
+              >
+                <mat-icon>pause</mat-icon>
+              </button>
+            } @else {
+              <button
+                mat-icon-button
+                color="primary"
+                aria-label="Reprendre l’affectation"
+                matTooltip="Reprendre"
+                (click)="resumeAssignment(a)"
+              >
+                <mat-icon>play_arrow</mat-icon>
+              </button>
+            }
 
-          @if (a.status !== 'PAUSED') {
-            <button mat-button color="warn"
-                    (click)="pauseAssignment(a)">
-              <mat-icon>pause</mat-icon>
-            </button>
-          } @else {
-            <button mat-button color="primary"
-                    (click)="resumeAssignment(a)">
-              <mat-icon>play_arrow</mat-icon>
-            </button>
-          }
-
-          <!-- Je commente le bouton de 'suppression' car on ne doit normalement pas delete une affectation de vehicle, on peut y
+            <!-- Je commente le bouton de 'suppression' car on ne doit normalement pas delete une affectation de vehicle, on peut y
             mettre fin mais jamais la supprimée -->
-          <!-- <button mat-button color="warn"
+            <!-- <button mat-icon-button color="warn"
                   (click)="deleteAssignment(a)">
             <mat-icon>delete</mat-icon>
           </button> -->
-        </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-
-    <mat-paginator [length]="totalElements"
-                   [pageSize]="pageSize"
-                   [pageSizeOptions]="[5, 10, 20]"
-                   (page)="onPageChange($event)">
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="empty-state" [attr.colspan]="displayedColumns.length">
+            {{ assigments.filter ? 'Aucun résultat sur cette page.' : 'Aucun élément à afficher.' }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    <mat-paginator
+      [length]="totalElements"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[5, 10, 20]"
+      (page)="onPageChange($event)"
+    >
     </mat-paginator>
+  </mat-card>
+</section>
