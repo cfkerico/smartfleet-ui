@@ -15,6 +15,8 @@ import { By } from '@angular/platform-browser';
 import { DocumentDetailDialogComponent } from '../../documents/dialogs/document-detail-dialog/document-detail-dialog.component';
 import { OwnerDocumentComplianceComponent } from '../../documents/components/owner-document-compliance/owner-document-compliance.component';
 import { OwnerArchivedDocumentListComponent } from '../../documents/components/owner-archived-document-list/owner-archived-document-list.component';
+import { CreateOwnerDocumentDialogComponent } from '../../documents/dialogs/create-owner-document-dialog/create-owner-document-dialog.component';
+import { AddDocumentVersionDialogComponent } from '../../documents/dialogs/add-document-version-dialog/add-document-version-dialog.component';
 
 describe('DriverDocumentPageComponent', () => {
   const driverServiceMock = {
@@ -197,6 +199,118 @@ describe('DriverDocumentPageComponent', () => {
       .toHaveBeenCalledWith('Document archivé avec succès.');
     expect(reloadCompliance).toHaveBeenCalledOnce();
     expect(reloadArchives).toHaveBeenCalledOnce();
+  });
+
+  it('should create a document for the driver and reload compliance', async () => {
+    const fixture = TestBed.createComponent(DriverDocumentPageComponent);
+    const component = fixture.componentInstance;
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const compliance = fixture.debugElement.query(
+      By.directive(OwnerDocumentComplianceComponent)
+    ).componentInstance as OwnerDocumentComplianceComponent;
+
+    const reloadCompliance = vi.spyOn(compliance, 'reload');
+    const notifySuccess = vi.spyOn(
+      TestBed.inject(NotificationService),
+      'success'
+    );
+
+    matDialogMock.open.mockReturnValue({
+      afterClosed: () => of(true),
+    });
+
+    const missingItem = {
+      requirementId: 100,
+      documentTypeId: 200,
+      documentTypeCode: 'DRIVER_LICENSE',
+      documentTypeLabel: 'Permis de conduire',
+      required: true,
+      expirationRequired: true,
+      displayOrder: 1,
+      complianceStatus: 'MISSING' as const,
+      blocking: true,
+      documentId: null,
+      documentTitle: null,
+      activeVersionId: null,
+      currentVersionNumber: null,
+      issuedDate: null,
+      expirationDate: null,
+      daysUntilExpiration: null,
+    };
+
+    component.addDocument(missingItem);
+
+    expect(matDialogMock.open).toHaveBeenCalledWith(
+      CreateOwnerDocumentDialogComponent,
+      expect.objectContaining({
+        data: {
+          ownerType: 'DRIVER',
+          ownerId: 10,
+          item: missingItem,
+        },
+      })
+    );
+    expect(notifySuccess)
+      .toHaveBeenCalledWith('Document ajouté avec succès.');
+    expect(reloadCompliance).toHaveBeenCalledOnce();
+  });
+
+  it('should replace a driver document and reload compliance', async () => {
+    const fixture = TestBed.createComponent(DriverDocumentPageComponent);
+    const component = fixture.componentInstance;
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const compliance = fixture.debugElement.query(
+      By.directive(OwnerDocumentComplianceComponent)
+    ).componentInstance as OwnerDocumentComplianceComponent;
+
+    const reloadCompliance = vi.spyOn(compliance, 'reload');
+    const notifySuccess = vi.spyOn(
+      TestBed.inject(NotificationService),
+      'success'
+    );
+
+    matDialogMock.open.mockReturnValue({
+      afterClosed: () => of(true),
+    });
+
+    const item = {
+      requirementId: 100,
+      documentTypeId: 200,
+      documentTypeCode: 'DRIVER_LICENSE',
+      documentTypeLabel: 'Permis de conduire',
+      required: true,
+      expirationRequired: true,
+      displayOrder: 1,
+      complianceStatus: 'VALID' as const,
+      blocking: false,
+      documentId: 300,
+      documentTitle: 'Permis de conduire',
+      activeVersionId: 401,
+      currentVersionNumber: 1,
+      issuedDate: '2026-01-01',
+      expirationDate: '2030-12-31',
+      daysUntilExpiration: 100,
+    };
+
+    component.replaceDocument(item);
+
+    expect(matDialogMock.open).toHaveBeenCalledWith(
+      AddDocumentVersionDialogComponent,
+      expect.objectContaining({
+        data: { item },
+      })
+    );
+    expect(notifySuccess)
+      .toHaveBeenCalledWith('Nouvelle version ajoutée avec succès.');
+    expect(reloadCompliance).toHaveBeenCalledOnce();
   });
 
 
