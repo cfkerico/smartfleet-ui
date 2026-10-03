@@ -58,7 +58,7 @@ export class CreateOwnerDocumentDialogComponent {
     title: [this.data.item.documentTypeLabel, [Validators.required, Validators.maxLength(150)]],
     documentNumber: [''],
     issuedDate: [''],
-    expirationDate: ['', this.data.item.expirationDate ? [Validators.required] : []],
+    expirationDate: ['', this.data.item.expirationRequired ? [Validators.required] : [],],
     comment: [''],
     file: new FormControl<File | null>(null, Validators.required)
   });

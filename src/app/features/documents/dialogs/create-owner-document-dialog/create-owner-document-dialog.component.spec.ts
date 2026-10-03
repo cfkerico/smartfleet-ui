@@ -127,6 +127,28 @@ describe('CreateOwnerDocumentDialogComponent', () => {
     expect(component.submitting()).toBe(false);
   });
 
+  it('should require an expiration date for a missing document when configured', () => {
+    const file = new File(
+      ['pdf-content'],
+      'assurance.pdf',
+      { type: 'application/pdf' }
+    );
+
+    // Le document est manquant : item.expirationDate vaut null,
+    // mais le type exige une date d'expiration.
+    expect(dialogData.item.documentId).toBeNull();
+    expect(dialogData.item.expirationDate).toBeNull();
+    expect(dialogData.item.expirationRequired).toBe(true);
+
+    component.form.patchValue({ file });
+    component.submit();
+
+    expect(component.form.controls.expirationDate.hasError('required'))
+      .toBe(true);
+    expect(documentApiMock.uploadDocument).not.toHaveBeenCalled();
+    expect(dialogRefMock.close).not.toHaveBeenCalled();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
