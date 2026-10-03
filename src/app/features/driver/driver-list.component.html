@@ -56,6 +56,15 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Actions</th>
           <td mat-cell *matCellDef="let d">
+            <a
+              mat-icon-button
+              color="primary"
+              [routerLink]="['/drivers', d.id, 'documents']"
+              matTooltip="Dossier documentaire"
+              [attr.aria-label]="'Documents du chauffeur ' + d.fullName"
+            >
+              <mat-icon>folder</mat-icon>
+            </a>
             <button
               mat-icon-button
               color="accent"

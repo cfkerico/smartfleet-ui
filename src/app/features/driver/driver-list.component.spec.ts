@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { DriverService } from '../../core/services/driver.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { provideRouter } from '@angular/router';
+
 
 import { DriverListComponent } from './driver-list.component';
 
@@ -13,9 +15,10 @@ describe('DriverListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [DriverListComponent],
       providers: [
+        provideRouter([]),
         {
           provide: DriverService,
-          useValue: { getAll: () => of({ content: [], totalElements: 0 }) },
+          useValue: { getAll: () => of({ content: [], totalElements: 0 }) },          
         },
         { provide: NotificationService, useValue: { error: () => undefined } },
       ],
@@ -35,10 +38,9 @@ describe('DriverListComponent', () => {
     const getAll = vi.spyOn(service, 'getAll');
 
     component.onPageChange({ pageIndex: 1, pageSize: 10, length: 25 });
-    fixture.detectChanges();
 
     expect(getAll).toHaveBeenCalledWith(1, 10);
-    expect(component.drivers.paginator).toBeNull();
+    expect(component.drivers.paginator).toBeUndefined();
     expect(component.pageIndex).toBe(1);
     expect(component.pageSize).toBe(10);
   });

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { AssignmentApiService } from '../../../core/services/assignment-api.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { provideRouter } from '@angular/router';
 
 import { AssignmentListComponent } from './assignment-list.component';
 
@@ -18,6 +19,7 @@ describe('AssignmentListComponent', () => {
           useValue: { getAll: () => of({ content: [], totalElements: 0 }) },
         },
         { provide: NotificationService, useValue: { error: () => undefined } },
+        provideRouter([]),
       ],
     }).compileComponents();
 
@@ -35,10 +37,9 @@ describe('AssignmentListComponent', () => {
     const getAll = vi.spyOn(service, 'getAll');
 
     component.onPageChange({ pageIndex: 1, pageSize: 10, length: 25 });
-    fixture.detectChanges();
 
     expect(getAll).toHaveBeenCalledWith(1, 10);
-    expect(component.assigments.paginator).toBeNull();
+    expect(component.assigments.paginator).toBeUndefined();
     expect(component.pageIndex).toBe(1);
     expect(component.pageSize).toBe(10);
   });

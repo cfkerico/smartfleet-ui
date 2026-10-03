@@ -16,6 +16,7 @@ import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { DriverAnalysis } from '../../models/driver-analysis.model';
 import { AnalyseIaComponent } from '../analyse-ia/analyse-ia.component';
+import { RouterLink } from '@angular/router';
 
 @Component({
   standalone: true,
@@ -33,6 +34,7 @@ import { AnalyseIaComponent } from '../analyse-ia/analyse-ia.component';
     MatFormField,
     MatInput,
     MatIcon,
+    RouterLink,
   ],
   templateUrl: './driver-list.component.html',
   styleUrl: './driver-list.component.scss',

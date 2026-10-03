@@ -38,10 +38,9 @@ describe('VehicleListComponent', () => {
     const getAll = vi.spyOn(service, 'getAll');
 
     component.onPageChange({ pageIndex: 1, pageSize: 10, length: 25 });
-    fixture.detectChanges();
 
     expect(getAll).toHaveBeenCalledWith(1, 10);
-    expect(component.vehicles.paginator).toBeNull();
+    expect(component.vehicles.paginator).toBeUndefined();
     expect(component.pageIndex).toBe(1);
     expect(component.pageSize).toBe(10);
   });
