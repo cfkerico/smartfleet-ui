@@ -37,6 +37,8 @@ export class ExpenseDetailComponent implements OnInit {
   expenseDetail?: ExpenseDetailView;
   expenseId!: number;
 
+  selectedTabIndex = 0;
+
   displayedDisbursementColumns = [
     'paymentDate',
     'paidAmount',
@@ -51,6 +53,7 @@ export class ExpenseDetailComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router, private expenseApi: ExpenseApiService, private cdr: ChangeDetectorRef, private dialog: MatDialog) {}
 
   ngOnInit(): void {
+    this.selectedTabIndex = this.route.snapshot.queryParamMap.get('tab') === 'documents' ? 3 : 0;
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
     if (!id || Number.isNaN(id)) {

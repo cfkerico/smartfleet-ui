@@ -58,6 +58,12 @@ export const routes: Routes = [
               import('./features/expenses/expense-list/expense-list.component').then(m => m.ExpenseListComponent)
           },
           {
+            path: 'expenses/:id/documents',
+            canActivate: [authGuard],
+            loadComponent: () => 
+              import('./features/expenses/expense-document-page/expense-document-page.component').then(m => m.ExpenseDocumentPageComponent)
+          },
+          {
             path: 'expenses/:id',
             canActivate: [authGuard],
             loadComponent: () => 

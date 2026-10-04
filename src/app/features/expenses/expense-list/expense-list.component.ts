@@ -18,7 +18,7 @@ import { Router } from "@angular/router";
 import { CreateExpenseDialogComponent } from '../create-expense-dialog/create-expense-dialog.component';
 import { ExpenseReasonDialogComponent } from '../expense-reason-dialog/expense-reason-dialog.component';
 import { DisburseExpenseDialogComponent } from '../disburse-expense-dialog/disburse-expense-dialog.component';
-import { Observable } from 'rxjs';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-expense-list',
@@ -34,7 +34,8 @@ import { Observable } from 'rxjs';
     MatOptionModule,
     MatTableModule,
     MatPaginatorModule,
-    MatIconModule
+    MatIconModule,
+    RouterLink
 ],
   templateUrl: './expense-list.component.html',
   styleUrl: './expense-list.component.scss',

@@ -110,6 +110,16 @@
                 <th mat-header-cell *matHeaderCellDef> Actions </th>
                 <td mat-cell *matCellDef="let expense">
 
+                    <a 
+                        mat-icon-button
+                        color="primary"
+                        [routerLink]="['/expenses', expense.id, 'documents']"
+                        matTooltip="Dossier documentaire"
+                        [attr.aria-label]="'Documents de la dépense ' + expense.id"
+                    >
+                        <mat-icon>folder</mat-icon>
+                    </a>
+
                     <button mat-icon-button type="button" (click)="openDetail(expense)">
                         <mat-icon>visibility</mat-icon>
                     </button>

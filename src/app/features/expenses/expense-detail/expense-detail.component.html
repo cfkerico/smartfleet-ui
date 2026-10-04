@@ -84,7 +84,7 @@
         </div>
 
         <mat-card class="detail-card">
-            <mat-tab-group animationDuration="200ms">
+            <mat-tab-group animationDuration="200ms" [selectedIndex]="selectedTabIndex">
                 <mat-tab label="Résumé">
                     <div class="tab-content summary-content">
                         <div class="detail-section">
@@ -233,12 +233,20 @@
                     </div>
                 </mat-tab>
 
-                <mat-tab label="documents">
+                <mat-tab label="Documents">
                     <div class="tab-content">
                         <div class="empty-state">
                             <mat-icon>folder</mat-icon>
-                            <h3>Documents</h3>
-                            <p>Cet onglet sera connecté au futur module Documents.</p>
+                            <h3>Dossier documentaire de la dépense #{{ request.id }}</h3>
+                            <p>Consultez les justificatifs, la conformité documentaire, les versions et les documents archivés.</p>
+
+                            <a 
+                                mat-raised-button
+                                color="primary"
+                                [routerLink]="['/expenses', request.id, 'documents']">
+                                <mat-icon>folder_open</mat-icon>
+                                Ouvrir le dossier documentaire
+                            </a>
                         </div>
                     </div>
                 </mat-tab>

@@ -1,0 +1,66 @@
+<section class="expense-document-page">
+
+    @if (loading()) {
+        <div class="page-state" aria-live="polite">
+            <mat-spinner diameter="44" />
+            <p>Chargement de la dépense...</p>
+        </div>
+    } @else if (error()) {
+        <div class="page-state error-state" role="alert">
+            <mat-icon>error_outline</mat-icon>
+
+            <div>
+                <h1>Dépense indisponible</h1>
+                <p>{{ error() }}</p>
+            </div>
+
+            <a mat-stroked-button routerLink="/expenses">
+                Revenir à la liste
+            </a>
+        </div>
+    } @else if (expenseDetail(); as currentExpense) {
+        <header class="expense-header">
+            <div class="expense-icon" aria-hidden="true">
+                <mat-icon>receipt</mat-icon>
+            </div>            
+
+            <div class="expense-detail">
+                <span class="page-eyebrow">Dossier documentaire — Dépense #{{ currentExpense.request.id }}</span>
+                <h1>{{ currentExpense.request.vehicleLabel }}</h1>
+                
+                <div class="expense-metadata">
+                    <span>
+                        <mat-icon>badge</mat-icon>
+                        Type: {{ currentExpense.request.expenseType }}
+                    </span>
+
+                    <span>
+                        <mat-icon>attach_money</mat-icon>
+                        Montant: {{ currentExpense.request.requestedAmount }} FCFA
+                    </span>
+                </div>
+            </div>
+
+            <a mat-button [routerLink]="['/expenses', currentExpense.request.id]" [queryParams]="{ tab: 'documents' }">
+                <mat-icon>arrow_back</mat-icon>
+                Retour sur le détail de la dépense
+            </a>
+        </header>
+
+        <div class="document-sections">
+            <app-owner-document-compliance
+                [ownerType]="'EXPENSE'"
+                [ownerId]="currentExpense.request.id"
+                (addRequested)="addDocument($event)"
+                (viewRequested)="viewDocument($event)"
+                (replaceRequested)="replaceDocument($event)"
+            />
+
+            <app-owner-archived-document-list
+                [ownerType]="'EXPENSE'"
+                [ownerId]="currentExpense.request.id"
+                (viewRequested)="viewArchivedDocument($event)"
+                />
+        </div>
+    }
+</section>
