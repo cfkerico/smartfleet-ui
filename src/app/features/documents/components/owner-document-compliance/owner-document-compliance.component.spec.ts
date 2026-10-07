@@ -134,6 +134,49 @@ describe('OwnerDocumentComplianceComponent', () => {
     expect(element.textContent).toContain('Situation documentaire bloquante');
   });
 
+  it('should show a neutral state when no mandatory requirement is configured', () => {
+    component.compliance.set({
+      ...complianceResponse,
+      totalRequired: 0,
+      compliantRequired: 0,
+      missingRequired: 0,
+      expiredRequired: 0,
+      expiringSoon: 0,
+      compliant: true,
+      blocked: false,
+      items: [],
+    });
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(component.compliancePercentage()).toBeNull();
+    expect(element.textContent).toContain('Aucune exigence documentaire obligatoire à évaluer');
+    expect(element.textContent).toContain('Non évaluée');
+    expect(element.querySelector('.summary-compliant')).toBeNull();
+    expect(element.querySelector('mat-progress-bar')).toBeNull();
+  });
+
+  it('should retain the compliant display when the only requirement is satisfied', () => {
+    component.compliance.set({
+      ...complianceResponse,
+      totalRequired: 1,
+      compliantRequired: 1,
+      missingRequired: 0,
+      expiredRequired: 0,
+      expiringSoon: 0,
+      compliant: true,
+      blocked: false,
+      items: [complianceResponse.items[0]],
+    });
+    fixture.detectChanges();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(component.compliancePercentage()).toBe(100);
+    expect(element.textContent.replace(/\s+/g, ' ')).toContain('1 / 1');
+    expect(element.querySelector('.summary-compliant')).not.toBeNull();
+    expect(element.querySelector('mat-progress-bar')).not.toBeNull();
+  });
+
   it('should emit the missing item when add is requested', () => {
     const addRequested = vi.fn();
 

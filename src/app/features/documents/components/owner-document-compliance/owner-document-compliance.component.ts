@@ -78,7 +78,7 @@ export class OwnerDocumentComplianceComponent {
     const compliance = this.compliance();
 
     if (!compliance || compliance.totalRequired === 0) {
-      return 100;
+      return null;
     }
 
     return Math.round((compliance.compliantRequired / compliance.totalRequired) * 100);

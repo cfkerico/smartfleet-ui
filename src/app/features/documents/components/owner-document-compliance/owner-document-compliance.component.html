@@ -26,13 +26,13 @@
 
         <mat-card 
             class="summary-card"
-            [class.summary-compliant]="data.compliant"
+            [class.summary-compliant]="data.totalRequired > 0 && data.compliant"
             [class.summary-blocked]="data.blocked">
 
             <div class="summary-header">
                 <div class="summary-title">
                     <div class="summary-icon">
-                        <mat-icon>{{ data.compliant ? 'verified' : 'fact_check' }}</mat-icon>
+                        <mat-icon>{{ data.totalRequired > 0 && data.compliant ? 'verified' : 'fact_check' }}</mat-icon>
                     </div>
 
                     <div>
@@ -42,25 +42,37 @@
                 </div>
 
                 <div class="summary-score">
-                    <strong>
-                        {{ data.compliantRequired }}
-                        /
-                        {{ data.totalRequired }}
-                    </strong>
-                    <span>documents conformes</span>
+                    @if (data.totalRequired === 0) {
+                        <strong>Aucune exigence documentaire obligatoire à évaluer</strong>
+                    } @else {
+                        <strong>
+                            {{ data.compliantRequired }}
+                            /
+                            {{ data.totalRequired }}
+                        </strong>
+                        <span>documents conformes</span>
+                    }                                        
                 </div>
             </div>
 
-            <mat-progress-bar 
-                mode="determinate"
-                [value]="compliancePercentage()"
-                [color]="data.compliant ? 'primary' : 'warn'"
-            />
+            @if (data.totalRequired > 0) {
+                <mat-progress-bar 
+                    mode="determinate"
+                    [value]="compliancePercentage()"
+                    [color]="data.compliant ? 'primary' : 'warn'"
+                />
+            }            
 
             <div class="summary-metrics">
                 <div class="metric">
-                    <strong>{{ compliancePercentage() }} %</strong>
-                    <span>Conformité</span>
+                    @if (data.totalRequired > 0) {
+                        <strong>{{ compliancePercentage() }} %</strong>
+                        <span>Conformité</span>
+                    } @else {
+                        <strong>—</strong>
+                        <span>Non évaluée</span>
+                    }
+                    
                 </div>
 
                 <div class="metric">
