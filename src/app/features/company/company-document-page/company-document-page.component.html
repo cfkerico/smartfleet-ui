@@ -1,0 +1,61 @@
+<section class="company-document-page">
+    <header class="page-toolbar">
+        <a mat-button routerLink="/dashboard">
+            <mat-icon>arrow_back</mat-icon>
+            Retour au tableau de bord
+        </a>
+    </header>
+
+    @if (loading()) {
+        <div class="page-state" aria-live="polite">
+            <mat-spinner diameter="44" />
+            <p>Chargement de la société...</p>
+        </div>
+    } @else if (error()) {
+        <div class="page-state error-state" role="alert">
+            <mat-icon>error_outline</mat-icon>
+
+            <div>
+                <h1>Société non connue</h1>
+                <p>{{ error() }}</p>
+            </div>
+
+            <a mat-stroked-button routerLink="/dashboard">
+                Revenir au tableau de bord
+            </a>
+        </div>
+    } @else if (company(); as currentCompany) {
+        <header class="company-header">
+            <div class="company-icon" aria-hidden="true">
+                <mat-icon>business</mat-icon>
+            </div>
+
+            <div class="company-identity">
+                <span class="page-eyebrow">Dossier documentaire</span>
+                <h1>{{ currentCompany.name }}</h1>
+
+                <div class="company-metadata">
+                    <span>Status: {{ currentCompany.status || 'Non renseigné' }}</span>
+                    <span>Plan: {{ currentCompany.plan || 'Non renseigné' }}</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="document-sections">
+            <app-owner-document-compliance
+                [ownerType]="'COMPANY'"
+                [ownerId]="currentCompany.id"
+                (addRequested)="addDocument($event)"
+                (viewRequested)="viewDocument($event)"
+                (replaceRequested)="replaceDocument($event)"
+            />
+
+            <app-owner-archived-document-list
+                [ownerType]="'COMPANY'"
+                [ownerId]="currentCompany.id"
+                (viewRequested)="viewArchivedDocument($event)"
+            />
+        </div>
+    }
+
+</section>

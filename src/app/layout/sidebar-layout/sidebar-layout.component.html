@@ -32,7 +32,7 @@
         @if (!layoutStateService.sidebarCollapsed()) {
           <span>Dashboard</span>
         }
-      </a>
+      </a>      
     </section>
 
     <section class="menu-section">
@@ -80,6 +80,17 @@
       @if (!layoutStateService.sidebarCollapsed()) {
         <span class="menu-section-title">Administration</span>
       }
+
+      <a
+        routerLink="/company/documents"
+        routerLinkActive="active"
+        class="menu-item"
+        title="Dossier documentaire">
+        <mat-icon>folder</mat-icon>
+        @if (!layoutStateService.sidebarCollapsed()) {
+          <span>Documents de la société</span>
+        }
+      </a>
 
       <a
         routerLink="/administration/document-types"

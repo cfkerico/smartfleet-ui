@@ -14,6 +14,13 @@ export const routes: Routes = [
               import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
           },
           {
+            path: 'company/documents',
+            canActivate: [authGuard],
+            loadComponent: () =>
+              import('./features/company/company-document-page/company-document-page.component')
+            .then(module => module.CompanyDocumentPageComponent),
+          },
+          {
             path: 'drivers',
             canActivate: [authGuard],
             loadComponent: () =>
