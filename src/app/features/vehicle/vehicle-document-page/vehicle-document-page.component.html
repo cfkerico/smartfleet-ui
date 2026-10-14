@@ -29,45 +29,14 @@
             </a>
         </div>
     } @else if (vehicle(); as currentVehicle) {
-        <header class="vehicle-header">
-            <div class="vehicle-icon" aria-hidden="true">
-                <mat-icon>directions_car</mat-icon>
-            </div>
-
-            <div class="vehicle-identity">
-                <span class="page-eyebrow">
-                    Dossier documentaire
-                </span>
-
-                <h1>
-                    {{ currentVehicle.brand }}
-                    {{ currentVehicle.model }}
-                </h1>
-
-                <div class="vehicle-metadata">
-                    <span>
-                        <mat-icon>pin</mat-icon>
-                        {{ currentVehicle.registrationNumber }}
-                    </span>
-
-                    <span>
-                        <mat-icon>calendar_month</mat-icon>
-                        {{ currentVehicle.year }}
-                    </span>
-
-                    <span>
-                        <mat-icon>local_gas_station</mat-icon>
-                        {{ currentVehicle.fuelType }}
-                    </span>
-                </div>
-            </div>
-
-            <span 
+        <app-vehicle-page-header [vehicle]="currentVehicle" eyebrow="Dossier documentaire">
+            <span
+                vehicle-header-aside
                 class="vehicle-status"
                 [class.vehicle-status-active]="currentVehicle.vehicleStatus === 'ACTIVE'">
                 {{ currentVehicle.vehicleStatus }}
             </span>
-        </header>
+        </app-vehicle-page-header>
 
         @if (vehicleId(); as id) {
             <div class="document-sections">

@@ -19,10 +19,10 @@ import { Vehicle } from '../../../models/vehicle';
 import { OwnerDocumentComplianceComponent } from '../../documents/components/owner-document-compliance/owner-document-compliance.component';
 import { AddDocumentVersionDialogComponent, AddDocumentVersionDialogData } from '../../documents/dialogs/add-document-version-dialog/add-document-version-dialog.component';
 import { OwnerArchivedDocumentListComponent } from '../../documents/components/owner-archived-document-list/owner-archived-document-list.component';
+import { VehiclePageHeaderComponent } from '../components/vehicle-page-header/vehicle-page-header.component';
 
 @Component({
   selector: 'app-vehicle-document-page',
-  standalone: true,
   imports: [
     CommonModule,
     RouterLink,
@@ -30,7 +30,8 @@ import { OwnerArchivedDocumentListComponent } from '../../documents/components/o
     MatIconModule,
     MatProgressSpinnerModule,
     OwnerDocumentComplianceComponent,
-    OwnerArchivedDocumentListComponent
+    OwnerArchivedDocumentListComponent,
+    VehiclePageHeaderComponent
   ],
   templateUrl: './vehicle-document-page.component.html',
   styleUrl: './vehicle-document-page.component.scss',

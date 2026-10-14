@@ -12,12 +12,13 @@ import { MaintenanceService } from '../../../core/services/maintenance.service';
 import { VehicleService } from '../../../core/services/vehicle.service';
 import { Vehicle } from '../../../models/vehicle';
 import { VehicleMaintenance } from './vehicle-maintenance.model';
+import { VehiclePageHeaderComponent } from '../components/vehicle-page-header/vehicle-page-header.component';
 
 @Component({
   selector: 'app-vehicle-maintenance-page',
   standalone: true,
   imports: [CommonModule, RouterLink, MatButtonModule, MatCardModule, MatIconModule,
-    MatPaginatorModule, MatProgressSpinnerModule, MatTableModule],
+    MatPaginatorModule, MatProgressSpinnerModule, MatTableModule, VehiclePageHeaderComponent],
   templateUrl: './vehicle-maintenance-page.component.html',
   styleUrl: './vehicle-maintenance-page.component.scss',
 })

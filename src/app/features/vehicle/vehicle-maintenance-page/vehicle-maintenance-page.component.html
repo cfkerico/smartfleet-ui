@@ -15,17 +15,12 @@
       <p>{{ vehicleError() }}</p>
     </div>
   } @else if (vehicle(); as currentVehicle) {
-    <header class="vehicle-header">
-      <div>
-        <span class="eyebrow">Historique des entretiens</span>
-        <h1>{{ currentVehicle.brand }} {{ currentVehicle.model }}</h1>
-        <p>{{ currentVehicle.registrationNumber }} · {{ currentVehicle.year }}</p>
-      </div>
-      <div class="mileage">
+    <app-vehicle-page-header [vehicle]="currentVehicle" eyebrow="Historique des entretiens">
+      <div vehicle-header-aside class="mileage">
         <span>Kilométrage actuel</span>
         <strong>{{ currentVehicle.currentMileage == null ? '—' : (currentVehicle.currentMileage | number) + ' km' }}</strong>
       </div>
-    </header>
+    </app-vehicle-page-header>
 
     <mat-card class="history-card">
       <div class="section-heading">

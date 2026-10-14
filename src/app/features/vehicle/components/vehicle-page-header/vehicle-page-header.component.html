@@ -1,0 +1,29 @@
+<header class="vehicle-header">
+  <div class="vehicle-icon" aria-hidden="true">
+    <mat-icon>directions_car</mat-icon>
+  </div>
+
+  <div class="vehicle-identity">
+    <span class="page-eyebrow">{{ eyebrow }}</span>
+    <h1>{{ vehicle.brand }} {{ vehicle.model }}</h1>
+
+    <div class="vehicle-metadata">
+      <span>
+        <mat-icon>pin</mat-icon>
+        {{ vehicle.registrationNumber }}
+      </span>
+      <span>
+        <mat-icon>calendar_month</mat-icon>
+        {{ vehicle.year }}
+      </span>
+      <span>
+        <mat-icon>local_gas_station</mat-icon>
+        {{ vehicle.fuelType }}
+      </span>
+    </div>
+  </div>
+
+  <div class="vehicle-header-aside">
+    <ng-content select="[vehicle-header-aside]" />
+  </div>
+</header>

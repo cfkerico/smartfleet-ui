@@ -46,6 +46,7 @@ describe('VehicleMaintenancePageComponent', () => {
     expect(maintenanceService.findByVehicle).toHaveBeenCalledWith(1, 0, 10);
     const text = fixture.nativeElement.textContent as string;
     expect(text).toContain('Toyota Yaris');
+    expect(fixture.nativeElement.querySelector('app-vehicle-page-header .vehicle-icon')).toBeTruthy();
     expect(text).toContain('Vidange');
     expect(text).toContain('Terminée');
     expect(text).toContain('101,000 km');
