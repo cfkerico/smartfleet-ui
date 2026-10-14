@@ -1,0 +1,24 @@
+:host { display: block; }
+
+.record-maintenance-page { max-width: 1440px; margin: 0 auto; padding: 24px; }
+.back-link { margin-bottom: 16px; }
+.mileage { display: grid; gap: 4px; text-align: right; color: #526577; }
+.mileage strong { color: #172b3f; font-size: 1.2rem; }
+
+.form-card { max-width: 840px; padding: 28px; border: 1px solid #dfe5ec; border-radius: 16px; }
+.form-intro { margin-bottom: 26px; }
+.form-intro h2 { margin: 0 0 8px; color: #172b3f; font-size: 1.3rem; }
+.form-intro p { margin: 0; color: #526577; line-height: 1.5; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; }
+.form-grid mat-form-field { width: 100%; }
+.form-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+.submit-error { margin: 4px 0 0; color: #a83232; }
+.page-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; min-height: 220px; text-align: center; color: #526577; }
+.error-state { color: #a83232; }
+
+@media (max-width: 720px) {
+  .record-maintenance-page { padding: 16px; }
+  .form-card { padding: 18px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .mileage { text-align: left; }
+}

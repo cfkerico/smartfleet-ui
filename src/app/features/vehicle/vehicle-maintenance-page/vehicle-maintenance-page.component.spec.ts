@@ -44,6 +44,7 @@ describe('VehicleMaintenancePageComponent', () => {
 
     expect(vehicleService.getById).toHaveBeenCalledWith(1);
     expect(maintenanceService.findByVehicle).toHaveBeenCalledWith(1, 0, 10);
+    expect(fixture.nativeElement.querySelector('a[href="/vehicles/1/maintenances/new"]')).toBeTruthy();
     const text = fixture.nativeElement.textContent as string;
     expect(text).toContain('Toyota Yaris');
     expect(fixture.nativeElement.querySelector('app-vehicle-page-header .vehicle-icon')).toBeTruthy();

@@ -1,0 +1,90 @@
+<section class="record-maintenance-page">
+  <a mat-button [routerLink]="vehicleId() ? ['/vehicles', vehicleId(), 'maintenances'] : ['/vehicles']" class="back-link">
+    <mat-icon>arrow_back</mat-icon>
+    Retour à l’historique
+  </a>
+
+  @if (loadingVehicle()) {
+    <div class="page-state" aria-live="polite">
+      <mat-spinner diameter="40" />
+      <p>Chargement du véhicule...</p>
+    </div>
+  } @else if (vehicleError()) {
+    <div class="page-state error-state" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ vehicleError() }}</p>
+    </div>
+  } @else if (vehicle(); as currentVehicle) {
+    <app-vehicle-page-header [vehicle]="currentVehicle" eyebrow="Nouvel entretien terminé">
+      <div vehicle-header-aside class="mileage">
+        <span>Kilométrage actuel</span>
+        <strong>{{ currentVehicle.currentMileage == null ? '—' : (currentVehicle.currentMileage | number) + ' km' }}</strong>
+      </div>
+    </app-vehicle-page-header>
+
+    <mat-card class="form-card">
+      <div class="form-intro">
+        <h2>Enregistrer une intervention terminée</h2>
+        <p>Renseignez les informations constatées lors de l’entretien. Une saisie historique peut avoir un kilométrage inférieur au kilométrage actuel.</p>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Type d’entretien</mat-label>
+            <mat-select formControlName="type">
+              @for (type of types; track type.value) {
+                <mat-option [value]="type.value">{{ type.label }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.type.hasError('required')) {
+              <mat-error>Choisissez un type d’entretien.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Date de réalisation</mat-label>
+            <input matInput type="date" [max]="maxDate" formControlName="completedDate" />
+            @if (form.controls.completedDate.hasError('required')) {
+              <mat-error>La date de réalisation est obligatoire.</mat-error>
+            } @else if (form.controls.completedDate.hasError('futureDate')) {
+              <mat-error>La date ne peut pas être dans le futur.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Kilométrage lors de l’entretien</mat-label>
+            <input matInput type="number" min="0" step="1" formControlName="mileageAtMaintenance" />
+            <span matTextSuffix>km</span>
+            @if (form.controls.mileageAtMaintenance.hasError('required')) {
+              <mat-error>Le kilométrage est obligatoire.</mat-error>
+            } @else if (form.controls.mileageAtMaintenance.invalid) {
+              <mat-error>Indiquez un kilométrage entier et positif ou nul.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Coût de l’entretien</mat-label>
+            <input matInput type="number" min="0" step="0.01" formControlName="costAmount" />
+            <span matTextSuffix>FCFA</span>
+            <mat-hint>Facultatif</mat-hint>
+            @if (form.controls.costAmount.hasError('min')) {
+              <mat-error>Le coût ne peut pas être négatif.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        @if (submitError()) {
+          <p class="submit-error" role="alert">{{ submitError() }}</p>
+        }
+
+        <div class="form-actions">
+          <a mat-stroked-button [routerLink]="['/vehicles', currentVehicle.id, 'maintenances']">Annuler</a>
+          <button mat-raised-button color="primary" type="submit" [disabled]="submitting()">
+            @if (submitting()) { Enregistrement... } @else { Enregistrer l’entretien }
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  }
+</section>

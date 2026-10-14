@@ -11,7 +11,7 @@ import { finalize } from 'rxjs';
 import { MaintenanceService } from '../../../core/services/maintenance.service';
 import { VehicleService } from '../../../core/services/vehicle.service';
 import { Vehicle } from '../../../models/vehicle';
-import { VehicleMaintenance } from './vehicle-maintenance.model';
+import { MAINTENANCE_TYPES, VehicleMaintenance } from './vehicle-maintenance.model';
 import { VehiclePageHeaderComponent } from '../components/vehicle-page-header/vehicle-page-header.component';
 
 @Component({
@@ -23,15 +23,6 @@ import { VehiclePageHeaderComponent } from '../components/vehicle-page-header/ve
   styleUrl: './vehicle-maintenance-page.component.scss',
 })
 export class VehicleMaintenancePageComponent implements OnInit {
-  private readonly typeLabels: Record<string, string> = {
-    OIL_CHANGE: 'Vidange',
-    TIRE_CHANGE: 'Changement de pneus',
-    BRAKE_CHECK: 'Contrôle des freins',
-    ENGINE_REPAIR: 'Réparation moteur',
-    TECHNICAL_INSPECTION: 'Contrôle technique',
-    GENERAL_SERVICE: 'Entretien général',
-    OTHER: 'Autre',
-  };
   private readonly statusLabels: Record<string, string> = {
     SCHEDULED: 'Planifiée',
     IN_PROGRESS: 'En cours',
@@ -86,7 +77,7 @@ export class VehicleMaintenancePageComponent implements OnInit {
   }
 
   typeLabel(type: string): string {
-    return this.typeLabels[type] ?? type;
+    return MAINTENANCE_TYPES.find(item => item.value === type)?.label ?? type;
   }
 
   statusLabel(status: string): string {

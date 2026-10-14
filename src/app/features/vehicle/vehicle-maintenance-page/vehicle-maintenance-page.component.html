@@ -28,7 +28,13 @@
           <h2>Interventions enregistrées</h2>
           <p>De la plus récente à la plus ancienne.</p>
         </div>
-        <span class="count">{{ totalElements() }}</span>
+        <div class="section-actions">
+          <span class="count">{{ totalElements() }}</span>
+          <a mat-raised-button color="primary" [routerLink]="['/vehicles', currentVehicle.id, 'maintenances', 'new']">
+            <mat-icon>add</mat-icon>
+            Ajouter un entretien
+          </a>
+        </div>
       </div>
 
       @if (loadingHistory()) {

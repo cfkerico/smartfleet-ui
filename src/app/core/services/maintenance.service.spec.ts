@@ -25,4 +25,25 @@ describe('MaintenanceService', () => {
     expect(actual).toEqual(response);
     http.verify();
   });
+
+  it('should post a completed maintenance without company or user fields', () => {
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
+    const service = TestBed.inject(MaintenanceService);
+    const http = TestBed.inject(HttpTestingController);
+    const payload = {
+      vehicleId: 1, type: 'OIL_CHANGE', completedDate: '2026-10-14',
+      mileageAtMaintenance: 100600, costAmount: null,
+    };
+    const created = { id: 3, ...payload, status: 'COMPLETED' };
+
+    service.recordCompleted(payload).subscribe(result => expect(result).toEqual(created));
+
+    const request = http.expectOne(API_ENDPOINTS.maintenances);
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual(payload);
+    request.flush(created, { status: 201, statusText: 'Created' });
+    http.verify();
+  });
 });
