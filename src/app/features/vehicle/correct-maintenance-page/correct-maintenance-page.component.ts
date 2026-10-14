@@ -137,10 +137,10 @@ export class CorrectMaintenancePageComponent implements OnInit {
 
     const user = this.auth.getUser();
     if (user?.sub === actorId) {
-      const fullName = typeof user.name === 'string' ? user.name.trim() : '';
-      const givenName = typeof user.given_name === 'string' ? user.given_name.trim() : '';
-      const familyName = typeof user.family_name === 'string' ? user.family_name.trim() : '';
-      const username = typeof user.preferred_username === 'string' ? user.preferred_username.trim() : '';
+      const fullName = typeof user['name'] === 'string' ? user['name'].trim() : '';
+      const givenName = typeof user['given_name'] === 'string' ? user['given_name'].trim() : '';
+      const familyName = typeof user['family_name'] === 'string' ? user['family_name'].trim() : '';
+      const username = typeof user['preferred_username'] === 'string' ? user['preferred_username'].trim() : '';
       return fullName || [givenName, familyName].filter(Boolean).join(' ') || username || 'Vous';
     }
 
