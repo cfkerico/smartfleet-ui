@@ -49,6 +49,15 @@
             <a
               mat-icon-button
               color="primary"
+              [routerLink]="['/vehicles', d.id, 'maintenances']"
+              [attr.aria-label]="'Entretien du véhicule ' + (d.label || d.registrationNumber)"
+              matTooltip="Entretien"
+            >
+              <mat-icon>build</mat-icon>
+            </a>
+            <a
+              mat-icon-button
+              color="primary"
               [routerLink]="['/vehicles', d.id, 'documents']"
               [attr.aria-label]="'Documents du véhicule ' + (d.label || d.registrationNumber)"
             >

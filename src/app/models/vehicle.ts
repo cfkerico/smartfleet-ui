@@ -8,5 +8,6 @@ export interface Vehicle {
   fuelType: string;
   vin: string;
   registrationNumber: string;
+  currentMileage?: number | null;
 
 }

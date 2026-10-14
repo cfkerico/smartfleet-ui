@@ -55,4 +55,16 @@ describe('VehicleListComponent', () => {
       'Aucun élément à afficher.',
     );
   });
+
+  it('should provide a maintenance history link for each vehicle', () => {
+    component.vehicles.data = [{
+      id: 1, brand: 'Toyota', model: 'Yaris', label: 'Toyota Yaris', year: 2004,
+      vehicleStatus: 'AVAILABLE', fuelType: 'ESSENCE', vin: 'VIN-1', registrationNumber: '033830',
+    }];
+    fixture.detectChanges();
+
+    const link = fixture.nativeElement.querySelector('a[aria-label="Entretien du véhicule Toyota Yaris"]');
+    expect(link).toBeTruthy();
+    expect(link.getAttribute('href')).toBe('/vehicles/1/maintenances');
+  });
 });

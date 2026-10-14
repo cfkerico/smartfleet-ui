@@ -7,6 +7,7 @@ export const API_ENDPOINTS = {
   assignments: `${baseUrl}/api/assignments`,
   drivers: `${baseUrl}/api/drivers`,
   vehicles: `${baseUrl}/api/vehicles`,
+  maintenances: `${baseUrl}/api/maintenances`,
   notifications: `${baseUrl}/api/notifications`,
   documentAdmin: `${baseUrl}/api/document-admin`,
   payments: `${baseUrl}/api/revenues/payments`,
