@@ -13,6 +13,7 @@ import { VehicleService } from '../../../core/services/vehicle.service';
 import { Vehicle } from '../../../models/vehicle';
 import { MAINTENANCE_TYPES, VehicleMaintenance } from './vehicle-maintenance.model';
 import { VehiclePageHeaderComponent } from '../components/vehicle-page-header/vehicle-page-header.component';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-vehicle-maintenance-page',
@@ -32,6 +33,7 @@ export class VehicleMaintenancePageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly vehicleService = inject(VehicleService);
   private readonly maintenanceService = inject(MaintenanceService);
+  readonly auth = inject(AuthService);
 
   readonly vehicle = signal<Vehicle | null>(null);
   readonly vehicleError = signal<string | null>(null);
@@ -42,7 +44,7 @@ export class VehicleMaintenancePageComponent implements OnInit {
   readonly totalElements = signal(0);
   readonly pageIndex = signal(0);
   readonly pageSize = signal(10);
-  readonly columns = ['completedDate', 'type', 'mileage', 'cost', 'status'];
+  readonly columns = ['completedDate', 'type', 'mileage', 'cost', 'status', 'actions'];
 
   private vehicleId: number | null = null;
 

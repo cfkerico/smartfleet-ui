@@ -18,6 +18,7 @@ th, td { padding: 12px 16px; }
 th { color: #40566b; font-weight: 700; }
 .status { display: inline-block; padding: 5px 10px; border-radius: 999px; background: #def4e7; color: #17613a; font-weight: 700; font-size: .8rem; }
 .status-muted { background: #edf1f5; color: #526577; }
+.corrected-badge { display: inline-block; margin-left: 8px; padding: 5px 10px; border-radius: 999px; background: #fff0cf; color: #744a00; font-size: .8rem; font-weight: 700; }
 .page-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 190px; padding: 24px; text-align: center; color: #526577; }
 .page-state p { margin: 0; }
 .page-state mat-icon { width: 36px; height: 36px; font-size: 36px; }

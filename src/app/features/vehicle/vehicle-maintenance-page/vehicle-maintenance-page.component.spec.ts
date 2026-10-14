@@ -4,6 +4,7 @@ import { of, throwError } from 'rxjs';
 import { MaintenanceService } from '../../../core/services/maintenance.service';
 import { VehicleService } from '../../../core/services/vehicle.service';
 import { VehicleMaintenancePageComponent } from './vehicle-maintenance-page.component';
+import { AuthService } from '../../../core/auth/auth.service';
 
 describe('VehicleMaintenancePageComponent', () => {
   const vehicleService = { getById: vi.fn() };
@@ -32,6 +33,7 @@ describe('VehicleMaintenancePageComponent', () => {
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({ vehicleId: '1' }) } } },
         { provide: VehicleService, useValue: vehicleService },
         { provide: MaintenanceService, useValue: maintenanceService },
+        { provide: AuthService, useValue: { isAdmin: () => true } },
       ],
     }).compileComponents();
   });
@@ -55,6 +57,7 @@ describe('VehicleMaintenancePageComponent', () => {
     expect(rows.length).toBe(2);
     expect(rows[0].textContent).toContain('100,600');
     expect(rows[1].textContent).toContain('101,000');
+    expect(rows[0].textContent).toContain('Voir / rectifier');
   });
 
   it('should request the selected server page', () => {

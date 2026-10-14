@@ -41,6 +41,13 @@ export const routes: Routes = [
             .then(module => module.VehicleDocumentPageComponent),
           },
           {
+            path: 'vehicles/:vehicleId/maintenances/:maintenanceId/corrections',
+            canActivate: [authGuard],
+            loadComponent: () =>
+              import('./features/vehicle/correct-maintenance-page/correct-maintenance-page.component')
+                .then(module => module.CorrectMaintenancePageComponent),
+          },
+          {
             path: 'vehicles/:vehicleId/maintenances/new',
             canActivate: [authGuard],
             loadComponent: () =>

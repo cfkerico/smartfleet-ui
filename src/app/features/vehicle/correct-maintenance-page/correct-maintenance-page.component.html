@@ -1,0 +1,132 @@
+<section class="correction-page">
+  <a mat-button [routerLink]="['/vehicles', vehicleId, 'maintenances']" class="back-link">
+    <mat-icon>arrow_back</mat-icon> Retour à l’historique
+  </a>
+
+  @if (loading() && !maintenance()) {
+    <p class="page-state">Chargement du dossier de rectification...</p>
+  } @else if (error()) {
+    <p class="page-state error" role="alert">{{ error() }}</p>
+  } @else if (vehicle(); as currentVehicle) {
+    <app-vehicle-page-header [vehicle]="currentVehicle" eyebrow="Rectification d’entretien">
+      <div vehicle-header-aside class="mileage">
+        <span>Kilométrage actuel</span>
+        <strong>{{ currentVehicle.currentMileage | number }} km</strong>
+      </div>
+    </app-vehicle-page-header>
+
+    @if (maintenance(); as item) {
+      <mat-card class="card">
+        <h2>Entretien #{{ item.id }} <span class="badge">Révision {{ item.revisionNumber }}</span></h2>
+        <p>{{ typeLabel(item.type) }} · {{ item.completedDate | date:'dd/MM/yyyy' }} ·
+          {{ item.mileageAtMaintenance | number }} km ·
+          {{ item.costAmount == null ? 'Coût non renseigné' : (item.costAmount | number) + ' FCFA' }}</p>
+        @if (reviewRequired()) {
+          <p class="warning" role="status">Le kilométrage de l’entretien est inférieur au compteur du véhicule.
+            Le compteur n’a pas été abaissé automatiquement. Vérifiez-le avant toute rectification explicite.</p>
+        }
+      </mat-card>
+
+      @if (auth.isAdmin()) {
+        <mat-card class="card">
+          <h2>Rectifier cet entretien</h2>
+          <p class="hint">Les valeurs précédentes sont conservées dans l’historique. Indiquez le motif de la rectification.</p>
+          <form [formGroup]="form" (ngSubmit)="submit()">
+            <div class="grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Type</mat-label>
+                <mat-select formControlName="type">
+                  @for (type of types; track type.value) { <mat-option [value]="type.value">{{ type.label }}</mat-option> }
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Date de réalisation</mat-label>
+                <input matInput type="date" [max]="maxDate" formControlName="completedDate" />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Kilométrage lors de l’entretien</mat-label>
+                <input matInput type="number" min="0" step="1" formControlName="mileageAtMaintenance" />
+                <span matTextSuffix>km</span>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Coût</mat-label>
+                <input matInput type="number" min="0" step="0.01" formControlName="costAmount" />
+                <span matTextSuffix>FCFA</span>
+              </mat-form-field>
+            </div>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Motif de la rectification</mat-label>
+              <textarea matInput rows="3" formControlName="reason"></textarea>
+            </mat-form-field>
+            @if (submitError()) { <p class="error" role="alert">{{ submitError() }}</p> }
+            <div class="actions"><button mat-raised-button color="primary" type="submit" [disabled]="submitting()">
+              {{ submitting() ? 'Enregistrement...' : 'Enregistrer la rectification' }}</button></div>
+          </form>
+        </mat-card>
+
+        @if (item.revisionNumber > 0) {
+          <mat-card class="card">
+            <h2>Rectifier explicitement le compteur</h2>
+            <p class="hint">Action indépendante et auditée. La valeur ne peut être inférieure au kilométrage d’acquisition ni à celui d’un entretien terminé.</p>
+            <form [formGroup]="mileageForm" (ngSubmit)="correctMileage()">
+              <div class="grid">
+                <mat-form-field appearance="outline">
+                  <mat-label>Nouveau kilométrage du véhicule</mat-label>
+                  <input matInput type="number" min="0" step="1" formControlName="correctedMileage" />
+                  <span matTextSuffix>km</span>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Motif de la correction du compteur</mat-label>
+                  <input matInput formControlName="reason" />
+                </mat-form-field>
+              </div>
+              @if (mileageError()) { <p class="error" role="alert">{{ mileageError() }}</p> }
+              <div class="actions"><button mat-stroked-button type="submit" [disabled]="mileageSubmitting()">
+                {{ mileageSubmitting() ? 'Enregistrement...' : 'Corriger le compteur' }}</button></div>
+            </form>
+          </mat-card>
+        }
+      }
+    }
+
+    <mat-card class="card">
+      <h2>Historique des rectifications</h2>
+      @if (revisions().length === 0) {
+        <p class="hint">Aucune rectification enregistrée.</p>
+      } @else {
+        <ol class="revision-list">
+          @for (revision of revisions(); track revision.revisionNumber) {
+            <li>
+              <strong>Révision {{ revision.revisionNumber }}</strong> · {{ revision.correctedAt | date:'dd/MM/yyyy HH:mm' }}
+              · par <span class="actor" [title]="revision.correctedBy">{{ actorLabel(revision.correctedBy) }}</span>
+              <p>Motif : {{ revision.reason }}</p>
+              <p>Avant : {{ typeLabel(revision.previous.type) }}, {{ revision.previous.completedDate | date:'dd/MM/yyyy' }},
+                {{ revision.previous.mileageAtMaintenance | number }} km,
+                {{ revision.previous.costAmount == null ? 'coût non renseigné' : (revision.previous.costAmount | number) + ' FCFA' }}</p>
+              <p>Après : {{ typeLabel(revision.corrected.type) }}, {{ revision.corrected.completedDate | date:'dd/MM/yyyy' }},
+                {{ revision.corrected.mileageAtMaintenance | number }} km,
+                {{ revision.corrected.costAmount == null ? 'coût non renseigné' : (revision.corrected.costAmount | number) + ' FCFA' }}</p>
+            </li>
+          }
+        </ol>
+      }
+    </mat-card>
+
+    <mat-card class="card">
+      <h2>Historique des corrections du compteur</h2>
+      @if (mileageCorrections().length === 0) {
+        <p class="hint">Aucune correction du compteur enregistrée.</p>
+      } @else {
+        <ol class="revision-list">
+          @for (correction of mileageCorrections(); track correction.correctedAt) {
+            <li>{{ correction.correctedAt | date:'dd/MM/yyyy HH:mm' }} ·
+              <span class="actor" [title]="correction.correctedBy">{{ actorLabel(correction.correctedBy) }}</span> ·
+              {{ correction.previousMileage | number }} → {{ correction.correctedMileage | number }} km
+              <p>Entretien #{{ correction.maintenanceId }} · {{ correction.reason }}</p>
+            </li>
+          }
+        </ol>
+      }
+    </mat-card>
+  }
+</section>
