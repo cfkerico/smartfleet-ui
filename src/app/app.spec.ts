@@ -6,18 +6,20 @@ import { NotificationStoreService } from './core/services/notification-store.ser
 import { NotificationWebSocketService } from './core/services/notification-web-socket.service';
 
 describe('App', () => {
+  const connect = vi.fn();
   beforeEach(async () => {
+    connect.mockReset();
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
         provideRouter([]),
         {
           provide: AuthService,
-          useValue: { getCompanyId: () => 1, getRoles: () => ['ADMIN'] },
+          useValue: { getCompanyId: () => 1, getRoles: () => ['ADMIN', 'FLEET_MANAGER'] },
         },
         {
           provide: NotificationWebSocketService,
-          useValue: { connect: () => undefined },
+          useValue: { connect },
         },
         {
           provide: NotificationStoreService,
@@ -39,5 +41,6 @@ describe('App', () => {
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled).toBeTruthy();
+    expect(connect).toHaveBeenCalledWith(1, ['ADMIN', 'FLEET_MANAGER']);
   });
 });

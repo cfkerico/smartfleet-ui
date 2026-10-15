@@ -3,6 +3,11 @@ import { Client } from '@stomp/stompjs';
 import { Subject, Observable } from 'rxjs';
 import { Notification } from '../../models/Notification';
 
+export function notificationTopics(companyId: number, roles: string[]): string[] {
+  return [...new Set(roles.filter(Boolean))]
+    .map(role => `/topic/notification/${companyId}/${role}`);
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -13,7 +18,7 @@ export class NotificationWebSocketService {
   private notificationSubject = new Subject<Notification>();
   notification$: Observable<Notification> = this.notificationSubject.asObservable();
 
-  connect(companyId: number, role: string): void {
+  connect(companyId: number, roles: string[]): void {
 
     if (this.client?.active) {
       return;
@@ -33,14 +38,13 @@ export class NotificationWebSocketService {
 
         console.log('Notification WebSocket connected');
 
-        this.client?.subscribe(`/topic/notification/${companyId}/${role}`,
-          message => {
-            const notification = JSON.parse(message.body) as Notification;
-
-            console.log('WS NOTIFICATION RECEIVED', notification);
-
-            this.notificationSubject.next(notification);
-          });
+        for (const topic of notificationTopics(companyId, roles)) {
+          this.client?.subscribe(topic,
+            message => {
+              const notification = JSON.parse(message.body) as Notification;
+              this.notificationSubject.next(notification);
+            });
+        }
 
       }
     });
