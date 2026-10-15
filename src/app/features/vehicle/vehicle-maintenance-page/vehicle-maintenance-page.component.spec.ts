@@ -58,6 +58,7 @@ describe('VehicleMaintenancePageComponent', () => {
     expect(rows[0].textContent).toContain('100,600');
     expect(rows[1].textContent).toContain('101,000');
     expect(rows[0].textContent).toContain('Voir / rectifier');
+    expect(fixture.nativeElement.querySelector('a[href="/vehicles/1/maintenances/2/documents"]')).toBeTruthy();
   });
 
   it('should request the selected server page', () => {

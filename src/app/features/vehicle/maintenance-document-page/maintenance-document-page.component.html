@@ -1,0 +1,50 @@
+<section class="maintenance-document-page">
+  <a mat-button [routerLink]="['/vehicles', vehicleId, 'maintenances']" class="back-link">
+    <mat-icon>arrow_back</mat-icon> Retour à l’historique des entretiens
+  </a>
+
+  @if (loading()) {
+    <div class="page-state" aria-live="polite">
+      <mat-spinner diameter="40" />
+      <p>Chargement de l’entretien...</p>
+    </div>
+  } @else if (error()) {
+    <div class="page-state error-state" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error() }}</p>
+    </div>
+  } @else if (vehicle(); as currentVehicle) {
+    @if (maintenance(); as currentMaintenance) {
+      <app-vehicle-page-header [vehicle]="currentVehicle" eyebrow="Dossier documentaire de l’entretien">
+        <div vehicle-header-aside class="maintenance-aside">
+          <span>Entretien #{{ currentMaintenance.id }}</span>
+          <strong>{{ typeLabel(currentMaintenance.type) }}</strong>
+        </div>
+      </app-vehicle-page-header>
+
+      <div class="maintenance-summary">
+        <span><mat-icon>event</mat-icon> {{ currentMaintenance.completedDate | date:'dd/MM/yyyy' }}</span>
+        <span><mat-icon>speed</mat-icon> {{ currentMaintenance.mileageAtMaintenance | number }} km</span>
+        <span><mat-icon>payments</mat-icon>
+          {{ currentMaintenance.costAmount == null ? 'Coût non renseigné' : (currentMaintenance.costAmount | number) + ' FCFA' }}
+        </span>
+      </div>
+
+      <div class="document-sections">
+        <app-owner-document-compliance
+          [ownerType]="'MAINTENANCE'"
+          [ownerId]="currentMaintenance.id"
+          (addRequested)="addDocument($event)"
+          (viewRequested)="viewDocument($event)"
+          (replaceRequested)="replaceDocument($event)"
+        />
+
+        <app-owner-archived-document-list
+          [ownerType]="'MAINTENANCE'"
+          [ownerId]="currentMaintenance.id"
+          (viewRequested)="viewArchivedDocument($event)"
+        />
+      </div>
+    }
+  }
+</section>

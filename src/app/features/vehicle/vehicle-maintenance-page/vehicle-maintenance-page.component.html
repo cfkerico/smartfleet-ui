@@ -81,6 +81,9 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>Actions</th>
               <td mat-cell *matCellDef="let item">
+                <a mat-button [routerLink]="['/vehicles', currentVehicle.id, 'maintenances', item.id, 'documents']">
+                  <mat-icon>folder_open</mat-icon> Dossier
+                </a>
                 <a mat-button [routerLink]="['/vehicles', currentVehicle.id, 'maintenances', item.id, 'corrections']">
                   {{ auth.isAdmin() ? 'Voir / rectifier' : 'Voir les révisions' }}
                 </a>

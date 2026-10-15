@@ -109,8 +109,11 @@ export class DocumentRequirementFormDialogComponent {
   get consequences(): string[] {
     const raw = this.form.getRawValue();
 
-    const ownerLabel = 
-      this.ownerType === 'VEHICLE' ? 'véhicule' : this.ownerType === 'DRIVER' ? 'chauffeur' : 'élément concerné';
+    const ownerLabel =
+      this.ownerType === 'VEHICLE' ? 'véhicule'
+      : this.ownerType === 'DRIVER' ? 'chauffeur'
+      : this.ownerType === 'MAINTENANCE' ? 'entretien'
+      : 'élément concerné';
 
     const documentLabel = this.selectedocumentType?.label ?? this.data.requirement?.documentTypeLabel ?? 'ce document';
 

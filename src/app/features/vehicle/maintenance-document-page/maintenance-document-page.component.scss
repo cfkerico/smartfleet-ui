@@ -1,0 +1,18 @@
+:host { display: block; }
+
+.maintenance-document-page { max-width: 1440px; margin: 0 auto; padding: 24px; }
+.back-link { margin-bottom: 16px; }
+.maintenance-aside { display: grid; gap: 4px; text-align: right; color: #526577; }
+.maintenance-aside strong { color: #172b3f; font-size: 1.1rem; }
+.maintenance-summary { display: flex; flex-wrap: wrap; gap: 12px 24px; margin: 18px 0 24px; color: #40566b; }
+.maintenance-summary span { display: inline-flex; align-items: center; gap: 6px; }
+.maintenance-summary mat-icon { color: #245b9c; }
+.document-sections { display: grid; gap: 24px; }
+.page-state { display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; min-height: 260px; text-align: center; color: #526577; }
+.error-state { color: #a83232; }
+
+@media (max-width: 720px) {
+  .maintenance-document-page { padding: 16px; }
+  .maintenance-aside { text-align: left; }
+}
