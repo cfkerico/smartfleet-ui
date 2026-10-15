@@ -62,6 +62,13 @@ export const routes: Routes = [
                 .then(module => module.RecordMaintenancePageComponent),
           },
           {
+            path: 'vehicles/:vehicleId/maintenance-plans',
+            canActivate: [authGuard],
+            loadComponent: () =>
+              import('./features/vehicle/vehicle-maintenance-plans-page/vehicle-maintenance-plans-page.component')
+                .then(module => module.VehicleMaintenancePlansPageComponent),
+          },
+          {
             path: 'vehicles/:vehicleId/maintenances',
             canActivate: [authGuard],
             loadComponent: () =>

@@ -1,0 +1,107 @@
+<section class="plans-page">
+  <a mat-button [routerLink]="vehicle() ? ['/vehicles', vehicle()!.id, 'maintenances'] : ['/vehicles']" class="back-link">
+    <mat-icon>arrow_back</mat-icon> Retour aux entretiens
+  </a>
+
+  @if (loadingVehicle()) {
+    <div class="page-state" aria-live="polite"><mat-spinner diameter="40" /><p>Chargement du véhicule...</p></div>
+  } @else if (vehicleError()) {
+    <div class="page-state error-state" role="alert"><mat-icon>error_outline</mat-icon><p>{{ vehicleError() }}</p></div>
+  } @else if (vehicle(); as currentVehicle) {
+    <app-vehicle-page-header [vehicle]="currentVehicle" eyebrow="Plans d’entretien préventif">
+      <div vehicle-header-aside class="mileage">
+        <span>Kilométrage actuel</span>
+        <strong>{{ currentVehicle.currentMileage == null ? '—' : (currentVehicle.currentMileage | number) + ' km' }}</strong>
+      </div>
+    </app-vehicle-page-header>
+
+    <mat-card class="plans-card">
+      <div class="section-heading">
+        <div><h2>Suivi des plans</h2><p>Une échéance est atteinte dès que la date ou le kilométrage prévu est atteint.</p></div>
+        <span class="count">{{ plans().length }}</span>
+      </div>
+      @if (loadingPlans()) {
+        <div class="page-state" aria-live="polite"><mat-spinner diameter="36" /><p>Chargement des plans...</p></div>
+      } @else if (plansError()) {
+        <div class="page-state error-state" role="alert">
+          <mat-icon>error_outline</mat-icon><p>{{ plansError() }}</p>
+          <button mat-stroked-button type="button" (click)="reloadPlans()">Réessayer</button>
+        </div>
+      } @else if (plans().length === 0) {
+        <div class="page-state"><mat-icon>event_busy</mat-icon><p>Aucun plan préventif pour ce véhicule.</p></div>
+      } @else {
+        <div class="plan-list">
+          @for (plan of plans(); track plan.id) {
+            <article class="plan-item">
+              <div class="plan-top">
+                <div><h3>{{ typeLabel(plan.type) }}</h3>
+                  <p>Fréquence :
+                    @if (plan.frequencyMileage != null) { {{ plan.frequencyMileage | number }} km }
+                    @if (plan.frequencyMileage != null && plan.frequencyMonths != null) { ou }
+                    @if (plan.frequencyMonths != null) { {{ plan.frequencyMonths }} mois }
+                  </p>
+                </div>
+                <span class="status" [class.due]="isDue(plan)" [class.inactive]="plan.status === 'INACTIVE'">
+                  {{ plan.status === 'INACTIVE' ? 'Inactif' : isDue(plan) ? 'À échéance' : plan.lastMaintenanceDate ? 'À jour' : 'Sans référence' }}
+                </span>
+              </div>
+              <div class="plan-details">
+                <div><span>Dernier entretien</span><strong>
+                  @if (plan.lastMaintenanceDate) {
+                    {{ plan.lastMaintenanceDate | date:'dd/MM/yyyy' }} · {{ plan.lastMaintenanceMileage | number }} km
+                  } @else { Aucun entretien de référence }
+                </strong></div>
+                <div><span>Prochain seuil kilométrique</span><strong>{{ plan.nextDueMileage == null ? '—' : (plan.nextDueMileage | number) + ' km' }}</strong></div>
+                <div><span>Prochaine date</span><strong>{{ plan.nextDueDate ? (plan.nextDueDate | date:'dd/MM/yyyy') : '—' }}</strong></div>
+              </div>
+              @if (canManage) {
+                <div class="plan-actions">
+                  <button mat-stroked-button type="button" [disabled]="mutatingId() !== null"
+                    (click)="changeStatus(plan)">
+                    {{ mutatingId() === plan.id ? 'Mise à jour...' : plan.status === 'ACTIVE' ? 'Désactiver' : 'Réactiver' }}
+                  </button>
+                </div>
+              }
+            </article>
+          }
+        </div>
+      }
+    </mat-card>
+
+    @if (canManage) {
+      <mat-card class="create-card">
+        <div class="section-heading"><div><h2>Créer un plan</h2><p>Un seul plan par type d’entretien et par véhicule.</p></div></div>
+        <form [formGroup]="form" (ngSubmit)="createPlan()">
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Type d’entretien</mat-label>
+              <mat-select formControlName="type">
+                @for (type of availableTypes(); track type.value) { <mat-option [value]="type.value">{{ type.label }}</mat-option> }
+              </mat-select>
+              <mat-error>Choisissez un type d’entretien.</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Fréquence kilométrique</mat-label>
+              <input matInput type="number" min="1" step="1" formControlName="frequencyMileage" />
+              <span matTextSuffix>km</span>
+              @if (form.controls.frequencyMileage.invalid) { <mat-error>Indiquez un entier positif.</mat-error> }
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Fréquence calendaire</mat-label>
+              <input matInput type="number" min="1" step="1" formControlName="frequencyMonths" />
+              <span matTextSuffix>mois</span>
+              @if (form.controls.frequencyMonths.invalid) { <mat-error>Indiquez un entier positif.</mat-error> }
+            </mat-form-field>
+          </div>
+          <p class="form-hint">Renseignez au moins une fréquence. Si les deux sont présentes, le premier seuil atteint déclenche l’échéance.</p>
+          @if (actionError()) { <p class="action-message error-state" role="alert">{{ actionError() }}</p> }
+          @if (actionSuccess()) { <p class="action-message success-state" role="status">{{ actionSuccess() }}</p> }
+          <div class="form-actions"><button mat-raised-button color="primary" type="submit"
+            [disabled]="submitting() || availableTypes().length === 0">{{ submitting() ? 'Création...' : 'Créer le plan' }}</button></div>
+        </form>
+      </mat-card>
+    } @else {
+      <p class="read-only-note">La gestion des plans est réservée à l’administrateur et au gestionnaire de flotte.</p>
+    }
+  }
+</section>

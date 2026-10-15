@@ -30,6 +30,10 @@
         </div>
         <div class="section-actions">
           <span class="count">{{ totalElements() }}</span>
+          <a mat-stroked-button [routerLink]="['/vehicles', currentVehicle.id, 'maintenance-plans']">
+            <mat-icon>event_repeat</mat-icon>
+            Plans préventifs
+          </a>
           <a mat-raised-button color="primary" [routerLink]="['/vehicles', currentVehicle.id, 'maintenances', 'new']">
             <mat-icon>add</mat-icon>
             Ajouter un entretien
