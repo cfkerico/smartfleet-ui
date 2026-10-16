@@ -1,4 +1,4 @@
-import { notificationTopics } from './notification-web-socket.service';
+import { notificationConnectHeaders, notificationTopics } from './notification-web-socket.service';
 
 describe('notificationTopics', () => {
   it('includes each role once for a multi-role user', () => {
@@ -21,5 +21,15 @@ describe('notificationTopics', () => {
       '/topic/notification/1/FLEET_MANAGER',
       '/topic/notification/1/MAINTENANCE_MANAGERS',
     ]);
+  });
+});
+
+describe('notificationConnectHeaders', () => {
+  it('sends the bearer token in the STOMP connection headers', () => {
+    expect(notificationConnectHeaders('jwt-value')).toEqual({ Authorization: 'Bearer jwt-value' });
+  });
+
+  it('rejects an empty token', () => {
+    expect(() => notificationConnectHeaders(' ')).toThrow();
   });
 });

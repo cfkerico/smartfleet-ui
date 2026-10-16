@@ -16,6 +16,14 @@ export class AuthService {
     return keycloak.token;
   }
 
+  async getFreshToken(): Promise<string | undefined> {
+    if (!keycloak.authenticated) {
+      return undefined;
+    }
+    await keycloak.updateToken(30);
+    return keycloak.token;
+  }
+
   isAuthenticated(): boolean {
     return !!keycloak.authenticated;
   }

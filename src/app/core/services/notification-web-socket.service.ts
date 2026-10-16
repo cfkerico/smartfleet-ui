@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Client } from '@stomp/stompjs';
 import { Subject, Observable } from 'rxjs';
 import { Notification } from '../../models/Notification';
+import { AuthService } from '../auth/auth.service';
 
 export function notificationTopics(companyId: number, roles: string[]): string[] {
   const audiences = new Set(roles.filter(Boolean));
@@ -12,10 +13,19 @@ export function notificationTopics(companyId: number, roles: string[]): string[]
     .map(role => `/topic/notification/${companyId}/${role}`);
 }
 
+export function notificationConnectHeaders(token: string): Record<string, string> {
+  if (!token.trim()) {
+    throw new Error('A token is required for WebSocket notifications.');
+  }
+  return { Authorization: `Bearer ${token}` };
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationWebSocketService {
+
+  constructor(private authService: AuthService) {}
 
   private client?: Client;
 
@@ -24,7 +34,7 @@ export class NotificationWebSocketService {
 
   connect(companyId: number, roles: string[]): void {
 
-    if (this.client?.active) {
+    if (this.client?.active || !this.authService.isAuthenticated()) {
       return;
     }
 
@@ -33,9 +43,12 @@ export class NotificationWebSocketService {
 
       reconnectDelay: 3000,
 
-      debug: (message) => {
-
-        console.log(message);
+      beforeConnect: async () => {
+        const token = await this.authService.getFreshToken();
+        if (!token) {
+          throw new Error('Authentication is required for WebSocket notifications.');
+        }
+        this.client!.connectHeaders = notificationConnectHeaders(token);
       },
 
       onConnect: () => {
