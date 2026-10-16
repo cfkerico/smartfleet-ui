@@ -4,7 +4,11 @@ import { Subject, Observable } from 'rxjs';
 import { Notification } from '../../models/Notification';
 
 export function notificationTopics(companyId: number, roles: string[]): string[] {
-  return [...new Set(roles.filter(Boolean))]
+  const audiences = new Set(roles.filter(Boolean));
+  if (audiences.has('ADMIN') || audiences.has('FLEET_MANAGER')) {
+    audiences.add('MAINTENANCE_MANAGERS');
+  }
+  return [...audiences]
     .map(role => `/topic/notification/${companyId}/${role}`);
 }
 
