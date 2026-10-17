@@ -32,7 +32,7 @@ export class NotificationWebSocketService {
   private notificationSubject = new Subject<Notification>();
   notification$: Observable<Notification> = this.notificationSubject.asObservable();
 
-  connect(companyId: number, roles: string[]): void {
+  connect(): void {
 
     if (this.client?.active || !this.authService.isAuthenticated()) {
       return;
@@ -44,7 +44,7 @@ export class NotificationWebSocketService {
       reconnectDelay: 3000,
 
       beforeConnect: async () => {
-        const token = await this.authService.getFreshToken();
+        const token = await this.authService.getFreshToken(true);
         if (!token) {
           throw new Error('Authentication is required for WebSocket notifications.');
         }
@@ -55,7 +55,7 @@ export class NotificationWebSocketService {
 
         console.log('Notification WebSocket connected');
 
-        for (const topic of notificationTopics(companyId, roles)) {
+        for (const topic of notificationTopics(this.authService.getCompanyId(), this.authService.getRoles())) {
           this.client?.subscribe(topic,
             message => {
               const notification = JSON.parse(message.body) as Notification;
