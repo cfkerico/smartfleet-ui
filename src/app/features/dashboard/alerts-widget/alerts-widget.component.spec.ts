@@ -19,4 +19,20 @@ describe('AlertsWidgetComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should display the notification title, message and severity icon', () => {
+    fixture.componentRef.setInput('notifications', [{
+      id: 7,
+      title: 'Entretien préventif',
+      message: 'Échéance atteinte',
+      severity: 'WARNING',
+      status: 'UNREAD',
+      createdAt: '2026-10-18T08:00:00Z',
+    }]);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Entretien préventif');
+    expect(fixture.nativeElement.textContent).toContain('Échéance atteinte');
+    expect(fixture.nativeElement.querySelector('.alert-icon mat-icon').textContent).toContain('warning');
+  });
 });

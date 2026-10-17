@@ -1,12 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Dashboard } from '../../models/dashboard.model';
-import { DashboardService } from '../../core/services/dashboard.service';
-import { ChangeDetectorRef } from '@angular/core';
 import { AnalyticsService } from '../../core/services/analytics.service';
 import { BaseChartDirective } from 'ng2-charts';
-import { NotificationWebSocketService} from '../../core/services/notification-web-socket.service';
+import { NotificationStoreService } from '../../core/services/notification-store.service';
 import {AlertsWidgetComponent} from './alerts-widget/alerts-widget.component';
-import {NotificationSeverity, Notification } from '../../models/Notification';
 import {Observable, tap} from 'rxjs';
 import {DashboardAnalytics} from '../../models/dashboard-analytics.model';
 import {AsyncPipe} from '@angular/common';
@@ -24,41 +20,15 @@ import {AsyncPipe} from '@angular/common';
 })
 export class DashboardComponent implements OnInit {
 
-  dashboard!: Dashboard;
-
-  //analytics: any;
   analytics$!: Observable<DashboardAnalytics>;
   chartLabels: string[] = [];
   chartData: number[] = [];
-  notifications: Notification[] = [];
 
-  constructor(private dashboardService: DashboardService, private cdr: ChangeDetectorRef,
-              private analyticsService: AnalyticsService, private notificationService: NotificationWebSocketService) { }
+  constructor(private analyticsService: AnalyticsService,
+              public notificationStore: NotificationStoreService) { }
 
   ngOnInit(): void {
-   // this.dashboardService.getDashboard().subscribe(data => {
-   //    this.dashboard = data;
-   //    this.cdr.detectChanges();
-   //  });
-
-  /* this.analyticsService.getDashboard().subscribe({
-     next: data => {
-       this.analytics = data;
-       this.chartLabels = Object.keys(data.driverActivity);
-       this.chartData = Object.values(data.driverActivity);
-     }
-   });*/
     this.loadAnalytics();
-
-    this.listenNotifications();
-
-  }
-
-  private listenNotifications(): void {
-    this.notificationService.notification$.subscribe(notification => {
-      this.notifications.unshift(notification);
-      this.cdr.detectChanges(); // ==> Utile afin de charger la notification reçue à l'IHM
-    });
   }
 
   private loadAnalytics(): void {

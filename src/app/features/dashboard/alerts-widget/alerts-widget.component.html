@@ -2,7 +2,7 @@
 
   <!--  HEADER  -->
   <div class="widget-header">
-    <h2>Live Alerts</h2>
+    <h2>Notifications non lues</h2>
     <span class="counter">{{ notifications.length }}</span>
   </div>
 
@@ -10,12 +10,12 @@
   @if (notifications.length === 0) {
     <div class="empty-state">
       <mat-icon>notification_off</mat-icon>
-      <span>No alerts available</span>
+      <span>Aucune notification non lue</span>
     </div>
   }
 
   <!--  LIST  -->
-  @for (notification of notifications; track notification.message) {
+  @for (notification of notifications; track notification.id) {
     <div class="alert-card"
          [class.info]="notification.severity === 'INFO'"
          [class.success]="notification.severity === 'SUCCESS'"
@@ -23,12 +23,12 @@
          [class.error]="notification.severity === 'ERROR'">
       <!--  ICON  -->
       <div class="alert-icon">
-        <mat-icon>{{ notification.severity }}</mat-icon>
+        <mat-icon>{{ getIcon(notification.severity) }}</mat-icon>
       </div>
 
       <!--  CONTENT -->
       <div class="alert-content">
-        <div class="alert-type">{{ notification.severity }}</div>
+        <div class="alert-type">{{ notification.title }}</div>
         <div class="alert-message">{{ notification.message }}</div>
       </div>
     </div>
