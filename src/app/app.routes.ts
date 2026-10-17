@@ -3,6 +3,11 @@ import { authGuard } from './core/auth/auth.guard';
 
 export const routes: Routes = [
   {
+    path: 'signed-out',
+    loadComponent: () =>
+      import('./features/auth/signed-out.component').then(m => m.SignedOutComponent),
+  },
+  {
     path: '',
         loadComponent: () =>
           import('./layout/main-layout.component').then(m => m.MainLayoutComponent),

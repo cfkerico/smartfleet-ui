@@ -4,12 +4,12 @@ import { keycloak } from './keycloak';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  login() {
-    return keycloak.login();
+  login(redirectUri?: string) {
+    return keycloak.login(redirectUri ? { redirectUri } : undefined);
   }
 
   logout() {
-    return keycloak.logout();
+    return keycloak.logout({ redirectUri: `${window.location.origin}/signed-out` });
   }
 
   getToken(): string | undefined {

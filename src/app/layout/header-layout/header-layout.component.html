@@ -54,13 +54,32 @@
       }
     </mat-menu>
 
-    <button mat-button class="profile-btn">
+    <button mat-button class="profile-btn" [matMenuTriggerFor]="profileMenu"
+            aria-label="Ouvrir le menu du profil">
       <mat-icon>
         account_circle
       </mat-icon>
 
-      <span>CHOUPO</span>
+      <span class="profile-name">{{ profileName }}</span>
+      <mat-icon>expand_more</mat-icon>
     </button>
+
+    <mat-menu #profileMenu="matMenu">
+      <div class="profile-summary">
+        <strong>{{ profileName }}</strong>
+        @if (profileUsername) {
+          <span>{{ profileUsername }}</span>
+        }
+        @if (profileEmail) {
+          <span>{{ profileEmail }}</span>
+        }
+      </div>
+      <mat-divider />
+      <button mat-menu-item class="logout-button" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Se déconnecter</span>
+      </button>
+    </mat-menu>
   </div>
 
 </header>

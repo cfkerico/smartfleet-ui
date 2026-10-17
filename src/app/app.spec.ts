@@ -7,15 +7,21 @@ import { NotificationWebSocketService } from './core/services/notification-web-s
 
 describe('App', () => {
   const connect = vi.fn();
+  const loadUnread = vi.fn();
+  const listenRealtime = vi.fn();
+  let authenticated = true;
   beforeEach(async () => {
     connect.mockReset();
+    loadUnread.mockReset();
+    listenRealtime.mockReset();
+    authenticated = true;
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
         provideRouter([]),
         {
           provide: AuthService,
-          useValue: { getCompanyId: () => 1, getRoles: () => ['ADMIN', 'FLEET_MANAGER'] },
+          useValue: { isAuthenticated: () => authenticated },
         },
         {
           provide: NotificationWebSocketService,
@@ -23,7 +29,7 @@ describe('App', () => {
         },
         {
           provide: NotificationStoreService,
-          useValue: { loadUnread: () => undefined, listenRealtime: () => undefined },
+          useValue: { loadUnread, listenRealtime },
         },
       ],
     }).compileComponents();
@@ -41,6 +47,18 @@ describe('App', () => {
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled).toBeTruthy();
-    expect(connect).toHaveBeenCalledWith(1, ['ADMIN', 'FLEET_MANAGER']);
+    expect(connect).toHaveBeenCalledOnce();
+    expect(loadUnread).toHaveBeenCalledOnce();
+    expect(listenRealtime).toHaveBeenCalledOnce();
+  });
+
+  it('does not start notifications on the public signed-out page', () => {
+    authenticated = false;
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    expect(connect).not.toHaveBeenCalled();
+    expect(loadUnread).not.toHaveBeenCalled();
+    expect(listenRealtime).not.toHaveBeenCalled();
   });
 });

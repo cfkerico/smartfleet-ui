@@ -6,6 +6,9 @@ import { LayoutStateService } from '../../core/services/layout-state.service';
 import {NotificationStoreService} from '../../core/services/notification-store.service';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatBadge} from '@angular/material/badge';
+import {MatDivider} from '@angular/material/divider';
+import {AuthService} from '../../core/auth/auth.service';
+import {Notification} from '../../models/Notification';
 
 @Component({
   standalone: true,
@@ -20,7 +23,8 @@ import {MatBadge} from '@angular/material/badge';
     MatMenuTrigger,
     MatBadge,
     MatMenu,
-    MatMenuItem
+    MatMenuItem,
+    MatDivider
   ],
   templateUrl: './header-layout.component.html',
   styleUrl: './header-layout.component.scss',
@@ -28,13 +32,36 @@ import {MatBadge} from '@angular/material/badge';
 export class HeaderLayoutComponent {
 
   constructor(public layoutStateService: LayoutStateService,
-              public notificationStore: NotificationStoreService,) {}
+              public notificationStore: NotificationStoreService,
+              private auth: AuthService) {}
+
+  get profileName(): string {
+    const fullName = [this.claim('given_name'), this.claim('family_name')].filter(Boolean).join(' ');
+    return fullName || this.claim('name') || this.profileUsername || 'Mon compte';
+  }
+
+  get profileUsername(): string {
+    return this.claim('preferred_username');
+  }
+
+  get profileEmail(): string {
+    return this.claim('email');
+  }
 
   toggleSidebar(): void {
     this.layoutStateService.toggleSidebar();
   }
 
-  markAsRead(notification: any): void {
+  markAsRead(notification: Notification): void {
     this.notificationStore.markAsRead(notification);
+  }
+
+  logout(): void {
+    void this.auth.logout();
+  }
+
+  private claim(name: string): string {
+    const value: unknown = this.auth.getUser()?.[name];
+    return typeof value === 'string' ? value.trim() : '';
   }
 }
