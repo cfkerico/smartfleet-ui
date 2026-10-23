@@ -2,6 +2,19 @@
     padding: 16px;
 }
 
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    h1 {
+        margin: 0;
+    }
+}
+
 .payment-table {
     width: 100%;
     margin-top: 16px;

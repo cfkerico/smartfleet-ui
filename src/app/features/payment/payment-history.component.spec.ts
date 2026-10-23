@@ -36,4 +36,13 @@ describe('PaymentHistoryComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it("should display the payment action in the page header with an icon", () => {
+    const header: HTMLElement = fixture.nativeElement.querySelector(".page-header");
+    expect(header).toBeTruthy();
+    expect(header.querySelector("h1")?.textContent).toContain("Recettes journalières");
+    const button = header.querySelector("button");
+    expect(button?.textContent).toContain("Nouveau versement");
+    expect(button?.querySelector("mat-icon")?.textContent).toContain("payments");
+  });
 });

@@ -46,7 +46,8 @@ import { formatDate } from '@angular/common';
     MatInputModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatOptionModule
+    MatOptionModule,
+    MatIcon
   ],
   templateUrl: './payment-history.component.html',
   styleUrl: './payment-history.component.scss',

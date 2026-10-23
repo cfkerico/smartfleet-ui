@@ -1,17 +1,11 @@
-<h1>Recettes journalières</h1>
+<header class="page-header">
+  <h1>Recettes journalières</h1>
+  <button mat-raised-button color="primary" type="button" (click)="openForm()">
+    <mat-icon>payments</mat-icon>
+    Nouveau versement
+  </button>
+</header>
 
-<button mat-raised-button color="primary" (click)="openForm()">
-  Nouveau versement
-</button>
-
-<!-- <mat-form-field appearance="outline" class="filter">
-  <mat-label>Filtrer</mat-label>
-
-  <input
-    matInput
-    (keyup)="applyFilter($event)"
-    placeholder="Recherche...">
-</mat-form-field> -->
 
 <form class="filters" [formGroup]="filterForm">
 
