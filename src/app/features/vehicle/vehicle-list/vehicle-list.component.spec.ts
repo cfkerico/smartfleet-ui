@@ -74,6 +74,16 @@ describe('VehicleListComponent', () => {
     expect(link.getAttribute('href')).toBe('/vehicles/1/maintenances');
   });
 
+  it('should link to the selected vehicle detail', () => {
+    component.vehicles.data = [{
+      id: 9, brand: 'Toyota', model: 'Yaris', label: 'Toyota Yaris', year: 2004,
+      vehicleStatus: 'AVAILABLE', fuelType: 'ESSENCE', vin: 'VIN-9', registrationNumber: 'CE 135 FG',
+    }];
+    fixture.detectChanges();
+    const link = fixture.nativeElement.querySelector('a[aria-label="Détail du véhicule Toyota Yaris"]');
+    expect(link?.getAttribute('href')).toBe('/vehicles/9');
+  });
+
   it('should deactivate an available vehicle only after confirmation', () => {
     const vehicle = {
       id: 1, brand: 'Toyota', model: 'Yaris', label: 'Toyota Yaris', year: 2004,

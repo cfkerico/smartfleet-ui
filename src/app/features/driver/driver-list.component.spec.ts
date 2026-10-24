@@ -78,8 +78,19 @@ describe('DriverListComponent', () => {
     ] as any;
     fixture.detectChanges();
     const element: HTMLElement = fixture.nativeElement;
-    expect(element.querySelector('.driver-row--active .driver-status')?.textContent?.trim()).toBe('Actif');
-    expect(element.querySelector('.driver-row--inactive .driver-status')?.textContent?.trim()).toBe('Inactif');
+    expect(element.querySelector('.driver-row--active .driver-status')?.textContent?.trim()).toBe('ACTIF');
+    expect(element.querySelector('.driver-row--inactive .driver-status')?.textContent?.trim()).toBe('INACTIF');
+  });
+
+  it('should link to the selected driver detail', () => {
+    component.drivers.data = [{
+      id: 7, civilite: 'Mme', nom: 'Dupont', prenom: 'Alice', fullName: 'Alice Dupont',
+      email: 'alice@example.com', mobilePhoneNumber: '', adresse: '',
+      licenseNumber: '', licenseExpirationDate: '', hireDate: '', status: 'ACTIVE', workedDays: 0,
+    }];
+    fixture.detectChanges();
+    const link = fixture.nativeElement.querySelector('a[aria-label="Détail du chauffeur Alice Dupont"]');
+    expect(link?.getAttribute('href')).toBe('/drivers/7');
   });
 
   it('should update the selected driver once and refresh the list', () => {

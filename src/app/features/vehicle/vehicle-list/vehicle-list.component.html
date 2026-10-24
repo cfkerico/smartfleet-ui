@@ -57,6 +57,11 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Actions</th>
           <td mat-cell *matCellDef="let d">
+            <a mat-icon-button color="primary" [routerLink]="['/vehicles', d.id]"
+              [attr.aria-label]="'Détail du véhicule ' + (d.label || d.registrationNumber)"
+              matTooltip="Voir la fiche">
+              <mat-icon>visibility</mat-icon>
+            </a>
             <a
               mat-icon-button
               color="primary"

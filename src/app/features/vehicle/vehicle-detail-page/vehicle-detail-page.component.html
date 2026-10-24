@@ -1,0 +1,69 @@
+<section class="entity-detail-page">
+  <a class="back-link" mat-button routerLink="/vehicles">
+    <mat-icon>arrow_back</mat-icon>
+    Retour aux véhicules
+  </a>
+
+  @if (loading()) {
+    <div class="page-state" aria-live="polite">
+      <mat-spinner diameter="44" />
+      <p>Chargement du véhicule...</p>
+    </div>
+  } @else if (error()) {
+    <div class="page-state error-state" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <h1>Véhicule indisponible</h1>
+      <p>{{ error() }}</p>
+      <a mat-stroked-button routerLink="/vehicles">Revenir à la liste</a>
+    </div>
+  } @else if (vehicle(); as currentVehicle) {
+    <app-vehicle-page-header [vehicle]="currentVehicle" eyebrow="Fiche véhicule">
+      <span vehicle-header-aside class="status" [class.status--inactive]="currentVehicle.vehicleStatus === 'INACTIVE'">
+        {{ statusLabel(currentVehicle.vehicleStatus) }}
+      </span>
+    </app-vehicle-page-header>
+
+    <div class="detail-grid">
+      <section class="detail-card" aria-labelledby="vehicle-identity-title">
+        <h2 id="vehicle-identity-title">Identification</h2>
+        <dl class="detail-list">
+          <div><dt>Marque</dt><dd>{{ currentVehicle.brand }}</dd></div>
+          <div><dt>Modèle</dt><dd>{{ currentVehicle.model }}</dd></div>
+          <div><dt>Version</dt><dd>{{ currentVehicle.version || 'Non renseignée' }}</dd></div>
+          <div><dt>Immatriculation</dt><dd>{{ currentVehicle.registrationNumber || 'Non renseignée' }}</dd></div>
+          <div><dt>Numéro VIN</dt><dd>{{ currentVehicle.vin || 'Non renseigné' }}</dd></div>
+          <div><dt>Année</dt><dd>{{ currentVehicle.year }}</dd></div>
+        </dl>
+      </section>
+
+      <section class="detail-card" aria-labelledby="vehicle-technical-title">
+        <h2 id="vehicle-technical-title">Caractéristiques et acquisition</h2>
+        <dl class="detail-list">
+          <div><dt>Carburant</dt><dd>{{ currentVehicle.fuelType || 'Non renseigné' }}</dd></div>
+          <div><dt>Transmission</dt><dd>{{ currentVehicle.transmissionType || 'Non renseignée' }}</dd></div>
+          <div><dt>Cylindrée</dt><dd>{{ currentVehicle.engineCapacity ?? 'Non renseignée' }}</dd></div>
+          <div><dt>Puissance fiscale</dt><dd>{{ currentVehicle.horsePower ?? 'Non renseignée' }}</dd></div>
+          <div><dt>Date d'acquisition</dt><dd>{{ currentVehicle.acquisitionDate || 'Non renseignée' }}</dd></div>
+          <div><dt>Kilométrage d'acquisition</dt><dd>{{ currentVehicle.acquisitionMileage == null ? 'Non renseigné' : currentVehicle.acquisitionMileage + ' km' }}</dd></div>
+          <div><dt>Kilométrage courant</dt><dd>{{ currentVehicle.currentMileage == null ? 'Non renseigné' : currentVehicle.currentMileage + ' km' }}</dd></div>
+          <div><dt>Recette journalière attendue</dt><dd>{{ currentVehicle.expectedDailyRevenue == null ? 'Non renseignée' : currentVehicle.expectedDailyRevenue + ' FCFA' }}</dd></div>
+        </dl>
+      </section>
+
+      <section class="detail-card" aria-labelledby="vehicle-links-title">
+        <h2 id="vehicle-links-title">Parcours associés</h2>
+        <div class="detail-actions">
+          <a mat-stroked-button [routerLink]="['/vehicles', currentVehicle.id, 'documents']">
+            <mat-icon>folder</mat-icon>Dossier documentaire
+          </a>
+          <a mat-stroked-button [routerLink]="['/vehicles', currentVehicle.id, 'maintenances']">
+            <mat-icon>build</mat-icon>Historique des entretiens
+          </a>
+          <a mat-stroked-button [routerLink]="['/vehicles', currentVehicle.id, 'maintenance-plans']">
+            <mat-icon>event_repeat</mat-icon>Plans préventifs
+          </a>
+        </div>
+      </section>
+    </div>
+  }
+</section>

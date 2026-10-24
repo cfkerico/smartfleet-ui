@@ -1,0 +1,66 @@
+<section class="entity-detail-page">
+  <a class="back-link" mat-button routerLink="/drivers">
+    <mat-icon>arrow_back</mat-icon>
+    Retour aux chauffeurs
+  </a>
+
+  @if (loading()) {
+    <div class="page-state" aria-live="polite">
+      <mat-spinner diameter="44" />
+      <p>Chargement du chauffeur...</p>
+    </div>
+  } @else if (error()) {
+    <div class="page-state error-state" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <h1>Chauffeur indisponible</h1>
+      <p>{{ error() }}</p>
+      <a mat-stroked-button routerLink="/drivers">Revenir à la liste</a>
+    </div>
+  } @else if (driver(); as currentDriver) {
+    <header class="entity-header">
+      <div class="entity-icon" aria-hidden="true"><mat-icon>person</mat-icon></div>
+      <div>
+        <span class="eyebrow">Fiche chauffeur</span>
+        <h1>{{ currentDriver.fullName || (currentDriver.prenom + ' ' + currentDriver.nom) }}</h1>
+        <p class="entity-subtitle">Chauffeur #{{ currentDriver.id }}</p>
+      </div>
+      <span class="status" [class.status--inactive]="currentDriver.status !== 'ACTIVE'">
+        {{ currentDriver.status === 'ACTIVE' ? 'Actif' : currentDriver.status === 'INACTIVE' ? 'Inactif' : currentDriver.status }}
+      </span>
+    </header>
+
+    <div class="detail-grid">
+      <section class="detail-card" aria-labelledby="driver-contact-title">
+        <h2 id="driver-contact-title">Identité et coordonnées</h2>
+        <dl class="detail-list">
+          <div><dt>Civilité</dt><dd>{{ currentDriver.civilite || 'Non renseignée' }}</dd></div>
+          <div><dt>Nom</dt><dd>{{ currentDriver.nom }}</dd></div>
+          <div><dt>Prénom</dt><dd>{{ currentDriver.prenom }}</dd></div>
+          <div><dt>Email</dt><dd>{{ currentDriver.email || 'Non renseigné' }}</dd></div>
+          <div><dt>Téléphone</dt><dd>{{ currentDriver.mobilePhoneNumber || 'Non renseigné' }}</dd></div>
+          <div><dt>Adresse</dt><dd>{{ currentDriver.adresse || 'Non renseignée' }}</dd></div>
+        </dl>
+      </section>
+
+      <section class="detail-card" aria-labelledby="driver-work-title">
+        <h2 id="driver-work-title">Permis et activité</h2>
+        <dl class="detail-list">
+          <div><dt>Numéro de permis</dt><dd>{{ currentDriver.licenseNumber || 'Non renseigné' }}</dd></div>
+          <div><dt>Expiration du permis</dt><dd>{{ currentDriver.licenseExpirationDate || 'Non renseignée' }}</dd></div>
+          <div><dt>Date d'embauche</dt><dd>{{ currentDriver.hireDate || 'Non renseignée' }}</dd></div>
+          <div><dt>Jours travaillés</dt><dd>{{ currentDriver.workedDays }}</dd></div>
+        </dl>
+      </section>
+
+      <section class="detail-card" aria-labelledby="driver-links-title">
+        <h2 id="driver-links-title">Parcours associés</h2>
+        <div class="detail-actions">
+          <a mat-stroked-button [routerLink]="['/drivers', currentDriver.id, 'documents']">
+            <mat-icon>folder</mat-icon>
+            Dossier documentaire
+          </a>
+        </div>
+      </section>
+    </div>
+  }
+</section>

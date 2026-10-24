@@ -39,6 +39,13 @@ export const routes: Routes = [
             .then(module => module.DriverDocumentPageComponent),
           },
           {
+            path: 'drivers/:driverId',
+            canActivate: [authGuard],
+            loadComponent: () =>
+              import('./features/driver/driver-detail-page/driver-detail-page.component')
+                .then(m => m.DriverDetailPageComponent),
+          },
+          {
             path: 'vehicles/:vehicleId/documents',
             canActivate: [authGuard],
             loadComponent: () => 
@@ -79,6 +86,13 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./features/vehicle/vehicle-maintenance-page/vehicle-maintenance-page.component')
                 .then(module => module.VehicleMaintenancePageComponent),
+          },
+          {
+            path: 'vehicles/:vehicleId',
+            canActivate: [authGuard],
+            loadComponent: () =>
+              import('./features/vehicle/vehicle-detail-page/vehicle-detail-page.component')
+                .then(m => m.VehicleDetailPageComponent),
           },
           {
             path: 'vehicles',

@@ -1,0 +1,26 @@
+:host { display: block; }
+.entity-detail-page { max-width: 1440px; margin: 0 auto; padding: 24px; }
+.back-link { margin-bottom: 18px; }
+.entity-header { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 18px; padding: 24px; margin-bottom: 22px; border: 1px solid #dfe5ec; border-radius: 16px; background: linear-gradient(135deg, #fff, #f5f8fc); box-shadow: 0 8px 24px rgb(15 23 42 / 6%); }
+.entity-icon { display: grid; place-items: center; width: 58px; height: 58px; border-radius: 14px; background: #e7f1f8; color: #1f5f8b; }
+.entity-icon mat-icon { width: 32px; height: 32px; font-size: 32px; }
+.eyebrow { display: block; color: #5f7285; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.entity-header h1 { margin: 2px 0 8px; color: #172b3f; font-size: clamp(1.5rem, 2vw, 2rem); overflow-wrap: anywhere; }
+.entity-subtitle { margin: 0; color: #526577; }
+.status { padding: 7px 12px; border-radius: 999px; background: #e6f4ea; color: #17613a; font-size: .8rem; font-weight: 700; }
+.status--inactive { background: #edf1f5; color: #526577; }
+.detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.detail-card { padding: 24px; border: 1px solid #dfe5ec; border-radius: 16px; background: #fff; }
+.detail-card h2 { margin: 0 0 18px; color: #172b3f; font-size: 1.15rem; }
+.detail-list { display: grid; gap: 14px; margin: 0; }
+.detail-list div { display: grid; grid-template-columns: minmax(140px, 35%) minmax(0, 1fr); gap: 12px; }
+.detail-list dt { color: #617385; }
+.detail-list dd { margin: 0; color: #172b3f; font-weight: 600; overflow-wrap: anywhere; }
+.detail-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.detail-actions a { display: inline-flex; align-items: center; gap: 8px; }
+.page-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; min-height: 300px; padding: 30px; text-align: center; color: #526577; }
+.page-state h1, .page-state p { margin: 0; }
+.page-state mat-icon { width: 44px; height: 44px; font-size: 44px; }
+.error-state mat-icon { color: #b42318; }
+@media (max-width: 760px) { .entity-detail-page { padding: 16px; } .entity-header { grid-template-columns: auto minmax(0,1fr); padding: 18px; } .entity-header .status { grid-column: 2; justify-self: start; } .detail-grid { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .detail-list div { grid-template-columns: 1fr; gap: 3px; } }
