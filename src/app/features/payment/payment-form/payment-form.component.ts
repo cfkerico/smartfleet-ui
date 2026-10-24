@@ -43,7 +43,7 @@ export class PaymentFormComponent implements OnInit {
   private initForm(): void {
     this.form = this.fb.group({
       assignmentId: [null, Validators.required],
-      paidAmount: [null, Validators.required, Validators.min(1)],
+      paidAmount: [null, [Validators.required, Validators.min(1)]],
       paymentDate: [new Date(), Validators.required]
     });
   }
@@ -56,7 +56,7 @@ export class PaymentFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.form.valid) {
+    if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
@@ -66,24 +66,20 @@ export class PaymentFormComponent implements OnInit {
     const assignment = this.assignments.find(a => a.id === raw.assignmentId);
 
     if (!assignment) {
-      this.notification.error('Selected assignment not found');
+      this.notification.error('Affectation active introuvable');
       this.form.get('assignmentId')?.setErrors({ assignmentNotFound: true });
       return;
     }
-
-    console.log('---------------- assignments : ', raw.paymentDate);
 
     const payload = {
       driverId: assignment.driverId,
       vehicleId: assignment.vehicleId,
       paidAmount: raw.paidAmount,
-      paymentDate: formatDate(raw.paymentDate, 'yyyy-MM-dd', 'fr')
+      paymentDate: formatDate(raw.paymentDate, 'yyyy-MM-dd', 'en-US')
     };
 
-    console.log('+++++++++++++++++ payload', JSON.stringify(payload));
-
     this.revenuePaymentApi.createPayment(payload).subscribe(() => {
-      this.notification.success('Payment created successfully');
+      this.notification.success('Versement enregistré avec succès');
         this.dialogRef.close(true);
     });
   }
@@ -92,15 +88,4 @@ export class PaymentFormComponent implements OnInit {
     this.dialogRef.close(false);
   }
 
-  private toIsoDate(date: Date): string {
-    return date.toISOString().substring(0, 10);
-  }
-
-  savePayment() {
-    // Implement the logic to save the payment
-  }
-
-  cancel() {
-    // Implement the logic to cancel the payment form
-  }
 }

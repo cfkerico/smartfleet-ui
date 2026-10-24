@@ -9,14 +9,16 @@ import { CreateExpenseDialogComponent } from './create-expense-dialog.component'
 describe('CreateExpenseDialogComponent', () => {
   let component: CreateExpenseDialogComponent;
   let fixture: ComponentFixture<CreateExpenseDialogComponent>;
+  const createExpense = vi.fn(() => of(undefined));
+  const close = vi.fn();
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CreateExpenseDialogComponent],
       providers: [
-        { provide: MatDialogRef, useValue: { close: () => undefined } },
+        { provide: MatDialogRef, useValue: { close } },
         { provide: AssignmentApiService, useValue: { findVehicles: () => of([]) } },
-        { provide: ExpenseApiService, useValue: { createExpense: () => of(null) } },
+        { provide: ExpenseApiService, useValue: { createExpense } },
       ],
     }).compileComponents();
 
@@ -27,5 +29,28 @@ describe('CreateExpenseDialogComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should reject a zero amount without sending a request', () => {
+    createExpense.mockClear();
+    component.form.patchValue({ vehicleId: 1, expenseType: 'FUEL', requestedAmount: 0 });
+
+    component.submit();
+
+    expect(component.form.get('requestedAmount')?.hasError('min')).toBe(true);
+    expect(createExpense).not.toHaveBeenCalled();
+  });
+
+  it('should create an expense and close on success', () => {
+    createExpense.mockClear();
+    close.mockClear();
+    component.form.patchValue({ vehicleId: 1, expenseType: 'FUEL', requestedAmount: 10000 });
+
+    component.submit();
+
+    expect(createExpense).toHaveBeenCalledWith(expect.objectContaining({
+      vehicleId: 1, expenseType: 'FUEL', requestedAmount: 10000, priority: 'NORMAL',
+    }));
+    expect(close).toHaveBeenCalledWith(true);
   });
 });

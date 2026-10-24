@@ -55,7 +55,7 @@ export class AssignmentApiService {
   }
 
   findActiveAssignments(): Observable<VehicleAssignment[]> {
-    return this.http.get<VehicleAssignment[]>(`${this.assignmentUrl}/active `);
+    return this.http.get<VehicleAssignment[]>(`${this.assignmentUrl}/active`);
   }
 
 }

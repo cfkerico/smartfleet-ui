@@ -30,6 +30,33 @@ export class CreateExpenseDialogComponent implements OnInit {
   expenseTypes: ExpenseType[] = ['FUEL', 'MAINTENANCE', 'REPAIR', 'SPARE_PART', 'INSURANCE', 'TAX', 'DOCUMENT', 'SALARY', 'UTILITY', 'OTHER'];
   expensePriorities: ExpensePriority[] = ['LOW', 'NORMAL', 'HIGH', 'URGENT', 'CRITICAL'];
 
+  typeLabel(type: ExpenseType): string {
+    const labels: Record<ExpenseType, string> = {
+      FUEL: 'Carburant',
+      MAINTENANCE: 'Entretien',
+      REPAIR: 'Réparation',
+      SPARE_PART: 'Pièce détachée',
+      INSURANCE: 'Assurance',
+      TAX: 'Taxe',
+      DOCUMENT: 'Document',
+      SALARY: 'Salaire',
+      UTILITY: 'Charge',
+      OTHER: 'Autre',
+    };
+    return labels[type];
+  }
+
+  priorityLabel(priority: ExpensePriority): string {
+    const labels: Record<ExpensePriority, string> = {
+      LOW: 'Faible',
+      NORMAL: 'Normale',
+      HIGH: 'Élevée',
+      URGENT: 'Urgente',
+      CRITICAL: 'Critique',
+    };
+    return labels[priority];
+  }
+
   constructor(
     private fb: FormBuilder,
     private expenseApi: ExpenseApiService,
@@ -46,7 +73,7 @@ export class CreateExpenseDialogComponent implements OnInit {
     this.form = this.fb.group({
       vehicleId: [null, Validators.required],
       expenseType: [null, Validators.required],
-      requestedAmount: [null, [Validators.required, Validators.min(0)]],
+      requestedAmount: [null, [Validators.required, Validators.min(1)]],
       priority: ['NORMAL', Validators.required],      
       description: [null],
     });
