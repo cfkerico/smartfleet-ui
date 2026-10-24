@@ -44,6 +44,10 @@ export class VehicleFormComponent {
     vin: ['', Validators.required],
     registrationNumber: [''],
     acquisitionMileage: [null as number | null, [Validators.required, Validators.min(0), Validators.pattern(/^\d+$/)]],
+    engineCapacity: [null as number | null, Validators.min(0.01)],
+    horsePower: [null as number | null, [Validators.min(1), Validators.pattern(/^\d+$/)]],
+    acquisitionDate: [null as string | null],
+    expectedDailyRevenue: [null as number | null, Validators.min(0)],
   });
 
   isEdit = false;
@@ -61,7 +65,11 @@ export class VehicleFormComponent {
         transmission: data.transmissionType ?? '',
         version: data.version ?? '',
         vin: data.vin,
-        registrationNumber: data.registrationNumber
+        registrationNumber: data.registrationNumber,
+        engineCapacity: data.engineCapacity ?? null,
+        horsePower: data.horsePower ?? null,
+        acquisitionDate: data.acquisitionDate ?? null,
+        expectedDailyRevenue: data.expectedDailyRevenue ?? null
       });
     }
   }

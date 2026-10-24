@@ -12,6 +12,10 @@ export interface VehicleDetailsPayload {
   year: number;
   fuelType: string;
   transmission: string;
+  engineCapacity?: number | null;
+  horsePower?: number | null;
+  acquisitionDate?: string | null;
+  expectedDailyRevenue?: number | null;
   registrationNumber?: string | null;
   vin: string;
 }

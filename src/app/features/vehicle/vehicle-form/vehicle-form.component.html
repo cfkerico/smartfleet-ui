@@ -63,6 +63,40 @@
             <mat-error>La transmission est obligatoire.</mat-error>
           }
         </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Cylindrée (L)</mat-label>
+          <input matInput type="number" min="0.01" step="0.01" formControlName="engineCapacity">
+          @if (f.engineCapacity.touched && f.engineCapacity.invalid) {
+            <mat-error>Indiquez une cylindrée supérieure à zéro.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Puissance fiscale (CV)</mat-label>
+          <input matInput type="number" min="1" step="1" formControlName="horsePower">
+          @if (f.horsePower.touched && f.horsePower.invalid) {
+            <mat-error>Indiquez un nombre entier positif.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h3>Acquisition et exploitation</h3>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Date d’acquisition</mat-label>
+          <input matInput type="date" formControlName="acquisitionDate">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Recette journalière attendue (FCFA)</mat-label>
+          <input matInput type="number" min="0" step="1" formControlName="expectedDailyRevenue">
+          @if (f.expectedDailyRevenue.touched && f.expectedDailyRevenue.invalid) {
+            <mat-error>Indiquez un montant positif ou nul.</mat-error>
+          }
+        </mat-form-field>
       </div>
     </section>
 

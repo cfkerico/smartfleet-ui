@@ -63,6 +63,8 @@ describe('VehicleService', () => {
     const details = {
       brand: 'Toyota', model: 'Yaris', year: 2004, fuelType: 'ESSENCE',
       transmission: 'MANUAL', vin: 'VIN-1', registrationNumber: '033830',
+      engineCapacity: 1.6, horsePower: 7, acquisitionDate: '2020-05-03',
+      expectedDailyRevenue: 12000,
     };
     service.update(7, details).subscribe();
 

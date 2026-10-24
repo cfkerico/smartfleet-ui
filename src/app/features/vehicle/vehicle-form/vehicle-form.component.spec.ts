@@ -31,7 +31,8 @@ describe('VehicleFormComponent', () => {
     component.form.patchValue({
       brand: 'Toyota', model: 'Yaris', year: 2004,
       fuelType: 'ESSENCE', registrationNumber: 'CE-554-MP', vin: 'VF1RFA00000000000',
-      acquisitionMileage: 101000
+      acquisitionMileage: 101000, engineCapacity: 1.6, horsePower: 7,
+      acquisitionDate: '2020-05-03', expectedDailyRevenue: 12000
     });
 
     expect(component.form.invalid).toBe(true);
@@ -41,7 +42,10 @@ describe('VehicleFormComponent', () => {
     component.form.patchValue({ transmission: 'MANUAL' });
     expect(component.form.valid).toBe(true);
     component.save();
-    expect(close).toHaveBeenCalledWith(expect.objectContaining({ transmission: 'MANUAL', acquisitionMileage: 101000 }));
+    expect(close).toHaveBeenCalledWith(expect.objectContaining({
+      transmission: 'MANUAL', acquisitionMileage: 101000, engineCapacity: 1.6,
+      horsePower: 7, acquisitionDate: '2020-05-03', expectedDailyRevenue: 12000,
+    }));
     expect(close.mock.calls[0][0]).not.toHaveProperty('currentMileage');
   });
 
@@ -55,6 +59,13 @@ describe('VehicleFormComponent', () => {
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('Kilométrage d’acquisition');
   });
 
+  it('rejects invalid optional vehicle specifications', () => {
+    component.form.patchValue({ engineCapacity: 0, horsePower: 2.5, expectedDailyRevenue: -1 });
+    expect(component.f.engineCapacity.invalid).toBe(true);
+    expect(component.f.horsePower.invalid).toBe(true);
+    expect(component.f.expectedDailyRevenue.invalid).toBe(true);
+  });
+
   it('does not include current mileage when editing a vehicle', async () => {
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
@@ -64,6 +75,8 @@ describe('VehicleFormComponent', () => {
           id: 7, brand: 'Toyota', model: 'Yaris', year: 2004,
           fuelType: 'ESSENCE', transmissionType: 'MANUAL', vin: 'VIN-7',
           registrationNumber: 'CE-554-MP', currentMileage: 101000,
+          engineCapacity: 1.6, horsePower: 7,
+          acquisitionDate: '2020-05-03', expectedDailyRevenue: 12000,
         } },
         { provide: MatDialogRef, useValue: { close } },
       ],
@@ -74,6 +87,10 @@ describe('VehicleFormComponent', () => {
 
     expect(editComponent.form.valid).toBe(true);
     expect(editComponent.form.controls.acquisitionMileage.disabled).toBe(true);
+    expect(editComponent.form.value).toMatchObject({
+      engineCapacity: 1.6, horsePower: 7,
+      acquisitionDate: '2020-05-03', expectedDailyRevenue: 12000,
+    });
     expect((editFixture.nativeElement as HTMLElement).textContent).not.toContain('Kilométrage d’acquisition');
     editComponent.save();
     expect(close).toHaveBeenCalledOnce();

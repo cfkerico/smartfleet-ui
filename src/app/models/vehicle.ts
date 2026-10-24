@@ -12,5 +12,9 @@ export interface Vehicle {
   registrationNumber: string;
   currentMileage?: number | null;
   acquisitionMileage?: number | null;
+  engineCapacity?: number | null;
+  horsePower?: number | null;
+  acquisitionDate?: string | null;
+  expectedDailyRevenue?: number | null;
 
 }
