@@ -58,4 +58,29 @@ describe('VehicleService', () => {
 
     request.flush(response);
   });
+
+  it('should update vehicle details without creating a new vehicle', () => {
+    const details = {
+      brand: 'Toyota', model: 'Yaris', year: 2004, fuelType: 'ESSENCE',
+      transmission: 'MANUAL', vin: 'VIN-1', registrationNumber: '033830',
+    };
+    service.update(7, details).subscribe();
+
+    const request = httpTestingController.expectOne(`${API_ENDPOINTS.vehicles}/7`);
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.body).toEqual(details);
+    request.flush(null);
+  });
+
+  it('should deactivate and reactivate the same vehicle', () => {
+    service.deactivate(7).subscribe();
+    const deactivate = httpTestingController.expectOne(`${API_ENDPOINTS.vehicles}/7`);
+    expect(deactivate.request.method).toBe('DELETE');
+    deactivate.flush(null);
+
+    service.reactivate(7).subscribe();
+    const reactivate = httpTestingController.expectOne(`${API_ENDPOINTS.vehicles}/7/reactivate`);
+    expect(reactivate.request.method).toBe('PUT');
+    reactivate.flush(null);
+  });
 });

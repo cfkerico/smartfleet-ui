@@ -43,6 +43,17 @@
           <td mat-cell *matCellDef="let d">{{ d.registrationNumber }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Statut</th>
+          <td mat-cell *matCellDef="let d">
+            <span class="vehicle-status"
+              [class.vehicle-status--available]="d.vehicleStatus === 'AVAILABLE'"
+              [class.vehicle-status--inactive]="d.vehicleStatus === 'INACTIVE'">
+              {{ statusLabel(d.vehicleStatus) }}
+            </span>
+          </td>
+        </ng-container>
+
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Actions</th>
           <td mat-cell *matCellDef="let d">
@@ -74,20 +85,26 @@
               <mat-icon>edit</mat-icon>
             </button>
 
-            <button
-              mat-icon-button
-              color="warn"
-              aria-label="Supprimer le véhicule"
-              matTooltip="Supprimer"
-              (click)="delete(d)"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
+            @if (d.vehicleStatus === 'AVAILABLE') {
+              <button mat-icon-button color="warn" type="button"
+                aria-label="Désactiver le véhicule" matTooltip="Désactiver"
+                (click)="deactivate(d)">
+                <mat-icon>block</mat-icon>
+              </button>
+            } @else if (d.vehicleStatus === 'INACTIVE') {
+              <button mat-icon-button color="primary" type="button"
+                aria-label="Réactiver le véhicule" matTooltip="Réactiver"
+                (click)="reactivate(d)">
+                <mat-icon>restore</mat-icon>
+              </button>
+            }
           </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="columns"></tr>
-        <tr mat-row *matRowDef="let row; columns: columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns"
+          [class.vehicle-row--available]="row.vehicleStatus === 'AVAILABLE'"
+          [class.vehicle-row--inactive]="row.vehicleStatus === 'INACTIVE'"></tr>
         <tr class="mat-row" *matNoDataRow>
           <td class="empty-state" [attr.colspan]="columns.length">
             {{ vehicles.filter ? 'Aucun résultat sur cette page.' : 'Aucun élément à afficher.' }}

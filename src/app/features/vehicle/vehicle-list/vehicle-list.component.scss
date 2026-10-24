@@ -1,1 +1,22 @@
 @use '../../../shared/styles/list-page';
+
+.vehicle-row--available { background: #f5fbf7; }
+.vehicle-row--inactive { background: #f7f8fa; color: #596779; }
+.vehicle-row--available .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #2c9b62; }
+.vehicle-row--inactive .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #9aa7b5; }
+.vehicle-row--available:hover { background: #ebf7ef; }
+.vehicle-row--inactive:hover { background: #eef1f4; }
+
+.vehicle-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #edf2f7;
+  color: #344457;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.vehicle-status--available { background: #ddf4e5; color: #17663d; }
+.vehicle-status--inactive { background: #e8edf2; color: #596779; }

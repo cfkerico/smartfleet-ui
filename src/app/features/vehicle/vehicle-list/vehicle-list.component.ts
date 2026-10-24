@@ -12,6 +12,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { VehicleFormComponent } from '../vehicle-form/vehicle-form.component';
 import { NotificationService } from '../../../core/services/notification.service';
+import { ConfirmationService } from '../../../core/services/confirmation.service';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
@@ -39,7 +40,7 @@ import { RouterLink } from '@angular/router';
 })
 export class VehicleListComponent implements OnInit {
   vehicles = new MatTableDataSource<Vehicle>([]);
-  columns = ['name', 'marque', 'modele', 'anneeFabrication', 'registration', 'actions'];
+  columns = ['name', 'marque', 'modele', 'anneeFabrication', 'registration', 'status', 'actions'];
   totalElements = 0;
   pageSize = 5;
   pageIndex = 0;
@@ -48,6 +49,7 @@ export class VehicleListComponent implements OnInit {
     private vehicleService: VehicleService,
     private dialog: MatDialog,
     private notification: NotificationService,
+    private confirmation: ConfirmationService,
   ) {}
 
   applyFilter(event: Event) {
@@ -123,17 +125,42 @@ export class VehicleListComponent implements OnInit {
     });
   }
 
-  delete(vehicle: Vehicle) {
-    if (vehicle.id !== undefined) {
-      this.vehicleService.delete(vehicle.id).subscribe({
+  deactivate(vehicle: Vehicle): void {
+    if (vehicle.id === undefined) return;
+    this.confirmation.confirm({
+      title: 'Désactiver ce véhicule ?',
+      message: `${vehicle.label} ne pourra plus être affecté. Ses documents, entretiens et autres historiques seront conservés.`,
+      confirmLabel: 'Désactiver',
+      tone: 'danger',
+    }).subscribe(confirmed => {
+      if (!confirmed) return;
+      this.vehicleService.deactivate(vehicle.id).subscribe({
         next: () => {
-          this.notification.success('Véhicule supprimé avec succès ✅');
+          this.notification.success('Véhicule désactivé avec succès');
           this.load();
         },
-        error: () => {
-          this.notification.error('Erreur lors de la modification ❌');
-        },
+        error: () => this.notification.error('Désactivation impossible. Vérifiez le statut et les affectations actives.'),
       });
-    }
+    });
+  }
+
+  reactivate(vehicle: Vehicle): void {
+    if (vehicle.id === undefined) return;
+    this.vehicleService.reactivate(vehicle.id).subscribe({
+      next: () => {
+        this.notification.success('Véhicule réactivé avec succès');
+        this.load();
+      },
+      error: () => this.notification.error('Réactivation impossible'),
+    });
+  }
+
+  statusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      AVAILABLE: 'Disponible', ASSIGNED: 'Affecté', MAINTENANCE: 'En entretien',
+      BLOCKED: 'Bloqué', SUSPENDED: 'Suspendu', SOLD: 'Vendu',
+      INACTIVE: 'Inactif', INVALID: 'Invalide',
+    };
+    return labels[status] ?? status;
   }
 }

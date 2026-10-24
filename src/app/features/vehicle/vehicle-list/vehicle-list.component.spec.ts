@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { NotificationService } from '../../../core/services/notification.service';
 import { VehicleService } from '../../../core/services/vehicle.service';
+import { ConfirmationService } from '../../../core/services/confirmation.service';
 
 import { VehicleListComponent } from './vehicle-list.component';
 
@@ -18,9 +19,14 @@ describe('VehicleListComponent', () => {
         provideRouter([]),
         {
           provide: VehicleService,
-          useValue: { getAll: () => of({ content: [], totalElements: 0 }) },
+          useValue: {
+            getAll: () => of({ content: [], totalElements: 0 }),
+            deactivate: () => of(undefined),
+            reactivate: () => of(undefined),
+          },
         },
-        { provide: NotificationService, useValue: { error: () => undefined } },
+        { provide: NotificationService, useValue: { error: () => undefined, success: () => undefined } },
+        { provide: ConfirmationService, useValue: { confirm: () => of(true) } },
       ],
     }).compileComponents();
 
@@ -66,5 +72,39 @@ describe('VehicleListComponent', () => {
     const link = fixture.nativeElement.querySelector('a[aria-label="Entretien du véhicule Toyota Yaris"]');
     expect(link).toBeTruthy();
     expect(link.getAttribute('href')).toBe('/vehicles/1/maintenances');
+  });
+
+  it('should deactivate an available vehicle only after confirmation', () => {
+    const vehicle = {
+      id: 1, brand: 'Toyota', model: 'Yaris', label: 'Toyota Yaris', year: 2004,
+      vehicleStatus: 'AVAILABLE', fuelType: 'ESSENCE', vin: 'VIN-1', registrationNumber: '033830',
+    };
+    const service = TestBed.inject(VehicleService);
+    const deactivate = vi.spyOn(service, 'deactivate').mockReturnValue(of(undefined));
+    const getAll = vi.spyOn(service, 'getAll');
+    component.vehicles.data = [vehicle];
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('[aria-label="Désactiver le véhicule"]')).toBeTruthy();
+    component.deactivate(vehicle);
+
+    expect(deactivate).toHaveBeenCalledWith(1);
+    expect(getAll).toHaveBeenCalled();
+  });
+
+  it('should reactivate an inactive vehicle', () => {
+    const vehicle = {
+      id: 2, brand: 'Toyota', model: 'Yaris', label: 'Toyota Yaris', year: 2004,
+      vehicleStatus: 'INACTIVE', fuelType: 'ESSENCE', vin: 'VIN-2', registrationNumber: '033831',
+    };
+    const service = TestBed.inject(VehicleService);
+    const reactivate = vi.spyOn(service, 'reactivate').mockReturnValue(of(undefined));
+    component.vehicles.data = [vehicle];
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('[aria-label="Réactiver le véhicule"]')).toBeTruthy();
+    component.reactivate(vehicle);
+
+    expect(reactivate).toHaveBeenCalledWith(2);
   });
 });

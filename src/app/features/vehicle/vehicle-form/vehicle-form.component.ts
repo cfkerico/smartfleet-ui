@@ -9,7 +9,6 @@ import {
 } from '@angular/material/dialog';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatError, MatFormField, MatInput} from '@angular/material/input';
-import {VehicleListComponent} from '../vehicle-list/vehicle-list.component';
 import {MatButton} from '@angular/material/button';
 import {MatSelectModule} from '@angular/material/select';
 import {Vehicle} from '../../../models/vehicle';
@@ -48,7 +47,7 @@ export class VehicleFormComponent {
 
   isEdit = false;
 
-  constructor(private dialogRef: MatDialogRef<VehicleListComponent>, @Inject(MAT_DIALOG_DATA) public data: Vehicle | null) {
+  constructor(private dialogRef: MatDialogRef<VehicleFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Vehicle | null) {
     if (data) {
       this.isEdit = true;
 

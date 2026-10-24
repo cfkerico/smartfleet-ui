@@ -5,6 +5,17 @@ import {Vehicle} from '../../models/vehicle';
 import {PageResponse} from '../../models/page-response.model';
 import { API_ENDPOINTS } from '../config/api-endpoints';
 
+export interface VehicleDetailsPayload {
+  brand: string;
+  model: string;
+  version?: string | null;
+  year: number;
+  fuelType: string;
+  transmission: string;
+  registrationNumber?: string | null;
+  vin: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class VehicleService {
 
@@ -27,13 +38,16 @@ export class VehicleService {
     return this.http.post<Vehicle>(`${this.baseUrl}`, vehicle);
   }
 
-  update(vehicleId: number, vehicle: Vehicle): Observable<Vehicle> {
-    console.log('---------------- Vehicle : ', JSON.stringify(vehicle));
-    return this.http.put<Vehicle>(`${this.baseUrl}/${vehicleId}`, vehicle);
+  update(vehicleId: number, vehicle: VehicleDetailsPayload): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/${vehicleId}`, vehicle);
   }
 
-  delete(vehicleId: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${vehicleId}`);
+  deactivate(vehicleId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${vehicleId}`);
+  }
+
+  reactivate(vehicleId: number): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/${vehicleId}/reactivate`, {});
   }
 
 }
