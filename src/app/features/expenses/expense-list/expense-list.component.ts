@@ -210,6 +210,18 @@ export class ExpenseListComponent implements OnInit {
     return `status-${status.toLowerCase()}`;
   }
 
+  statusLabel(status: ExpenseStatus): string {
+    const labels: Record<ExpenseStatus, string> = {
+      REQUESTED: 'Demandée',
+      APPROVED: 'Approuvée',
+      PARTIALLY_DISBURSED: 'Partiellement décaissée',
+      DISBURSED: 'Décaissée',
+      REJECTED: 'Rejetée',
+      CANCELLED: 'Annulée',
+    };
+    return labels[status] ?? status;
+  }
+
   getPriorityClass(priority: string): string {
     return `priority-${priority.toLowerCase()}`;
   }

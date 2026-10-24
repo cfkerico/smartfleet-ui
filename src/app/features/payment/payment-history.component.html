@@ -107,17 +107,22 @@
     </ng-container>
 
     <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <th mat-header-cell *matHeaderCellDef>Statut</th>
         <td mat-cell *matCellDef="let payment">
-            <span [class]="getStatusClass(payment.status)">
-                {{ payment.status }}
+            <span class="status-badge" [ngClass]="getStatusClass(payment.status)">
+                {{ statusLabel(payment.status) }}
             </span>
         </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+        [class.payment-row--validated]="row.status === 'VALIDATED'"
+        [class.payment-row--partial]="row.status === 'PARTIAL'"
+        [class.payment-row--overpaid]="row.status === 'OVERPAID'"
+        [class.payment-row--under-review]="row.status === 'UNDER_REVIEW'"
+        [class.payment-row--cancelled]="row.status === 'CANCELLED'"></tr>
 
 </table>
 

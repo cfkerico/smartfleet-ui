@@ -106,3 +106,21 @@
     background: #e5e7eb;
     color: #374151;
 }
+
+.payment-row--validated { background: #f5fbf7; }
+.payment-row--partial { background: #fffbf0; }
+.payment-row--overpaid { background: #f3f8ff; }
+.payment-row--under-review { background: #fff6f6; }
+.payment-row--cancelled { background: #f7f8fa; color: #596779; }
+
+.payment-row--validated .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #2c9b62; }
+.payment-row--partial .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #d09a28; }
+.payment-row--overpaid .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #347eb3; }
+.payment-row--under-review .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #c75454; }
+.payment-row--cancelled .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #9aa7b5; }
+
+.payment-row--validated:hover { background: #ebf7ef; }
+.payment-row--partial:hover { background: #fff5dc; }
+.payment-row--overpaid:hover { background: #e8f2ff; }
+.payment-row--under-review:hover { background: #ffeded; }
+.payment-row--cancelled:hover { background: #eef1f4; }

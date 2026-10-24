@@ -169,6 +169,17 @@ export class PaymentHistoryComponent implements OnInit, AfterViewInit {
     return `status-${status.toLowerCase()}`;
   }
 
+  statusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      VALIDATED: 'Validée',
+      PARTIAL: 'Partielle',
+      OVERPAID: 'Surplus versé',
+      UNDER_REVIEW: 'À vérifier',
+      CANCELLED: 'Annulée',
+    };
+    return labels[status] ?? status;
+  }
+
   getDifferenceClass(value: number): string {
     if (value < 0) {
       return 'negative';

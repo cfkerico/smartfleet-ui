@@ -100,3 +100,24 @@
     color: #991b1b;
 }
 
+.expense-row--requested { background: #fffbf0; }
+.expense-row--approved { background: #f3f8ff; }
+.expense-row--partially-disbursed { background: #f8f5ff; }
+.expense-row--disbursed { background: #f5fbf7; }
+.expense-row--rejected { background: #fff6f6; }
+.expense-row--cancelled { background: #f7f8fa; color: #596779; }
+
+.expense-row--requested .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #d09a28; }
+.expense-row--approved .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #347eb3; }
+.expense-row--partially-disbursed .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #8060b5; }
+.expense-row--disbursed .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #2c9b62; }
+.expense-row--rejected .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #c75454; }
+.expense-row--cancelled .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #9aa7b5; }
+
+.expense-row--requested:hover { background: #fff5dc; }
+.expense-row--approved:hover { background: #e8f2ff; }
+.expense-row--partially-disbursed:hover { background: #f0eaff; }
+.expense-row--disbursed:hover { background: #ebf7ef; }
+.expense-row--rejected:hover { background: #ffeded; }
+.expense-row--cancelled:hover { background: #eef1f4; }
+

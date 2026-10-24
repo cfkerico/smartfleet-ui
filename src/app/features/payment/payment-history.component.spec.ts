@@ -4,6 +4,7 @@ import { AssignmentApiService } from '../../core/services/assignment-api.service
 import { RevenuePaymentApiService } from '../../core/services/revenue-payment-api.service';
 
 import { PaymentHistoryComponent } from './payment-history.component';
+import { DriverPayment } from '../../models/payment.model';
 
 describe('PaymentHistoryComponent', () => {
   let component: PaymentHistoryComponent;
@@ -44,5 +45,29 @@ describe('PaymentHistoryComponent', () => {
     const button = header.querySelector("button");
     expect(button?.textContent).toContain("Nouveau versement");
     expect(button?.querySelector("mat-icon")?.textContent).toContain("payments");
+  });
+
+  it.each([
+    ['VALIDATED', 'Validée', 'validated'],
+    ['PARTIAL', 'Partielle', 'partial'],
+    ['OVERPAID', 'Surplus versé', 'overpaid'],
+    ['UNDER_REVIEW', 'À vérifier', 'under-review'],
+    ['CANCELLED', 'Annulée', 'cancelled'],
+  ])('should identify a %s payment in the list', (status, label, rowClass) => {
+    component.dataSource.data = [{
+      id: 1,
+      driverFullName: 'Jean Dupont',
+      vehicleLabel: 'Toyota Yaris',
+      expectedAmount: 10000,
+      paidAmount: 10000,
+      differenceAmount: 0,
+      paymentDate: '2026-10-24',
+      status,
+    } as DriverPayment];
+    fixture.detectChanges();
+
+    const row: HTMLElement | null = fixture.nativeElement.querySelector(`.payment-row--${rowClass}`);
+    expect(row).toBeTruthy();
+    expect(row?.querySelector('.status-badge')?.textContent?.trim()).toBe(label);
   });
 });
