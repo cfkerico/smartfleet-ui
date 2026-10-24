@@ -18,5 +18,21 @@
 .toast__content { display: grid; gap: 3px; flex: 1; min-width: 0; line-height: 1.35; }
 .toast__content strong { font-size: 0.92rem; }
 .toast__content span { font-size: 0.86rem; overflow-wrap: anywhere; }
-.toast button { flex: 0 0 auto; width: 30px; height: 30px; margin: -5px -7px 0 0; color: #5f6d7b; }
-.toast button mat-icon { font-size: 19px; width: 19px; height: 19px; }
+.toast__close {
+  display: inline-flex;
+  flex: 0 0 30px;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin: -5px -7px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #5f6d7b;
+  cursor: pointer;
+}
+.toast__close:hover { background: #edf1f4; }
+.toast__close:focus-visible { outline: 2px solid #075bbb; outline-offset: 2px; }
+.toast__close mat-icon { display: block; width: 18px; height: 18px; font-size: 18px; line-height: 18px; }

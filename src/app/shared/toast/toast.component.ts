@@ -1,6 +1,5 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 export interface ToastData {
@@ -11,7 +10,7 @@ export interface ToastData {
 @Component({
   selector: 'app-toast',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule],
+  imports: [MatIconModule],
   templateUrl: './toast.component.html',
   styleUrl: './toast.component.scss',
 })
