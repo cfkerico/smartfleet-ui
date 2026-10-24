@@ -43,6 +43,7 @@ export class VehicleFormComponent {
     version: [''],
     vin: ['', Validators.required],
     registrationNumber: [''],
+    acquisitionMileage: [null as number | null, [Validators.required, Validators.min(0), Validators.pattern(/^\d+$/)]],
   });
 
   isEdit = false;
@@ -50,6 +51,7 @@ export class VehicleFormComponent {
   constructor(private dialogRef: MatDialogRef<VehicleFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Vehicle | null) {
     if (data) {
       this.isEdit = true;
+      this.form.controls.acquisitionMileage.disable();
 
       this.form.patchValue({
         brand: data.brand,

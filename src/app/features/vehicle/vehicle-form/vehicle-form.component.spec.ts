@@ -30,7 +30,8 @@ describe('VehicleFormComponent', () => {
   it('requires a transmission before creating a vehicle', () => {
     component.form.patchValue({
       brand: 'Toyota', model: 'Yaris', year: 2004,
-      fuelType: 'ESSENCE', registrationNumber: 'CE-554-MP', vin: 'VF1RFA00000000000'
+      fuelType: 'ESSENCE', registrationNumber: 'CE-554-MP', vin: 'VF1RFA00000000000',
+      acquisitionMileage: 101000
     });
 
     expect(component.form.invalid).toBe(true);
@@ -40,7 +41,43 @@ describe('VehicleFormComponent', () => {
     component.form.patchValue({ transmission: 'MANUAL' });
     expect(component.form.valid).toBe(true);
     component.save();
-    expect(close).toHaveBeenCalledWith(expect.objectContaining({ transmission: 'MANUAL' }));
+    expect(close).toHaveBeenCalledWith(expect.objectContaining({ transmission: 'MANUAL', acquisitionMileage: 101000 }));
+    expect(close.mock.calls[0][0]).not.toHaveProperty('currentMileage');
+  });
+
+  it('requires a non-negative integer mileage on creation', () => {
+    component.form.patchValue({ acquisitionMileage: -1 });
+    expect(component.f.acquisitionMileage.invalid).toBe(true);
+    component.form.patchValue({ acquisitionMileage: 12.5 });
+    expect(component.f.acquisitionMileage.invalid).toBe(true);
+    component.form.patchValue({ acquisitionMileage: 0 });
+    expect(component.f.acquisitionMileage.valid).toBe(true);
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Kilométrage d’acquisition');
+  });
+
+  it('does not include current mileage when editing a vehicle', async () => {
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [VehicleFormComponent],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: {
+          id: 7, brand: 'Toyota', model: 'Yaris', year: 2004,
+          fuelType: 'ESSENCE', transmissionType: 'MANUAL', vin: 'VIN-7',
+          registrationNumber: 'CE-554-MP', currentMileage: 101000,
+        } },
+        { provide: MatDialogRef, useValue: { close } },
+      ],
+    }).compileComponents();
+    const editFixture = TestBed.createComponent(VehicleFormComponent);
+    editFixture.detectChanges();
+    const editComponent = editFixture.componentInstance;
+
+    expect(editComponent.form.valid).toBe(true);
+    expect(editComponent.form.controls.acquisitionMileage.disabled).toBe(true);
+    expect((editFixture.nativeElement as HTMLElement).textContent).not.toContain('Kilométrage d’acquisition');
+    editComponent.save();
+    expect(close).toHaveBeenCalledOnce();
+    expect(close.mock.calls[0][0]).not.toHaveProperty('acquisitionMileage');
   });
 
   it('shows labelled transmission and registration fields', () => {

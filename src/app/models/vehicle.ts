@@ -11,5 +11,6 @@ export interface Vehicle {
   vin: string;
   registrationNumber: string;
   currentMileage?: number | null;
+  acquisitionMileage?: number | null;
 
 }

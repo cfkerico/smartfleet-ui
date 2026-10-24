@@ -85,6 +85,22 @@
         </mat-form-field>
       </div>
     </section>
+
+    @if (!isEdit) {
+      <section class="form-section">
+        <h3>Kilométrage d’acquisition</h3>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Kilométrage d’acquisition (km)</mat-label>
+            <input matInput type="number" min="0" step="1" formControlName="acquisitionMileage">
+            <mat-hint>Le kilométrage actuel sera initialisé avec cette valeur.</mat-hint>
+            @if (f.acquisitionMileage.touched && f.acquisitionMileage.invalid) {
+              <mat-error>Indiquez un kilométrage entier positif ou nul.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </section>
+    }
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
