@@ -98,6 +98,8 @@ export class DriverListComponent implements OnInit {
   openForm() {
     const dialogRef = this.dialog.open(DriverFormComponent, {
       width: '800px',
+      maxWidth: '96vw',
+      maxHeight: '90vh',
       data: {
         mode: 'CREATE',
       },
@@ -122,6 +124,8 @@ export class DriverListComponent implements OnInit {
     console.log(driver);
     const dialogRef = this.dialog.open(DriverFormComponent, {
       width: '800px',
+      maxWidth: '96vw',
+      maxHeight: '90vh',
       data: {
         mode: 'EDIT',
         driver: driver,

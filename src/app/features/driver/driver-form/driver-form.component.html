@@ -1,75 +1,116 @@
-<h2 mat-dialog-title>Créer Driver</h2>
-<mat-dialog-content class="dialog-content">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="create-form-grid">
+<h2 mat-dialog-title>{{ data.mode === 'CREATE' ? 'Nouveau chauffeur' : 'Modifier le chauffeur' }}</h2>
 
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-dialog-content class="dialog-content">
+    <p class="dialog-intro">Renseignez l'identité et les informations professionnelles du chauffeur.</p>
+
+    <section class="form-section">
+      <h3>Identité</h3>
+      <div class="form-grid">
         <mat-form-field appearance="outline">
-            <mat-label>Civilité</mat-label>
-            <mat-select formControlName="civilite">
-                @for (civilite of civilites; track civilite) {
-                    <mat-option [value]="civilite">
-                        {{ civilite }}
-                    </mat-option>
-                }
-            </mat-select>
+          <mat-label>Civilité</mat-label>
+          <mat-select formControlName="civilite">
+            @for (civilite of civilites; track civilite) {
+              <mat-option [value]="civilite">{{ civilite }}</mat-option>
+            }
+          </mat-select>
+          @if (form.controls['civilite'].touched && form.controls['civilite'].invalid) {
+            <mat-error>La civilité est obligatoire.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-            <mat-label>Nom</mat-label>
-            <input matInput formControlName="nom" placeholder="Nom">
+          <mat-label>Nom</mat-label>
+          <input matInput formControlName="nom" autocomplete="family-name">
+          @if (form.controls['nom'].touched && form.controls['nom'].invalid) {
+            <mat-error>Indiquez au moins deux caractères.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-            <mat-label>Prénom</mat-label>
-            <input matInput formControlName="prenom" placeholder="Prénom">
+          <mat-label>Prénom</mat-label>
+          <input matInput formControlName="prenom" autocomplete="given-name">
+          @if (form.controls['prenom'].touched && form.controls['prenom'].invalid) {
+            <mat-error>Indiquez au moins deux caractères.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h3>Coordonnées</h3>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Adresse e-mail</mat-label>
+          <input matInput type="email" formControlName="email" autocomplete="email">
+          @if (form.controls['email'].touched && form.controls['email'].invalid) {
+            <mat-error>Indiquez une adresse e-mail valide.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-            <mat-label>Email</mat-label>
-            <input matInput formControlName="email" placeholder="Email">
+          <mat-label>Téléphone mobile</mat-label>
+          <input matInput type="tel" formControlName="mobilePhoneNumber" autocomplete="tel">
+          @if (form.controls['mobilePhoneNumber'].touched && form.controls['mobilePhoneNumber'].invalid) {
+            <mat-error>Le téléphone est obligatoire.</mat-error>
+          }
         </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Téléphone Mobile</mat-label>
-            <input matInput formControlName="mobilePhoneNumber" placeholder="Téléphone Mobile">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Worked Days</mat-label>
-            <input matInput formControlName="workedDays" placeholder="Worked Days">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Numéro de permis</mat-label>
-            <input matInput formControlName="licenseNumber" placeholder="Numéro de permis">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Date d'expiration du permis</mat-label>
-            <input matInput [matDatepicker]="licensePicker" formControlName="licenseExpirationDate" placeholder="Date d'expiration du permis">
-            <mat-datepicker-toggle matIconSuffix [for]="licensePicker"></mat-datepicker-toggle>
-            <mat-datepicker #licensePicker></mat-datepicker>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Date d'embauche</mat-label>
-            <input matInput [matDatepicker]="hireDatePicker" formControlName="hireDate" placeholder="Date d'embauche">
-            <mat-datepicker-toggle matIconSuffix [for]="hireDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #hireDatePicker></mat-datepicker>
-        </mat-form-field>
-        
 
         <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Adresse</mat-label>
-            <input matInput formControlName="adresse" placeholder="Adresse">
+          <mat-label>Adresse</mat-label>
+          <input matInput formControlName="adresse" autocomplete="street-address">
+          <mat-hint>Facultatif</mat-hint>
+        </mat-form-field>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h3>Permis et activité</h3>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Numéro de permis</mat-label>
+          <input matInput formControlName="licenseNumber">
+          @if (form.controls['licenseNumber'].touched && form.controls['licenseNumber'].invalid) {
+            <mat-error>Le numéro de permis est obligatoire.</mat-error>
+          }
         </mat-form-field>
 
+        <mat-form-field appearance="outline">
+          <mat-label>Expiration du permis</mat-label>
+          <input matInput [matDatepicker]="licensePicker" formControlName="licenseExpirationDate">
+          <mat-datepicker-toggle matIconSuffix [for]="licensePicker"></mat-datepicker-toggle>
+          <mat-datepicker #licensePicker></mat-datepicker>
+          @if (form.controls['licenseExpirationDate'].touched && form.controls['licenseExpirationDate'].invalid) {
+            <mat-error>La date d'expiration est obligatoire.</mat-error>
+          }
+        </mat-form-field>
 
-        <mat-dialog-actions align="end">
-            <button mat-button (click)="onClose()">Annuler</button>
-            <button mat-raised-button color="primary" [disabled]="form.invalid" type="submit">
-                Save
-            </button>
-        </mat-dialog-actions>
+        <mat-form-field appearance="outline">
+          <mat-label>Date d'embauche</mat-label>
+          <input matInput [matDatepicker]="hireDatePicker" formControlName="hireDate">
+          <mat-datepicker-toggle matIconSuffix [for]="hireDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #hireDatePicker></mat-datepicker>
+          @if (form.controls['hireDate'].touched && form.controls['hireDate'].invalid) {
+            <mat-error>La date d'embauche est obligatoire.</mat-error>
+          }
+        </mat-form-field>
 
-    </form>
-</mat-dialog-content>
+        <mat-form-field appearance="outline">
+          <mat-label>Jours travaillés par mois</mat-label>
+          <input matInput type="number" min="0" max="31" formControlName="workedDays">
+          <mat-hint>De 0 à 31 jours</mat-hint>
+          @if (form.controls['workedDays'].touched && form.controls['workedDays'].invalid) {
+            <mat-error>Indiquez un nombre entre 0 et 31.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </section>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onClose()">Annuler</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+      {{ data.mode === 'CREATE' ? 'Créer le chauffeur' : 'Enregistrer les modifications' }}
+    </button>
+  </mat-dialog-actions>
+</form>
