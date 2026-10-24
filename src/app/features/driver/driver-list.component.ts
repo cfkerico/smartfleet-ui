@@ -49,6 +49,7 @@ export class DriverListComponent implements OnInit {
     'mobilePhoneNumber',
     'adresse',
     'workedDays',
+    'status',
     'actions',
   ];
   totalElements = 0;
@@ -148,16 +149,27 @@ export class DriverListComponent implements OnInit {
   }
 
   delete(driver: Driver) {
-    console.log(driver);
-    if (driver.id !== undefined) {
+    if (driver.id !== undefined && confirm(`Désactiver ${driver.fullName} ? Ses données et son historique seront conservés.`)) {
       this.driverService.delete(driver.id).subscribe({
         next: () => {
-          this.notification.success('Chauffeur supprimé avec succès ✅');
+          this.notification.success('Chauffeur désactivé avec succès');
           this.load();
         },
         error: () => {
-          this.notification.error('Erreur lors de la modification ❌');
+          this.notification.error('Désactivation impossible. Vérifiez les affectations actives.');
         },
+      });
+    }
+  }
+
+  reactivate(driver: Driver) {
+    if (driver.id !== undefined) {
+      this.driverService.reactivate(driver.id).subscribe({
+        next: () => {
+          this.notification.success('Chauffeur réactivé avec succès');
+          this.load();
+        },
+        error: () => this.notification.error('Réactivation impossible'),
       });
     }
   }
@@ -165,7 +177,6 @@ export class DriverListComponent implements OnInit {
   analyse(id: number) {
     this.driverService.analyse(id).subscribe({
       next: (response) => {
-        console.log('++++++++++++++++ ------------- +++++++++++++', response);
         this.analysis = response;
         this.dialog.open(AnalyseIaComponent, {
           width: '500px',

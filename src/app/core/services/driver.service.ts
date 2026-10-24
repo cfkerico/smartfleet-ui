@@ -28,12 +28,16 @@ export class DriverService {
         return this.http.post<Driver>(this.apiUrl, payload);
     }
 
-    update(driverId: number, payload: any): Observable<Driver> {
-      return this.http.put<Driver>(`${this.apiUrl}/${driverId}`, payload);
+    update(driverId: number, payload: any): Observable<void> {
+      return this.http.put<void>(`${this.apiUrl}/${driverId}`, payload);
     }
 
-    delete(driverId: number): Observable<any> {
-      return this.http.delete<Driver>(`${this.apiUrl}/${driverId}`);
+    delete(driverId: number): Observable<void> {
+      return this.http.delete<void>(`${this.apiUrl}/${driverId}`);
+    }
+
+    reactivate(driverId: number): Observable<void> {
+      return this.http.put<void>(`${this.apiUrl}/${driverId}/reactivate`, {});
     }
 
     analyse(id: number) {
