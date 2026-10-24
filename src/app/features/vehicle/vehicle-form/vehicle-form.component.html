@@ -1,51 +1,96 @@
-<h2 mat-dialog-title>Créer vehicle</h2>
-<mat-dialog-content class="dialog-content">
-  <form [formGroup]="form" class="create-form-grid">
+<h2 mat-dialog-title>{{ isEdit ? 'Modifier le véhicule' : 'Nouveau véhicule' }}</h2>
 
-    <mat-form-field appearance="outline">
-      <input matInput formControlName="brand" placeholder="Brand">
-      @if (f.brand.touched && f.brand.invalid) {
-        <mat-error>Champ Obligatoire</mat-error>
-      }
-    </mat-form-field>
+<form [formGroup]="form" (ngSubmit)="save()">
+  <mat-dialog-content class="dialog-content">
+    <p class="dialog-intro">Renseignez les informations du véhicule. Les champs marqués * sont obligatoires.</p>
 
-    <mat-form-field appearance="outline">
-      <input matInput formControlName="model" placeholder="Modèle">
-      @if (f.model.touched && f.model.invalid) {
-        <mat-error>Champ Obligatoire</mat-error>
-      }
-    </mat-form-field>
+    <section class="form-section">
+      <h3>Identification</h3>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Marque</mat-label>
+          <input matInput formControlName="brand" autocomplete="off">
+          @if (f.brand.touched && f.brand.hasError('required')) {
+            <mat-error>La marque est obligatoire.</mat-error>
+          }
+        </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <input matInput formControlName="fuelType" placeholder="Fuel Type">
-      @if (f.fuelType.touched && f.fuelType.invalid) {
-        <mat-error>Champ Obligatoire</mat-error>
-      }
-    </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Modèle</mat-label>
+          <input matInput formControlName="model" autocomplete="off">
+          @if (f.model.touched && f.model.hasError('required')) {
+            <mat-error>Le modèle est obligatoire.</mat-error>
+          }
+        </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <input matInput formControlName="year" placeholder="Année Fabrication">
-      @if (f.year.touched && f.year.invalid) {
-        <mat-error>Champ Obligatoire</mat-error>
-      }
-    </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Version ou finition</mat-label>
+          <input matInput formControlName="version" autocomplete="off">
+          <mat-hint>Facultatif</mat-hint>
+        </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <input matInput formControlName="vin" placeholder="Immatriculation">
-    </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Année de fabrication</mat-label>
+          <input matInput type="number" min="1900" formControlName="year">
+          @if (f.year.touched && f.year.invalid) {
+            <mat-error>Indiquez une année valide (1900 minimum).</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </section>
 
-    <mat-form-field appearance="outline">
-      <input matInput formControlName="registrationNumber" placeholder="Matricule Véhicule">
-      @if (f.registrationNumber.touched && f.registrationNumber.invalid) {
-        <mat-error>Champ Obligatoire</mat-error>
-      }
-    </mat-form-field>
+    <section class="form-section">
+      <h3>Caractéristiques</h3>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Carburant</mat-label>
+          <mat-select formControlName="fuelType">
+            <mat-option value="ESSENCE">Essence</mat-option>
+            <mat-option value="GASOIL">Gasoil</mat-option>
+          </mat-select>
+          @if (f.fuelType.touched && f.fuelType.hasError('required')) {
+            <mat-error>Le carburant est obligatoire.</mat-error>
+          }
+        </mat-form-field>
 
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="cancel()">Annuler</button>
-      <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="save()">
-        Save
-      </button>
-    </mat-dialog-actions>
-  </form>
-</mat-dialog-content>
+        <mat-form-field appearance="outline">
+          <mat-label>Transmission</mat-label>
+          <mat-select formControlName="transmission">
+            <mat-option value="MANUAL">Manuelle</mat-option>
+            <mat-option value="AUTOMATIC">Automatique</mat-option>
+          </mat-select>
+          @if (f.transmission.touched && f.transmission.hasError('required')) {
+            <mat-error>La transmission est obligatoire.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h3>Immatriculation</h3>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Numéro d’immatriculation</mat-label>
+          <input matInput formControlName="registrationNumber" autocomplete="off">
+          <mat-hint>Facultatif</mat-hint>
+          
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Numéro de châssis (VIN)</mat-label>
+          <input matInput formControlName="vin" autocomplete="off">
+          @if (f.vin.touched && f.vin.hasError('required')) {
+            <mat-error>Le numéro de châssis (VIN) est obligatoire.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </section>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()">Annuler</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+      {{ isEdit ? 'Enregistrer les modifications' : 'Créer le véhicule' }}
+    </button>
+  </mat-dialog-actions>
+</form>

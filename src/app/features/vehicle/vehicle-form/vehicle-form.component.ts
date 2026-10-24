@@ -11,6 +11,7 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatError, MatFormField, MatInput} from '@angular/material/input';
 import {VehicleListComponent} from '../vehicle-list/vehicle-list.component';
 import {MatButton} from '@angular/material/button';
+import {MatSelectModule} from '@angular/material/select';
 import {Vehicle} from '../../../models/vehicle';
 
 @Component({
@@ -25,7 +26,8 @@ import {Vehicle} from '../../../models/vehicle';
     MatError,
     MatButton,
     MatDialogModule,
-    MatDialogActions
+    MatDialogActions,
+    MatSelectModule
   ],
   templateUrl: './vehicle-form.component.html',
   styleUrl: './vehicle-form.component.scss',
@@ -36,10 +38,12 @@ export class VehicleFormComponent {
   form = this.fb.group({
     brand: ['', Validators.required],
     model: ['', Validators.required],
-    year: [0, Validators.required],
+    year: [null as number | null, [Validators.required, Validators.min(1900)]],
     fuelType: ['', Validators.required],
-    vin: [''],
-    registrationNumber: ['', Validators.required],
+    transmission: ['', Validators.required],
+    version: [''],
+    vin: ['', Validators.required],
+    registrationNumber: [''],
   });
 
   isEdit = false;
@@ -53,6 +57,8 @@ export class VehicleFormComponent {
         model: data.model,
         year: data.year,
         fuelType: data.fuelType,
+        transmission: data.transmissionType ?? '',
+        version: data.version ?? '',
         vin: data.vin,
         registrationNumber: data.registrationNumber
       });
@@ -64,7 +70,10 @@ export class VehicleFormComponent {
   }
 
   save() {
-    if(this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     this.dialogRef.close(this.form.value);
   }

@@ -79,7 +79,11 @@ export class VehicleListComponent implements OnInit {
   }
 
   openForm() {
-    const dialogRef = this.dialog.open(VehicleFormComponent);
+    const dialogRef = this.dialog.open(VehicleFormComponent, {
+      width: '760px',
+      maxWidth: '96vw',
+      maxHeight: '90vh',
+    });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
@@ -99,6 +103,9 @@ export class VehicleListComponent implements OnInit {
   edit(vehicle: Vehicle) {
     const dialogRef = this.dialog.open(VehicleFormComponent, {
       data: vehicle,
+      width: '760px',
+      maxWidth: '96vw',
+      maxHeight: '90vh',
     });
 
     dialogRef.afterClosed().subscribe((result) => {

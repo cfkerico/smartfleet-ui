@@ -6,6 +6,8 @@ export interface Vehicle {
   year: number;
   vehicleStatus: string;
   fuelType: string;
+  transmissionType?: string | null;
+  version?: string | null;
   vin: string;
   registrationNumber: string;
   currentMileage?: number | null;
