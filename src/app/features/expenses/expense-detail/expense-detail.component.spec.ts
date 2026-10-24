@@ -3,7 +3,7 @@ import { By } from '@angular/platform-browser';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { ExpenseApiService } from '../../../core/services/expense-api.service';
 import { ExpenseDetailView } from '../../../models/expense.model';
 
@@ -84,5 +84,31 @@ describe('ExpenseDetailComponent', () => {
     const tabs = fixture.debugElement.query(By.directive(MatTabGroup)).componentInstance as MatTabGroup;
     expect(component.selectedTabIndex).toBe(0);
     expect(tabs.selectedIndex).toBe(0);
+  });
+
+  it('shows financial totals and readable status labels', async () => {
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const element: HTMLElement = fixture.nativeElement;
+    expect(element.querySelectorAll('.summary-card').length).toBe(4);
+    expect(element.textContent).toContain('Montant décaissé');
+    expect(element.textContent).toContain('Reste à payer');
+    expect(element.querySelector('.status-badge')?.textContent?.trim()).toBe('Approuvée');
+    expect(element.querySelector('.priority-badge')?.textContent?.trim()).toBe('Normale');
+  });
+
+  it('offers a retry when the detail cannot be loaded', async () => {
+    expenseApiMock.findExpenseDetail.mockReturnValue(throwError(() => new Error('Erreur réseau')));
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.error-card')).toBeTruthy();
+    expect(fixture.nativeElement.textContent).toContain('Réessayer');
+    consoleError.mockRestore();
   });
 });

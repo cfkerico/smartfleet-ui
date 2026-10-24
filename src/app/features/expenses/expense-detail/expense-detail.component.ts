@@ -11,7 +11,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { ChangeDetectorRef } from '@angular/core';
 
-import { ExpenseDetailView, ExpenseRequest } from '../../../models/expense.model';
+import { ExpenseDetailView, ExpensePriority, ExpenseRequest, ExpenseStatus, ExpenseType, PaymentMethod } from '../../../models/expense.model';
 import { ExpenseApiService } from '../../../core/services/expense-api.service';
 import { DisburseExpenseDialogComponent } from '../disburse-expense-dialog/disburse-expense-dialog.component';
 import { ExpenseReasonDialogComponent } from '../expense-reason-dialog/expense-reason-dialog.component';
@@ -36,6 +36,8 @@ export class ExpenseDetailComponent implements OnInit {
 
   expenseDetail?: ExpenseDetailView;
   expenseId!: number;
+  loading = true;
+  loadError = false;
 
   selectedTabIndex = 0;
 
@@ -65,14 +67,19 @@ export class ExpenseDetailComponent implements OnInit {
   }
 
   loadExpense(id: number): void {
-    //this.loading = true;
+    this.loading = true;
+    this.loadError = false;
 
     this.expenseApi.findExpenseDetail(id).subscribe({next: detail => {
       this.expenseDetail = detail;
+      this.loading = false;
       this.cdr.markForCheck();
     },
     error: error => {
-      console.error('Erreur chargement dépense', error)
+      console.error('Erreur chargement dépense', error);
+      this.loading = false;
+      this.loadError = true;
+      this.cdr.markForCheck();
       }
     });
   }
@@ -87,6 +94,40 @@ export class ExpenseDetailComponent implements OnInit {
 
   getPriorityClass(priority: string): string {
     return `priority-${priority.toLowerCase()}`;
+  }
+
+  statusLabel(status: ExpenseStatus): string {
+    const labels: Record<ExpenseStatus, string> = {
+      REQUESTED: 'Demandée', APPROVED: 'Approuvée',
+      PARTIALLY_DISBURSED: 'Partiellement décaissée', DISBURSED: 'Décaissée',
+      REJECTED: 'Rejetée', CANCELLED: 'Annulée',
+    };
+    return labels[status] ?? status;
+  }
+
+  priorityLabel(priority: ExpensePriority): string {
+    const labels: Record<ExpensePriority, string> = {
+      LOW: 'Faible', NORMAL: 'Normale', HIGH: 'Élevée',
+      URGENT: 'Urgente', CRITICAL: 'Critique',
+    };
+    return labels[priority] ?? priority;
+  }
+
+  typeLabel(type: ExpenseType): string {
+    const labels: Record<ExpenseType, string> = {
+      FUEL: 'Carburant', MAINTENANCE: 'Entretien', REPAIR: 'Réparation',
+      SPARE_PART: 'Pièce détachée', INSURANCE: 'Assurance', TAX: 'Taxe',
+      DOCUMENT: 'Document', SALARY: 'Salaire', UTILITY: 'Charge', OTHER: 'Autre',
+    };
+    return labels[type] ?? type;
+  }
+
+  paymentMethodLabel(method: PaymentMethod): string {
+    const labels: Record<PaymentMethod, string> = {
+      CASH: 'Espèces', BANK_TRANSFER: 'Virement bancaire', CHECK: 'Chèque',
+      MOBILE_MONEY: 'Mobile Money', CARD: 'Carte bancaire',
+    };
+    return labels[method] ?? method;
   }
 
   get request(): ExpenseRequest | undefined {
@@ -113,7 +154,7 @@ export class ExpenseDetailComponent implements OnInit {
         width:'520px',
         data: {
           title: 'Rejeter la demande',
-          message: 'Vous allez rejeter la demande de <strong>'+ this.request.requestedAmount + '</strong> pour le véhicule <strong>'+ this.request.vehicleLabel +'</strong>',
+          message: `Vous allez rejeter la demande de ${this.request.requestedAmount} FCFA pour le véhicule ${this.request.vehicleLabel}.`,
           confirmLabel: "Confirmer le rejet",
           confirmColor: 'warn',
           placeholderMotif: 'Motif du rejet'
@@ -140,8 +181,8 @@ export class ExpenseDetailComponent implements OnInit {
       const dialogRef = this.dialog.open(ExpenseReasonDialogComponent, {
         width: '520px',
         data: {
-          title: 'Annuler la depense',
-          message: 'Vous allez annuler la demande de <strong>'+ this.request.requestedAmount + '</strong> pour le véhicule <strong>'+ this.request.vehicleLabel +'</strong>',
+          title: 'Annuler la dépense',
+          message: `Vous allez annuler la demande de ${this.request.requestedAmount} FCFA pour le véhicule ${this.request.vehicleLabel}.`,
           confirmLabel: "Confirmer l'annulation",
           confirmColor: 'warn',
           placeholderMotif: "Motif de l'annulation"
