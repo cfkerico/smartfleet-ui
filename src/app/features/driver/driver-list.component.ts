@@ -12,6 +12,7 @@ import { DriverFormComponent } from './driver-form/driver-form.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { NotificationService } from '../../core/services/notification.service';
+import { ConfirmationService } from '../../core/services/confirmation.service';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { DriverAnalysis } from '../../models/driver-analysis.model';
@@ -61,6 +62,7 @@ export class DriverListComponent implements OnInit {
     private driverService: DriverService,
     private dialog: MatDialog,
     private notification: NotificationService,
+    private confirmation: ConfirmationService,
   ) {}
 
   ngOnInit(): void {
@@ -149,17 +151,22 @@ export class DriverListComponent implements OnInit {
   }
 
   delete(driver: Driver) {
-    if (driver.id !== undefined && confirm(`Désactiver ${driver.fullName} ? Ses données et son historique seront conservés.`)) {
+    if (driver.id === undefined) return;
+    this.confirmation.confirm({
+      title: 'Désactiver ce chauffeur ?',
+      message: `${driver.fullName} ne pourra plus être affecté. Ses données et son historique seront conservés.`,
+      confirmLabel: 'Désactiver',
+      tone: 'danger',
+    }).subscribe(confirmed => {
+      if (!confirmed) return;
       this.driverService.delete(driver.id).subscribe({
         next: () => {
           this.notification.success('Chauffeur désactivé avec succès');
           this.load();
         },
-        error: () => {
-          this.notification.error('Désactivation impossible. Vérifiez les affectations actives.');
-        },
+        error: () => this.notification.error('Désactivation impossible. Vérifiez les affectations actives.'),
       });
-    }
+    });
   }
 
   reactivate(driver: Driver) {

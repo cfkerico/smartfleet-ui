@@ -37,16 +37,22 @@ body {
   height: 100%;
 }
 /* You can add global styles to this file, and also import other style files */
-.snackbar-success {
-  background: #4caf50;
-  color: white;
-  font-weight: 500;
+.smartfleet-toast-panel.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: transparent;
+  --mat-snack-bar-container-color: transparent;
+  padding: 0;
+  box-shadow: none;
 }
 
-.snackbar-error {
-  background: #f44336;
-  color: white;
-  font-weight: 500;
+.smartfleet-toast-panel .mdc-snackbar__surface {
+  padding: 0;
+  box-shadow: none;
+  background: transparent;
+  min-width: 0;
+}
+
+.smartfleet-toast-panel .mat-mdc-snack-bar-label {
+  padding: 0;
 }
 
 /* Formulaire */

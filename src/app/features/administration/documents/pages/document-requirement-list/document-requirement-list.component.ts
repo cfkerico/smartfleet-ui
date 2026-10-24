@@ -24,7 +24,7 @@ import { StatusBadgeComponent, StatusBadgeVariant } from '../../../../../shared/
 import { DialogRef } from '@angular/cdk/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { NotificationService } from '../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-document-requirement-list',
@@ -45,7 +45,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     MatSelectModule,
     MatTableModule,
     MatTooltipModule,
-    MatSnackBarModule,
     MatProgressSpinnerModule
 ],
   templateUrl: './document-requirement-list.component.html',
@@ -57,7 +56,7 @@ export class DocumentRequirementListComponent implements OnInit, OnDestroy {
   private readonly dialog = inject(MatDialog);
   private readonly destroy$ = new Subject<void>();
   private readonly cdr = inject(ChangeDetectorRef);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly notification = inject(NotificationService);
 
   readonly ownerTypes: DocumentOwnerType[] = [
     'DRIVER',
@@ -130,15 +129,7 @@ export class DocumentRequirementListComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().pipe(takeUntil(this.destroy$))
       .subscribe(result => {
         if (result === true) {
-          this.snackBar.open(
-            'Exigence documentaire enregistrée avec succès.',
-            'Fermer',
-            {
-              duration: 3500,
-              horizontalPosition: 'end',
-              verticalPosition: 'top'
-            }
-          );
+          this.notification.success('Exigence documentaire enregistrée avec succès.');
           this.loadRequirements();
         }
       });
@@ -159,15 +150,7 @@ export class DocumentRequirementListComponent implements OnInit, OnDestroy {
     dialorRef.afterClosed().pipe(takeUntil(this.destroy$))
       .subscribe(result => {
         if (result === true) {
-          this.snackBar.open(
-            'Exigence documentaire mise à jour.',
-            'Fermer',
-            {
-              duration: 3500,
-              horizontalPosition: 'end',
-              verticalPosition: 'top'
-            }
-          )
+          this.notification.success('Exigence documentaire mise à jour.');
           this.loadRequirements();
         }
       });

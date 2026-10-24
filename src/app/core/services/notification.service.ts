@@ -1,22 +1,27 @@
-import { Injectable } from "@angular/core";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToastComponent, ToastData } from '../../shared/toast/toast.component';
 
-@Injectable({ providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class NotificationService {
+  constructor(private readonly snackBar: MatSnackBar) {}
 
-    constructor(private snackBar: MatSnackBar) {}
+  success(message: string): void {
+    this.show({ message, type: 'success' }, 4500);
+  }
 
-    success(message: string) {
-        this.snackBar.open(message, 'OK', {
-            duration: 3000,
-            panelClass: ['snackbar-success']
-        });
-    }
+  error(message: string): void {
+    this.show({ message, type: 'error' }, 6500);
+  }
 
-    error(message: string) {
-        this.snackBar.open(message, 'Erreur', {
-            duration: 4000,
-            panelClass: ['snackbar-error']
-        });
-    }
+  private show(data: ToastData, duration: number): void {
+    this.snackBar.openFromComponent(ToastComponent, {
+      data,
+      duration,
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+      panelClass: ['smartfleet-toast-panel'],
+      politeness: data.type === 'error' ? 'assertive' : 'polite',
+    });
+  }
 }

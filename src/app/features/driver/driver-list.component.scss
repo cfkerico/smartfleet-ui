@@ -1,1 +1,22 @@
 @use '../../shared/styles/list-page';
+
+.driver-row--active { background: #f5fbf7; }
+.driver-row--inactive { background: #f7f8fa; color: #596779; }
+.driver-row--active .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #2c9b62; }
+.driver-row--inactive .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #9aa7b5; }
+.driver-row--active:hover { background: #ebf7ef; }
+.driver-row--inactive:hover { background: #eef1f4; }
+
+.driver-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #edf2f7;
+  color: #344457;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.driver-status--active { background: #ddf4e5; color: #17663d; }
+.driver-status--inactive { background: #e8edf2; color: #596779; }

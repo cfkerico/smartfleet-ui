@@ -1,0 +1,13 @@
+<div class="toast" [class.toast--error]="data.type === 'error'"
+  [attr.role]="data.type === 'error' ? 'alert' : 'status'">
+  <span class="toast__icon" aria-hidden="true">
+    <mat-icon>{{ data.type === 'success' ? 'check_circle' : 'error_outline' }}</mat-icon>
+  </span>
+  <div class="toast__content">
+    <strong>{{ data.type === 'success' ? 'Opération réussie' : 'Une erreur est survenue' }}</strong>
+    <span>{{ data.message }}</span>
+  </div>
+  <button mat-icon-button type="button" aria-label="Fermer la notification" (click)="dismiss()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>

@@ -1,0 +1,15 @@
+<div class="confirmation-dialog" [class.confirmation-dialog--danger]="data.tone === 'danger'">
+  <div class="confirmation-dialog__icon" aria-hidden="true">
+    <mat-icon>{{ data.tone === 'danger' ? 'warning_amber' : 'help_outline' }}</mat-icon>
+  </div>
+  <div class="confirmation-dialog__body">
+    <h2 mat-dialog-title>{{ data.title }}</h2>
+    <mat-dialog-content>{{ data.message }}</mat-dialog-content>
+  </div>
+</div>
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">{{ data.cancelLabel || 'Annuler' }}</button>
+  <button mat-flat-button type="button" class="confirmation-dialog__confirm-button"
+    [class.confirmation-dialog__danger-button]="data.tone === 'danger'"
+    (click)="confirm()">{{ data.confirmLabel }}</button>
+</mat-dialog-actions>

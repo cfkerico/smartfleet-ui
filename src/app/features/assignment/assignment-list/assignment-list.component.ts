@@ -13,6 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { AssignmentApiService } from '../../../core/services/assignment-api.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { ConfirmationService } from '../../../core/services/confirmation.service';
 import { AssignmentFormComponent } from '../assignment-form/assignment-form.component';
 
 @Component({
@@ -56,6 +57,7 @@ export class AssignmentListComponent implements OnInit {
     private assignmentService: AssignmentApiService,
     private dialog: MatDialog,
     private notification: NotificationService,
+    private confirmation: ConfirmationService,
   ) {}
 
   ngOnInit(): void {
@@ -134,20 +136,22 @@ export class AssignmentListComponent implements OnInit {
   }
 
   deleteAssignment(assignment: VehicleAssignment) {
-    if (
-      confirm(
-        `Are you sure you want to delete the assignment for driver ${assignment.driverFullName} and vehicle ${assignment.vehicleLabel}?`,
-      )
-    ) {
+    this.confirmation.confirm({
+      title: 'Supprimer cette affectation ?',
+      message: `Affectation de ${assignment.driverFullName} au véhicule ${assignment.vehicleLabel}. Confirmez-vous cette action ?`,
+      confirmLabel: 'Supprimer',
+      tone: 'danger',
+    }).subscribe(confirmed => {
+      if (!confirmed) return;
       this.assignmentService.deleteAssignment(assignment.id).subscribe({
         next: () => {
-          this.notification.success('Assignment deleted successfully');
+          this.notification.success('Affectation supprimée avec succès');
           this.load(); // Reload the assignments after deletion
         },
         error: () => {
-          this.notification.error('Failed to delete assignment');
+          this.notification.error('Impossible de supprimer l’affectation');
         },
       });
-    }
+    });
   }
 }

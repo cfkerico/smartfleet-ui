@@ -3,6 +3,7 @@ import { of } from 'rxjs';
 import { AssignmentApiService } from '../../../core/services/assignment-api.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { provideRouter } from '@angular/router';
+import { ConfirmationService } from '../../../core/services/confirmation.service';
 
 import { AssignmentListComponent } from './assignment-list.component';
 
@@ -19,6 +20,7 @@ describe('AssignmentListComponent', () => {
           useValue: { getAll: () => of({ content: [], totalElements: 0 }) },
         },
         { provide: NotificationService, useValue: { error: () => undefined } },
+        { provide: ConfirmationService, useValue: { confirm: () => of(false) } },
         provideRouter([]),
       ],
     }).compileComponents();

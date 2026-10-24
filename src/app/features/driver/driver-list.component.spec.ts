@@ -4,6 +4,7 @@ import { DriverService } from '../../core/services/driver.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { provideRouter } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationService } from '../../core/services/confirmation.service';
 
 
 import { DriverListComponent } from './driver-list.component';
@@ -18,6 +19,7 @@ describe('DriverListComponent', () => {
     reactivate: vi.fn(() => of(undefined)),
   };
   const dialogMock = { open: vi.fn() };
+  const confirmationMock = { confirm: vi.fn(() => of(true)) };
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -30,6 +32,7 @@ describe('DriverListComponent', () => {
           useValue: serviceMock,
         },
         { provide: MatDialog, useValue: dialogMock },
+        { provide: ConfirmationService, useValue: confirmationMock },
         { provide: NotificationService, useValue: { error: vi.fn(), success: vi.fn() } },
       ],
     }).compileComponents();
@@ -66,6 +69,19 @@ describe('DriverListComponent', () => {
     );
   });
 
+  it('should distinguish active and inactive drivers by row and text', () => {
+    component.drivers.data = [
+      { id: 1, civilite: 'Mr', nom: 'Actif', prenom: 'Jean', email: 'a@test.fr',
+        mobilePhoneNumber: '0600000001', adresse: '', workedDays: 20, status: 'ACTIVE' },
+      { id: 2, civilite: 'Mme', nom: 'Inactif', prenom: 'Alice', email: 'b@test.fr',
+        mobilePhoneNumber: '0600000002', adresse: '', workedDays: 20, status: 'INACTIVE' },
+    ] as any;
+    fixture.detectChanges();
+    const element: HTMLElement = fixture.nativeElement;
+    expect(element.querySelector('.driver-row--active .driver-status')?.textContent?.trim()).toBe('Actif');
+    expect(element.querySelector('.driver-row--inactive .driver-status')?.textContent?.trim()).toBe('Inactif');
+  });
+
   it('should update the selected driver once and refresh the list', () => {
     const payload = { nom: 'Dupont' };
     dialogMock.open.mockReturnValue({ afterClosed: () => of(payload) });
@@ -78,7 +94,6 @@ describe('DriverListComponent', () => {
   });
 
   it('should deactivate only after confirmation, then reactivate', () => {
-    const confirmation = vi.spyOn(window, 'confirm').mockReturnValue(true);
     const driver = { id: 10, fullName: 'Alice Dupont', status: 'ACTIVE' } as any;
 
     component.delete(driver);
@@ -87,6 +102,14 @@ describe('DriverListComponent', () => {
     expect(serviceMock.delete).toHaveBeenCalledExactlyOnceWith(10);
     expect(serviceMock.reactivate).toHaveBeenCalledExactlyOnceWith(10);
     expect(serviceMock.getAll).toHaveBeenCalledTimes(3);
-    confirmation.mockRestore();
+    expect(confirmationMock.confirm).toHaveBeenCalledWith(expect.objectContaining({
+      title: 'Désactiver ce chauffeur ?', confirmLabel: 'Désactiver',
+    }));
+  });
+
+  it('should not deactivate when the confirmation is cancelled', () => {
+    confirmationMock.confirm.mockReturnValueOnce(of(false));
+    component.delete({ id: 10, fullName: 'Alice Dupont' } as any);
+    expect(serviceMock.delete).not.toHaveBeenCalled();
   });
 });
