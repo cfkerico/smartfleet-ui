@@ -1,1 +1,37 @@
 @use '../../../shared/styles/list-page';
+
+.assignment-row--active { background: #f5fbf7; }
+.assignment-row--temporary { background: #f2f8fd; }
+.assignment-row--paused { background: #fffaf0; }
+.assignment-row--ended,
+.assignment-row--cancelled { background: #f7f8fa; color: #596779; }
+
+.assignment-row--active .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #2c9b62; }
+.assignment-row--temporary .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #347eb3; }
+.assignment-row--paused .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #d09a28; }
+.assignment-row--ended .mat-mdc-cell:first-child,
+.assignment-row--cancelled .mat-mdc-cell:first-child { box-shadow: inset 4px 0 #9aa7b5; }
+
+.assignment-row--active:hover { background: #ebf7ef; }
+.assignment-row--temporary:hover { background: #e8f3fc; }
+.assignment-row--paused:hover { background: #fff3d9; }
+.assignment-row--ended:hover,
+.assignment-row--cancelled:hover { background: #eef1f4; }
+
+.assignment-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #edf2f7;
+  color: #344457;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.assignment-status--active { background: #ddf4e5; color: #17663d; }
+.assignment-status--temporary { background: #dceefa; color: #17547e; }
+.assignment-status--paused { background: #fff0c7; color: #795213; }
+.assignment-status--ended,
+.assignment-status--cancelled { background: #e8edf2; color: #596779; }

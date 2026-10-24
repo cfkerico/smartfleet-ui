@@ -81,4 +81,27 @@ describe('AssignmentListComponent', () => {
     expect(fixture.nativeElement.querySelector('[aria-label="Suspendre l’affectation"]')).toBeNull();
     expect(fixture.nativeElement.querySelector('[aria-label="Reprendre l’affectation"]')).toBeNull();
   });
+
+  it.each([
+    ['ACTIVE', 'Active', 'active'],
+    ['TEMPORARY_ACTIVE', 'Temporaire active', 'temporary'],
+    ['PAUSED', 'En pause', 'paused'],
+    ['ENDED', 'Terminée', 'ended'],
+    ['CANCELLED', 'Annulée', 'cancelled'],
+  ])('should distinguish the %s assignment visually', (status, label, className) => {
+    component.assigments.data = [{
+      id: 9,
+      driverFullName: 'Jean Dupont',
+      vehicleLabel: 'Toyota',
+      type: 'PRIMARY',
+      status,
+      startDate: '2026-10-24',
+    } as VehicleAssignment];
+    fixture.detectChanges();
+
+    const row: HTMLElement | null = fixture.nativeElement.querySelector(`.assignment-row--${className}`);
+    const badge: HTMLElement | null = row?.querySelector(`.assignment-status--${className}`) ?? null;
+    expect(row).toBeTruthy();
+    expect(badge?.textContent?.trim()).toBe(label);
+  });
 });
