@@ -1,86 +1,90 @@
-<h2 mat-dialog-title>{{ data.mode === 'CREATE' ? 'Ajouter une affectation' : 'Modifier affectation' }}</h2>
+<h2 mat-dialog-title>
+  {{ data.mode === 'CREATE' ? 'Nouvelle affectation' : data.mode === 'PAUSE' ? 'Suspendre l’affectation' : 'Reprendre l’affectation' }}
+</h2>
 
-<mat-dialog-content class="dialog-content">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="create-form-grid">
-        <mat-form-field appearance="outline">
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-dialog-content class="dialog-content">
+    @if (data.mode === 'CREATE') {
+      <p class="dialog-intro">Associez un chauffeur et un véhicule, puis indiquez le type et la date de début.</p>
+      <section class="form-section">
+        <h3>Ressources affectées</h3>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
             <mat-label>Chauffeur</mat-label>
             <mat-select formControlName="driverId">
-                @for (driver of drivers; track driver.id) {
-                    <mat-option [value]="driver.id">
-                        {{ driver.nom }} {{ driver.prenom }}
-
-                        @if (isDriverAlreadyAssigned(driver.id)) {
-                            <!-- <span class="assigned-label"> (Déjà affecté)</span> -->
-                             - Déjà affecté
-                        }
-                    </mat-option>
-                }
-                
+              @for (driver of drivers; track driver.id) {
+                <mat-option [value]="driver.id" [disabled]="isDriverAlreadyAssigned(driver.id)">
+                  {{ driver.nom }} {{ driver.prenom }}{{ isDriverAlreadyAssigned(driver.id) ? ' — Déjà affecté' : '' }}
+                </mat-option>
+              }
             </mat-select>
-        </mat-form-field>
+            @if (form.controls['driverId'].touched && form.controls['driverId'].invalid) {
+              <mat-error>Choisissez un chauffeur disponible.</mat-error>
+            }
+          </mat-form-field>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Vehicule</mat-label>
+          <mat-form-field appearance="outline">
+            <mat-label>Véhicule</mat-label>
             <mat-select formControlName="vehicleId">
-                @for (vehicle of vehicles; track vehicle.id) {
-                    <mat-option [value]="vehicle.id">
-                        {{ vehicle.brand }} {{ vehicle.model }} {{ vehicle.year }} {{ vehicle.fuelType }} ({{ vehicle.vin === null ? vehicle.registrationNumber : vehicle.vin }})
-                        @if (isVehicleAlreadyAssigned(vehicle.id)) {
-                            <!-- <span class="assigned-label"> (Déjà affecté)</span> -->
-                             - Déjà affecté
-                        }
-                    </mat-option>
-                }
+              @for (vehicle of vehicles; track vehicle.id) {
+                <mat-option [value]="vehicle.id" [disabled]="isVehicleAlreadyAssigned(vehicle.id)">
+                  {{ vehicle.brand }} {{ vehicle.model }} — {{ vehicle.registrationNumber }}{{ isVehicleAlreadyAssigned(vehicle.id) ? ' — Déjà affecté' : '' }}
+                </mat-option>
+              }
             </mat-select>
-        </mat-form-field>
+            @if (form.controls['vehicleId'].touched && form.controls['vehicleId'].invalid) {
+              <mat-error>Choisissez un véhicule disponible.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </section>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Type</mat-label>
+      <section class="form-section">
+        <h3>Modalités de l’affectation</h3>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Type d’affectation</mat-label>
             <mat-select formControlName="type">
-                @for (type of assignmentTypes; track type) {
-                    <mat-option [value]="type">
-                        {{ type }}
-                    </mat-option>
-                }
+              @for (type of assignmentTypes; track type) {
+                <mat-option [value]="type">{{ type }}</mat-option>
+              }
             </mat-select>
-        </mat-form-field>
+          </mat-form-field>
 
-        <mat-form-field appearance="outline" *ngIf="data.mode === 'EDIT'">
-            <mat-label>Status</mat-label>
-            <mat-select formControlName="status">
-                @for (status of assignmentStatuses; track status) {
-                    <mat-option [value]="status">
-                        {{ status }}
-                    </mat-option>
-                }
-            </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Date début</mat-label>
-
+          <mat-form-field appearance="outline">
+            <mat-label>Date de début</mat-label>
             <input matInput [matDatepicker]="startPicker" formControlName="startDate">
             <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
             <mat-datepicker #startPicker></mat-datepicker>
-        </mat-form-field>
+            @if (form.controls['startDate'].touched && form.controls['startDate'].invalid) {
+              <mat-error>La date de début est obligatoire.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </section>
+    } @else {
+      <p class="dialog-intro">
+        {{ data.assignment?.driverFullName }} — {{ data.assignment?.vehicleLabel }}
+      </p>
+      @if (data.mode === 'PAUSE') {
+        <section class="form-section">
+          <h3>Motif de la suspension</h3>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Motif</mat-label>
+            <input matInput formControlName="reason">
+            @if (form.controls['reason'].touched && form.controls['reason'].invalid) {
+              <mat-error>Indiquez un motif.</mat-error>
+            }
+          </mat-form-field>
+        </section>
+      }
+    }
+  </mat-dialog-content>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Date fin</mat-label>
-
-            <input matInput [matDatepicker]="endPicker" formControlName="endDate">
-            <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
-            <mat-datepicker #endPicker></mat-datepicker>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <input matInput formControlName="reason" placeholder="Raison">
-        </mat-form-field>
-
-        <mat-dialog-actions align="end">
-            <button mat-button type="button" (click)="onClose()">Annuler</button>
-            <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
-                {{ data.mode === 'CREATE' ? 'Ajouter' : 'Modifier' }}
-            </button>
-        </mat-dialog-actions>
-    </form>
-</mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onClose()">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
+      {{ data.mode === 'CREATE' ? 'Créer l’affectation' : data.mode === 'PAUSE' ? 'Suspendre' : 'Reprendre' }}
+    </button>
+  </mat-dialog-actions>
+</form>

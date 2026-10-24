@@ -4,6 +4,7 @@ import { AssignmentApiService } from '../../../core/services/assignment-api.serv
 import { NotificationService } from '../../../core/services/notification.service';
 import { provideRouter } from '@angular/router';
 import { ConfirmationService } from '../../../core/services/confirmation.service';
+import { VehicleAssignment } from '../../../models/vehicle-assignment.model';
 
 import { AssignmentListComponent } from './assignment-list.component';
 
@@ -17,9 +18,9 @@ describe('AssignmentListComponent', () => {
       providers: [
         {
           provide: AssignmentApiService,
-          useValue: { getAll: () => of({ content: [], totalElements: 0 }) },
+          useValue: { getAll: () => of({ content: [], totalElements: 0 }), endAssignment: () => of({}) },
         },
-        { provide: NotificationService, useValue: { error: () => undefined } },
+        { provide: NotificationService, useValue: { error: () => undefined, success: () => undefined } },
         { provide: ConfirmationService, useValue: { confirm: () => of(false) } },
         provideRouter([]),
       ],
@@ -55,5 +56,29 @@ describe('AssignmentListComponent', () => {
     expect(element.querySelector('.empty-state')?.textContent).toContain(
       'Aucun élément à afficher.',
     );
+  });
+
+  it('should end an assignment without deleting it, then reload the history', () => {
+    const service = TestBed.inject(AssignmentApiService);
+    const confirmation = TestBed.inject(ConfirmationService);
+    const end = vi.spyOn(service, 'endAssignment').mockReturnValue(of({} as VehicleAssignment));
+    vi.spyOn(confirmation, 'confirm').mockReturnValue(of(true));
+    const load = vi.spyOn(component, 'load');
+    const assignment = { id: 7, driverFullName: 'Jean Dupont', vehicleLabel: 'Toyota', status: 'ACTIVE' } as any;
+
+    component.endAssignment(assignment);
+
+    expect(end).toHaveBeenCalledExactlyOnceWith(7);
+    expect(load).toHaveBeenCalledOnce();
+  });
+
+  it('should not offer pause, resume or end for an ended assignment', () => {
+    component.assigments.data = [{ id: 8, driverFullName: 'Jean Dupont', vehicleLabel: 'Toyota', status: 'ENDED' } as any];
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Jean Dupont');
+    expect(fixture.nativeElement.querySelector('[aria-label="Terminer l’affectation"]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('[aria-label="Suspendre l’affectation"]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('[aria-label="Reprendre l’affectation"]')).toBeNull();
   });
 });

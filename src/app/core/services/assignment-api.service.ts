@@ -43,6 +43,10 @@ export class AssignmentApiService {
     return this.http.put<VehicleAssignment>(`${this.assignmentUrl}/resumed/${id}`, null);
   }
 
+  endAssignment(id: number): Observable<VehicleAssignment> {
+    return this.http.put<VehicleAssignment>(`${this.assignmentUrl}/ended/${id}`, null);
+  }
+
   getAll(page: number, size: number): Observable<PageResponse<VehicleAssignment>> {
       const params = new HttpParams()
         .set('page', page)
@@ -54,7 +58,4 @@ export class AssignmentApiService {
     return this.http.get<VehicleAssignment[]>(`${this.assignmentUrl}/active `);
   }
 
-  deleteAssignment(id: number): Observable<any> {
-    return this.http.delete(`${this.assignmentUrl}/${id}`);
-  }
 }

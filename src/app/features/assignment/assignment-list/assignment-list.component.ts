@@ -135,21 +135,21 @@ export class AssignmentListComponent implements OnInit {
     });
   }
 
-  deleteAssignment(assignment: VehicleAssignment) {
+  endAssignment(assignment: VehicleAssignment): void {
     this.confirmation.confirm({
-      title: 'Supprimer cette affectation ?',
-      message: `Affectation de ${assignment.driverFullName} au véhicule ${assignment.vehicleLabel}. Confirmez-vous cette action ?`,
-      confirmLabel: 'Supprimer',
+      title: 'Terminer cette affectation ?',
+      message: `${assignment.driverFullName} et ${assignment.vehicleLabel} seront libérés pour de nouvelles affectations. Cette affectation restera dans l’historique.`,
+      confirmLabel: 'Terminer l’affectation',
       tone: 'danger',
     }).subscribe(confirmed => {
       if (!confirmed) return;
-      this.assignmentService.deleteAssignment(assignment.id).subscribe({
+      this.assignmentService.endAssignment(assignment.id).subscribe({
         next: () => {
-          this.notification.success('Affectation supprimée avec succès');
-          this.load(); // Reload the assignments after deletion
+          this.notification.success('Affectation terminée. Chauffeur et véhicule libérés.');
+          this.load();
         },
         error: () => {
-          this.notification.error('Impossible de supprimer l’affectation');
+          this.notification.error('Impossible de terminer l’affectation');
         },
       });
     });
