@@ -142,7 +142,7 @@ export class ExpenseListComponent implements OnInit {
         width: '520px',
         data: {
           title: 'Rejeter la demande',
-          message: 'Vous allez rejeter la demande de <strong>'+ expense.requestedAmount + '</strong> pour le véhicule <strong>'+ expense.vehicleLabel +'</strong>',
+          message: `Vous allez rejeter la demande de ${expense.requestedAmount} FCFA pour le véhicule ${expense.vehicleLabel}.`,
           confirmLabel: "Confirmer le rejet",
           confirmColor: 'warn',
           placeholderMotif: 'Motif du rejet'
@@ -166,8 +166,8 @@ export class ExpenseListComponent implements OnInit {
       {
         width: '520px',
         data: {
-          title: 'Annuler la depense',
-          message: 'Vous allez annuler la demande de <strong>'+ expense.requestedAmount + '</strong> pour le véhicule <strong>'+ expense.vehicleLabel +'</strong>',
+          title: 'Annuler la dépense',
+          message: `Vous allez annuler la demande de ${expense.requestedAmount} FCFA pour le véhicule ${expense.vehicleLabel}.`,
           confirmLabel: "Confirmer l'annulation",
           confirmColor: 'warn',
           placeholderMotif: "Motif de l'annulation"

@@ -6,6 +6,7 @@ import { ExpenseReasonDialogComponent } from './expense-reason-dialog.component'
 describe('RejectExpenseDialogComponent', () => {
   let component: ExpenseReasonDialogComponent;
   let fixture: ComponentFixture<ExpenseReasonDialogComponent>;
+  const close = vi.fn();
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -21,7 +22,7 @@ describe('RejectExpenseDialogComponent', () => {
             placeholderMotif: 'Motif',
           },
         },
-        { provide: MatDialogRef, useValue: { close: () => undefined } },
+        { provide: MatDialogRef, useValue: { close } },
       ],
     }).compileComponents();
 
@@ -32,5 +33,24 @@ describe('RejectExpenseDialogComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should require a reason of at least five characters', () => {
+    close.mockClear();
+    component.form.patchValue({ reason: 'abc' });
+
+    component.submit();
+
+    expect(component.form.controls.reason.hasError('minlength')).toBe(true);
+    expect(close).not.toHaveBeenCalled();
+  });
+
+  it('should return the reason when valid', () => {
+    close.mockClear();
+    component.form.patchValue({ reason: 'Demande en double' });
+
+    component.submit();
+
+    expect(close).toHaveBeenCalledWith({ reason: 'Demande en double' });
   });
 });

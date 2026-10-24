@@ -1,73 +1,86 @@
-<h2 mat-dialog-title>Décaisser la dépense</h2>
+<h2 mat-dialog-title>Décaisser une dépense</h2>
 
 <form [formGroup]="form" (ngSubmit)="submit()">
+  <mat-dialog-content class="dialog-content">
+    <p class="dialog-intro">Renseignez le versement effectué pour cette demande de dépense.</p>
 
-    <mat-dialog-content class="dialog-content">
-        <div class="expense-summary">
-            <span>Véhicule</span>
-            <strong>{{ data.expense.vehicleLabel }}</strong>
-
-            <span>Montant demandé</span>
-            <strong>{{ data.expense.requestedAmount }}</strong>
+    <section class="form-section">
+      <h3>Dépense concernée</h3>
+      <div class="expense-summary">
+        <div>
+          <span>Véhicule</span>
+          <strong>{{ data.expense.vehicleLabel }}</strong>
         </div>
+        <div>
+          <span>Montant demandé</span>
+          <strong>{{ data.expense.requestedAmount }} FCFA</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h3>Paiement</h3>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Montant décaissé (FCFA)</mat-label>
+          <input matInput type="number" min="1" step="1" formControlName="paidAmount" required>
+          @if (form.controls.paidAmount.touched && form.controls.paidAmount.hasError('required')) {
+            <mat-error>Le montant est obligatoire.</mat-error>
+          } @else if (form.controls.paidAmount.touched && form.controls.paidAmount.hasError('min')) {
+            <mat-error>Le montant doit être d’au moins 1 FCFA.</mat-error>
+          }
+        </mat-form-field>
 
         <mat-form-field appearance="outline">
-            <mat-label>Montant décaissé</mat-label>
-
-            <input matInput type="number" formControlName="paidAmount">
-
-            @if (form.get('paidAmount')?.hasError('required')) {
-                <mat-error>Le montant est obligatoire.</mat-error>
+          <mat-label>Mode de paiement</mat-label>
+          <mat-select formControlName="paymentMethod" required>
+            @for (method of paymentMethods; track method) {
+              <mat-option [value]="method">{{ paymentMethodLabel(method) }}</mat-option>
             }
-
-            @if (form.get('paidAmount')?.hasError('min')) {
-                <mat-error>Le montant doit être supérieur à 0.</mat-error>
-            }
+          </mat-select>
+          @if (form.controls.paymentMethod.touched && form.controls.paymentMethod.invalid) {
+            <mat-error>Choisissez un mode de paiement.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-            <mat-label>Mode de paiement</mat-label>
-            <mat-select formControlName="paymentMethod">
-                @for (method of paymentMethods; track method) {
-                    <mat-option [value]="method">
-                        {{ method }}
-                    </mat-option>
-                }
-            </mat-select>
+          <mat-label>Date de paiement</mat-label>
+          <input matInput [matDatepicker]="paymentPicker" formControlName="paymentDate" required>
+          <mat-datepicker-toggle matIconSuffix [for]="paymentPicker"></mat-datepicker-toggle>
+          <mat-datepicker #paymentPicker></mat-datepicker>
+          @if (form.controls.paymentDate.touched && form.controls.paymentDate.invalid) {
+            <mat-error>La date de paiement est obligatoire.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h3>Informations complémentaires</h3>
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Référence</mat-label>
+          <input matInput formControlName="referenceNumber">
+          <mat-hint>Facultatif</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-            <mat-label>Référence</mat-label>
-
-            <input matInput formControlName="referenceNumber">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Bénéficiaire</mat-label>
-
-            <input matInput formControlName="beneficiary">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Date de paiement</mat-label>
-
-            <input matInput [matDatepicker]="paymentPicker" formControlName="paymentDate">
-
-            <mat-datepicker-toggle matIconSuffix [for]="paymentPicker"></mat-datepicker-toggle>
-
-            <mat-datepicker #paymentPicker></mat-datepicker>
+          <mat-label>Bénéficiaire</mat-label>
+          <input matInput formControlName="beneficiary">
+          <mat-hint>Facultatif</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Commentaire</mat-label>
-
-            <textarea matInput rows="3" formControlName="comment"></textarea>
+          <mat-label>Commentaire</mat-label>
+          <textarea matInput rows="3" formControlName="comment"></textarea>
+          <mat-hint>Facultatif</mat-hint>
         </mat-form-field>
+      </div>
+    </section>
+  </mat-dialog-content>
 
-    </mat-dialog-content>
-
-    <mat-dialog-actions align="end">
-        <button mat-button type="button" (click)="close()">Annuler</button>
-        <button mat-raised-button color="primary" type="submit">Confirmer le décaissement</button>
-    </mat-dialog-actions>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="close()">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">Confirmer le décaissement</button>
+  </mat-dialog-actions>
 </form>

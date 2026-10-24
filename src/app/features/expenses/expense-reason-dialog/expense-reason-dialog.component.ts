@@ -6,7 +6,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 import { Inject } from '@angular/core';
-import { ExpenseRequest } from '../../../models/expense.model';
 
 @Component({
   selector: 'app-expense-reason-dialog',

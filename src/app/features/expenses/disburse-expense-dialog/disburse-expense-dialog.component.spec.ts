@@ -6,6 +6,7 @@ import { DisburseExpenseDialogComponent } from './disburse-expense-dialog.compon
 describe('DisburseExpenseDialogComponent', () => {
   let component: DisburseExpenseDialogComponent;
   let fixture: ComponentFixture<DisburseExpenseDialogComponent>;
+  const close = vi.fn();
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -15,7 +16,7 @@ describe('DisburseExpenseDialogComponent', () => {
           provide: MAT_DIALOG_DATA,
           useValue: { expense: { vehicleLabel: 'Véhicule test', requestedAmount: 1000 } },
         },
-        { provide: MatDialogRef, useValue: { close: () => undefined } },
+        { provide: MatDialogRef, useValue: { close } },
       ],
     }).compileComponents();
 
@@ -26,5 +27,34 @@ describe('DisburseExpenseDialogComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should not close with a zero disbursement', () => {
+    close.mockClear();
+    component.form.patchValue({ paidAmount: 0, paymentMethod: 'CASH' });
+
+    component.submit();
+
+    expect(component.form.controls.paidAmount.hasError('min')).toBe(true);
+    expect(close).not.toHaveBeenCalled();
+  });
+
+  it('should return the payment details when valid', () => {
+    close.mockClear();
+    component.form.patchValue({
+      paidAmount: 500,
+      paymentMethod: 'BANK_TRANSFER',
+      referenceNumber: 'VIR-001',
+      paymentDate: new Date(Date.UTC(2026, 9, 24)),
+    });
+
+    component.submit();
+
+    expect(close).toHaveBeenCalledWith(expect.objectContaining({
+      paidAmount: 500,
+      paymentMethod: 'BANK_TRANSFER',
+      referenceNumber: 'VIR-001',
+      paymentDate: '2026-10-24T00:00:00.000Z',
+    }));
   });
 });

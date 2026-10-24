@@ -9,9 +9,6 @@ import { ExpenseRequest, PaymentMethod } from '../../../models/expense.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { formatDate } from '@angular/common';
-
-
 @Component({
   selector: 'app-disburse-expense-dialog',
   standalone: true,
@@ -38,6 +35,17 @@ export class DisburseExpenseDialogComponent {
     'MOBILE_MONEY',
     'CARD'
   ];
+
+  paymentMethodLabel(method: PaymentMethod): string {
+    const labels: Record<PaymentMethod, string> = {
+      CASH: 'Espèces',
+      BANK_TRANSFER: 'Virement bancaire',
+      CHECK: 'Chèque',
+      MOBILE_MONEY: 'Mobile Money',
+      CARD: 'Carte bancaire',
+    };
+    return labels[method];
+  }
 
   private readonly fb = inject(FormBuilder);
 
