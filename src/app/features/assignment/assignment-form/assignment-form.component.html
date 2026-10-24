@@ -39,6 +39,12 @@
         </div>
       </section>
 
+      @if (contextUnavailable()) {
+        <p class="availability-note" role="alert">
+          La ressource sélectionnée dans la fiche n'est plus disponible pour une nouvelle affectation.
+        </p>
+      }
+
       <section class="form-section">
         <h3>Modalités de l’affectation</h3>
         <div class="form-grid">
@@ -83,7 +89,7 @@
 
   <mat-dialog-actions align="end">
     <button mat-button type="button" (click)="onClose()">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || (data.mode === 'CREATE' && !canCreateAssignment())">
       {{ data.mode === 'CREATE' ? 'Créer l’affectation' : data.mode === 'PAUSE' ? 'Suspendre' : 'Reprendre' }}
     </button>
   </mat-dialog-actions>

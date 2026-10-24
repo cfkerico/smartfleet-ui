@@ -55,6 +55,10 @@
       <section class="detail-card" aria-labelledby="driver-links-title">
         <h2 id="driver-links-title">Parcours associés</h2>
         <div class="detail-actions">
+          <button mat-raised-button color="primary" type="button" (click)="openAssignment()"
+            [disabled]="currentDriver.status !== 'ACTIVE'">
+            <mat-icon>add</mat-icon>Nouvelle affectation
+          </button>
           <a mat-stroked-button [routerLink]="['/drivers', currentDriver.id, 'documents']">
             <mat-icon>folder</mat-icon>
             Dossier documentaire

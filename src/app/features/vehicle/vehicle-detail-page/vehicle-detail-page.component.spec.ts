@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { VehicleService } from '../../../core/services/vehicle.service';
@@ -12,6 +13,7 @@ describe('VehicleDetailPageComponent', () => {
     registrationNumber: 'CE 135 FG', acquisitionMileage: 100000, currentMileage: 101000,
   };
   const getById = vi.fn();
+  const open = vi.fn(() => ({ afterClosed: () => of(false) }));
 
   async function create(id: string | null) {
     await TestBed.configureTestingModule({
@@ -20,6 +22,7 @@ describe('VehicleDetailPageComponent', () => {
         provideRouter([]),
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap(id === null ? {} : { vehicleId: id }) } } },
         { provide: VehicleService, useValue: { getById } },
+        { provide: MatDialog, useValue: { open } },
       ],
     }).compileComponents();
     const fixture = TestBed.createComponent(VehicleDetailPageComponent);
@@ -27,7 +30,10 @@ describe('VehicleDetailPageComponent', () => {
     return fixture;
   }
 
-  beforeEach(() => getById.mockReset());
+  beforeEach(() => {
+    getById.mockReset();
+    open.mockClear();
+  });
 
   it('loads the vehicle and links to its existing pages', async () => {
     getById.mockReturnValue(of(vehicle));
@@ -37,6 +43,18 @@ describe('VehicleDetailPageComponent', () => {
     for (const path of ['/vehicles/9/documents', '/vehicles/9/maintenances', '/vehicles/9/maintenance-plans']) {
       expect(fixture.nativeElement.querySelector(`a[href="${path}"]`)).toBeTruthy();
     }
+  });
+
+  it('opens assignment creation with this vehicle preselected', async () => {
+    getById.mockReturnValue(of(vehicle));
+    const fixture = await create('9');
+    fixture.componentInstance.openAssignment();
+    expect(open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: { mode: 'CREATE', preselectedVehicle: vehicle },
+    }));
+    fixture.componentInstance.vehicle.set({ ...vehicle, vehicleStatus: 'INACTIVE' });
+    fixture.componentInstance.openAssignment();
+    expect(open).toHaveBeenCalledTimes(1);
   });
 
   it('rejects an invalid route id without calling the API', async () => {

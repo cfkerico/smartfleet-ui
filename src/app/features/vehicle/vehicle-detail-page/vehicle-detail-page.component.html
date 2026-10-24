@@ -53,6 +53,10 @@
       <section class="detail-card" aria-labelledby="vehicle-links-title">
         <h2 id="vehicle-links-title">Parcours associés</h2>
         <div class="detail-actions">
+          <button mat-raised-button color="primary" type="button" (click)="openAssignment()"
+            [disabled]="currentVehicle.vehicleStatus !== 'AVAILABLE'">
+            <mat-icon>add</mat-icon>Nouvelle affectation
+          </button>
           <a mat-stroked-button [routerLink]="['/vehicles', currentVehicle.id, 'documents']">
             <mat-icon>folder</mat-icon>Dossier documentaire
           </a>

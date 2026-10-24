@@ -34,6 +34,15 @@
 
 .full-width { width: 100%; }
 
+.availability-note {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #fff2f0;
+  color: #9b2822;
+  line-height: 1.4;
+}
+
 mat-dialog-actions {
   gap: 8px;
   padding: 16px 24px 20px;

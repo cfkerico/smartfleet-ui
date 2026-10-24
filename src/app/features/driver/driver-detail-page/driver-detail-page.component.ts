@@ -2,6 +2,8 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { AssignmentFormComponent, AssignmentFormData } from '../../assignment/assignment-form/assignment-form.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DriverService } from '../../../core/services/driver.service';
@@ -17,6 +19,7 @@ import { Driver } from '../../../models/driver.model';
 export class DriverDetailPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly driverService = inject(DriverService);
+  private readonly dialog = inject(MatDialog);
 
   readonly driver = signal<Driver | null>(null);
   readonly loading = signal(true);
@@ -30,11 +33,32 @@ export class DriverDetailPageComponent implements OnInit {
       return;
     }
 
+    this.loadDriver(driverId);
+  }
+
+  openAssignment(): void {
+    const driver = this.driver();
+    if (!driver || driver.status !== 'ACTIVE') return;
+
+    const data: AssignmentFormData = { mode: 'CREATE', preselectedDriver: driver };
+    this.dialog.open<AssignmentFormComponent, AssignmentFormData, boolean>(AssignmentFormComponent, {
+      width: '800px', maxWidth: '96vw', maxHeight: '90vh', data,
+    }).afterClosed().subscribe(created => {
+      if (created === true) this.loadDriver(driver.id);
+    });
+  }
+
+  private loadDriver(driverId: number): void {
+    this.loading.set(true);
+    this.error.set(null);
     this.driverService.getById(driverId).pipe(
       finalize(() => this.loading.set(false)),
     ).subscribe({
       next: driver => this.driver.set(driver),
-      error: () => this.error.set('Impossible de charger ce chauffeur.'),
+      error: () => {
+        this.driver.set(null);
+        this.error.set('Impossible de charger ce chauffeur.');
+      },
     });
   }
 }

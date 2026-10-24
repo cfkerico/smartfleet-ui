@@ -17,6 +17,13 @@ import { AssignmentStatus, AssignmentType, VehicleAssignment } from '../../../mo
 import { AssignmentApiService } from '../../../core/services/assignment-api.service';
 import { NotificationService } from '../../../core/services/notification.service';
 
+export interface AssignmentFormData {
+  mode: 'CREATE' | 'PAUSE' | 'RESUME';
+  assignment?: VehicleAssignment;
+  preselectedDriver?: Driver;
+  preselectedVehicle?: Vehicle;
+}
+
 @Component({
   selector: 'app-assignment-form',
   standalone: true,
@@ -34,15 +41,17 @@ export class AssignmentFormComponent implements OnInit {
   drivers: Driver[] = [];
   vehicles: Vehicle[] = [];
   assignments: VehicleAssignment[] = [];
+  private assignableDriverIds = new Set<number>();
+  private assignableVehicleIds = new Set<number>();
+  private driversLoaded = false;
+  private vehiclesLoaded = false;
+  private assignmentsLoaded = false;
 
   assignmentTypes: string[] = [AssignmentType.PRIMARY, AssignmentType.TEMPORARY_REMPLACEMENT, AssignmentType.PROMOTION];
 
   constructor(private fb: FormBuilder, private assignmentService: AssignmentApiService, private notification: NotificationService,
     private dialogRef: MatDialogRef<AssignmentFormComponent>,
-     @Inject(MAT_DIALOG_DATA) public data: {
-      mode: 'CREATE' | 'PAUSE' | 'RESUME';
-      assignment?: VehicleAssignment;
-    }) {}
+     @Inject(MAT_DIALOG_DATA) public data: AssignmentFormData) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -53,8 +62,8 @@ export class AssignmentFormComponent implements OnInit {
     const assignment = this.data.assignment;
 
     this.form = this.fb.group({
-      driverId: [assignment?.driverId ?? null, Validators.required],
-      vehicleId: [assignment?.vehicleId ?? null, Validators.required],
+      driverId: [this.data.preselectedDriver?.id ?? assignment?.driverId ?? null, Validators.required],
+      vehicleId: [this.data.preselectedVehicle?.id ?? assignment?.vehicleId ?? null, Validators.required],
       type: [assignment?.type ?? AssignmentType.PRIMARY, Validators.required],
       startDate: [assignment?.startDate ? new Date(assignment.startDate) : new Date(), Validators.required],
       reason: [assignment?.reason ?? '']
@@ -63,23 +72,69 @@ export class AssignmentFormComponent implements OnInit {
 
     if (this.data.mode === 'CREATE') {
       this.form.get('type')?.setValue(AssignmentType.PRIMARY);
+      if (this.data.preselectedDriver) this.form.get('driverId')?.disable();
+      if (this.data.preselectedVehicle) this.form.get('vehicleId')?.disable();
     } else if (this.data.mode === 'PAUSE') {
       this.form.get('reason')?.addValidators(Validators.required);
     }
   }
 
   private loadData() {
-    this.assignmentService.findDrivers().subscribe(drivers => {
-      this.drivers = drivers;
+    this.assignmentService.findDrivers().subscribe({
+      next: drivers => {
+        this.assignableDriverIds = new Set(drivers.map(driver => driver.id));
+        const selected = this.data.preselectedDriver;
+        this.drivers = selected && !this.assignableDriverIds.has(selected.id)
+          ? [selected, ...drivers] : drivers;
+        this.driversLoaded = true;
+      },
+      error: () => this.notification.error('Impossible de charger les chauffeurs disponibles'),
     });
 
-    this.assignmentService.findVehicles().subscribe(vehicles => {      
-      this.vehicles = vehicles;
+    this.assignmentService.findVehicles().subscribe({
+      next: vehicles => {
+        this.assignableVehicleIds = new Set(vehicles.map(vehicle => vehicle.id));
+        const selected = this.data.preselectedVehicle;
+        this.vehicles = selected && !this.assignableVehicleIds.has(selected.id)
+          ? [selected, ...vehicles] : vehicles;
+        this.vehiclesLoaded = true;
+      },
+      error: () => this.notification.error('Impossible de charger les véhicules disponibles'),
     });
 
-    this.assignmentService.findAssignments().subscribe(assignments => {
-      this.assignments = assignments;
+    this.assignmentService.findAssignments().subscribe({
+      next: assignments => {
+        this.assignments = assignments;
+        this.assignmentsLoaded = true;
+      },
+      error: () => this.notification.error('Impossible de vérifier les affectations existantes'),
     });
+  }
+
+  private availabilityChecked(): boolean {
+    return this.driversLoaded && this.vehiclesLoaded && this.assignmentsLoaded;
+  }
+
+  contextUnavailable(): boolean {
+    if (!this.availabilityChecked()) return false;
+    const driverId = this.data.preselectedDriver?.id;
+    const vehicleId = this.data.preselectedVehicle?.id;
+    return (driverId !== undefined
+        && (!this.assignableDriverIds.has(driverId) || this.isDriverAlreadyAssigned(driverId)))
+      || (vehicleId !== undefined
+        && (!this.assignableVehicleIds.has(vehicleId) || this.isVehicleAlreadyAssigned(vehicleId)));
+  }
+
+  canCreateAssignment(): boolean {
+    if (this.data.mode !== 'CREATE' || !this.availabilityChecked()) {
+      return false;
+    }
+    const { driverId, vehicleId } = this.form.getRawValue();
+    return this.form.valid
+      && this.assignableDriverIds.has(driverId)
+      && this.assignableVehicleIds.has(vehicleId)
+      && !this.isDriverAlreadyAssigned(driverId)
+      && !this.isVehicleAlreadyAssigned(vehicleId);
   }
 
   isDriverAlreadyAssigned(driverId: number): boolean {
@@ -95,6 +150,10 @@ export class AssignmentFormComponent implements OnInit {
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      return;
+    }
+    if (this.data.mode === 'CREATE' && !this.canCreateAssignment()) {
+      this.notification.error('Chauffeur ou véhicule indisponible pour une nouvelle affectation');
       return;
     }
 

@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { DriverService } from '../../../core/services/driver.service';
@@ -13,6 +14,7 @@ describe('DriverDetailPageComponent', () => {
     hireDate: '2025-01-01', status: 'ACTIVE', workedDays: 20,
   };
   const getById = vi.fn();
+  const open = vi.fn(() => ({ afterClosed: () => of(false) }));
 
   async function create(id: string | null) {
     await TestBed.configureTestingModule({
@@ -21,6 +23,7 @@ describe('DriverDetailPageComponent', () => {
         provideRouter([]),
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap(id === null ? {} : { driverId: id }) } } },
         { provide: DriverService, useValue: { getById } },
+        { provide: MatDialog, useValue: { open } },
       ],
     }).compileComponents();
     const fixture = TestBed.createComponent(DriverDetailPageComponent);
@@ -28,7 +31,10 @@ describe('DriverDetailPageComponent', () => {
     return fixture;
   }
 
-  beforeEach(() => getById.mockReset());
+  beforeEach(() => {
+    getById.mockReset();
+    open.mockClear();
+  });
 
   it('loads the driver and links to its document dossier', async () => {
     getById.mockReturnValue(of(driver));
@@ -36,6 +42,18 @@ describe('DriverDetailPageComponent', () => {
     expect(getById).toHaveBeenCalledExactlyOnceWith(7);
     expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain('Alice Dupont');
     expect(fixture.nativeElement.querySelector('a[href="/drivers/7/documents"]')).toBeTruthy();
+  });
+
+  it('opens assignment creation with this driver preselected', async () => {
+    getById.mockReturnValue(of(driver));
+    const fixture = await create('7');
+    fixture.componentInstance.openAssignment();
+    expect(open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: { mode: 'CREATE', preselectedDriver: driver },
+    }));
+    fixture.componentInstance.driver.set({ ...driver, status: 'INACTIVE' });
+    fixture.componentInstance.openAssignment();
+    expect(open).toHaveBeenCalledTimes(1);
   });
 
   it('rejects an invalid route id without calling the API', async () => {
