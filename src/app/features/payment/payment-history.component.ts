@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { Component, OnInit } from '@angular/core';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { DriverPayment } from '../../models/payment.model';
@@ -55,14 +55,13 @@ import { formatDate } from '@angular/common';
   templateUrl: './payment-history.component.html',
   styleUrl: './payment-history.component.scss',
 })
-export class PaymentHistoryComponent implements OnInit, AfterViewInit {
+export class PaymentHistoryComponent implements OnInit {
 
   displayedColumns: string[] = [
     'paymentDate', 'driver', 'vehicle', 'expectedAmount', 'paidAmount', 'differenceAmount', 'status', 'actions'];
 
   dataSource = new MatTableDataSource<DriverPayment>([]);
-  
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   totalElements = 0;
   pageSize = 10;
   pageIndex = 0;
@@ -83,14 +82,9 @@ export class PaymentHistoryComponent implements OnInit, AfterViewInit {
     this.loadPayments(this.pageIndex, this.pageSize);
   }
 
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-  }
-
   loadPayments(page: number, size: number): void {
 
     const raw = this.filterForm?.getRawValue();
-    console.log('----++++++++----- Raw Filter Form:', raw);
 
     const filters = {
       driverId: raw?.driverId ?? null,
@@ -134,9 +128,6 @@ export class PaymentHistoryComponent implements OnInit, AfterViewInit {
   applyFilters(): void {
     this.pageIndex = 0; 
     this.loadPayments(0, this.pageSize);
-
-    //const filterValue = (event.target as HTMLInputElement).value;
-    //this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   resetFilters(): void {
@@ -166,10 +157,6 @@ export class PaymentHistoryComponent implements OnInit, AfterViewInit {
 
   getTotalPaid(): number {
     return this.dataSource.data.reduce((total, payment) => total + payment.paidAmount, 0);
-  }
-
-  getTotalExpected(): number {
-    return this.dataSource.data.reduce((total, payment) => total + payment.expectedAmount, 0);
   }
 
   getTotalDifference(): number {

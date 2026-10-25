@@ -83,4 +83,45 @@ describe('PaymentHistoryComponent', () => {
     expect(row).toBeTruthy();
     expect(row?.querySelector('.status-badge')?.textContent?.trim()).toBe(label);
   });
+  it('keeps the server total and displays all ten rows when changing page size', () => {
+    const payments = Array.from({ length: 10 }, (_, index) => ({
+      id: index + 11,
+      driverFullName: 'Jean Dupont',
+      vehicleLabel: 'Toyota Yaris',
+      expectedAmount: 10000,
+      paidAmount: 10000,
+      differenceAmount: 0,
+      paymentDate: '2026-10-24',
+      status: 'VALIDATED',
+    } as DriverPayment));
+    const findPayments = vi.spyOn(TestBed.inject(RevenuePaymentApiService), 'findPayments')
+      .mockReturnValue(of({ content: payments, totalElements: 30, totalPages: 3, page: 1, size: 10, last: false }));
+
+    component.pageSize = 5;
+    component.onPageChange({ pageIndex: 1, pageSize: 10, length: 30 });
+    fixture.detectChanges();
+
+    expect(findPayments).toHaveBeenLastCalledWith(1, 10, expect.any(Object));
+    expect(component.totalElements).toBe(30);
+    expect(component.dataSource.paginator).toBeUndefined();
+    expect(fixture.nativeElement.querySelectorAll('tr.mat-mdc-row')).toHaveLength(10);
+  });
+  it('labels summary amounts as current-page totals and uses the paid amount', () => {
+    component.dataSource.data = [{
+      id: 1,
+      driverFullName: 'Jean Dupont',
+      vehicleLabel: 'Toyota Yaris',
+      expectedAmount: 12000,
+      paidAmount: 10000,
+      differenceAmount: -2000,
+      paymentDate: '2026-10-24',
+      status: 'PARTIAL',
+    } as DriverPayment];
+    fixture.detectChanges();
+
+    const cards = fixture.nativeElement.querySelectorAll('.summary-card');
+    expect(cards[0].textContent).toContain('Versé sur cette page');
+    expect(cards[0].querySelector('strong')?.textContent?.trim()).toBe('10000');
+    expect(cards[1].textContent).toContain('Écart sur cette page');
+  });
 });

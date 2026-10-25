@@ -59,12 +59,12 @@
 
 <div class="summary-cards">
     <div class="summary-card">
-        <span>Versé</span>
-        <strong>{{ getTotalExpected() }}</strong>
+        <span>Versé sur cette page</span>
+        <strong>{{ getTotalPaid() }}</strong>
     </div>
 
     <div class="summary-card">
-        <span>Ecart</span>
+        <span>Écart sur cette page</span>
         <strong [class]="getDifferenceClass(getTotalDifference())">{{ getTotalDifference() }}</strong>
     </div>
 
