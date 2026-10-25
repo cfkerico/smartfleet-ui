@@ -108,6 +108,27 @@ describe('VehicleDetailPageComponent', () => {
     expect(open).toHaveBeenCalledTimes(1);
   });
 
+  it('keeps an inactive vehicle and its histories accessible without creation actions', async () => {
+    getById.mockReturnValue(of({ ...vehicle, vehicleStatus: 'INACTIVE' }));
+    const fixture = await create('9');
+    const buttons = [...fixture.nativeElement.querySelectorAll('button')] as HTMLButtonElement[];
+
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain('Toyota Yaris');
+    expect(fixture.nativeElement.querySelector('.status')?.textContent).toContain('Inactif');
+    for (const path of ['/vehicles/9/documents', '/vehicles/9/maintenances', '/vehicles/9/maintenance-plans']) {
+      expect(fixture.nativeElement.querySelector(`a[href="${path}"]`)).toBeTruthy();
+    }
+    for (const action of ['Nouvelle affectation', 'Nouvelle recette', 'Nouvelle dépense']) {
+      expect(buttons.find(button => button.textContent?.includes(action))?.disabled).toBe(true);
+    }
+    expect(findActiveAssignments).not.toHaveBeenCalled();
+
+    fixture.componentInstance.openAssignment();
+    fixture.componentInstance.openPayment();
+    fixture.componentInstance.openExpense();
+    expect(open).not.toHaveBeenCalled();
+  });
+
   it('rejects an invalid route id without calling the API', async () => {
     const fixture = await create('0');
     expect(getById).not.toHaveBeenCalled();

@@ -91,6 +91,23 @@ describe('DriverDetailPageComponent', () => {
     expect(open).not.toHaveBeenCalled();
   });
 
+  it('keeps an inactive driver and its document history accessible without creation actions', async () => {
+    getById.mockReturnValue(of({ ...driver, status: 'INACTIVE' }));
+    const fixture = await create('7');
+    const buttons = [...fixture.nativeElement.querySelectorAll('button')] as HTMLButtonElement[];
+
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain('Alice Dupont');
+    expect(fixture.nativeElement.querySelector('.status')?.textContent).toContain('Inactif');
+    expect(fixture.nativeElement.querySelector('a[href="/drivers/7/documents"]')).toBeTruthy();
+    expect(buttons.find(button => button.textContent?.includes('Nouvelle affectation'))?.disabled).toBe(true);
+    expect(buttons.find(button => button.textContent?.includes('Nouvelle recette'))?.disabled).toBe(true);
+    expect(findActiveAssignments).not.toHaveBeenCalled();
+
+    fixture.componentInstance.openAssignment();
+    fixture.componentInstance.openPayment();
+    expect(open).not.toHaveBeenCalled();
+  });
+
   it('rejects an invalid route id without calling the API', async () => {
     const fixture = await create('invalid');
     expect(getById).not.toHaveBeenCalled();
