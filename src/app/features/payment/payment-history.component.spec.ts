@@ -8,6 +8,7 @@ import { PaymentHistoryComponent } from './payment-history.component';
 import { DriverPayment } from '../../models/payment.model';
 import { Driver } from '../../models/driver.model';
 import { Vehicle } from '../../models/vehicle';
+import { AuthService } from '../../core/auth/auth.service';
 
 describe('PaymentHistoryComponent', () => {
   let component: PaymentHistoryComponent;
@@ -19,6 +20,7 @@ describe('PaymentHistoryComponent', () => {
     await TestBed.configureTestingModule({
       imports: [PaymentHistoryComponent],
       providers: [
+        { provide: AuthService, useValue: { isAdmin: () => false } },
         {
           provide: DriverService,
           useValue: { getOptions: () => of(driverOptions) },

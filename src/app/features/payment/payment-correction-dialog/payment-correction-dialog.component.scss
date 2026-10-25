@@ -1,0 +1,8 @@
+.dialog-content { display: grid; gap: 12px; min-width: min(520px, 80vw); }
+.dialog-content p, .dialog-content h3 { margin: 0; }
+.correction-form { display: grid; gap: 8px; padding: 12px 0; }
+.correction-form mat-form-field { width: 100%; }
+.correction-form button { justify-self: end; }
+.history { margin: 0; padding-left: 24px; }
+.history li { margin-bottom: 12px; }
+.history span { display: block; color: #475569; }

@@ -12,6 +12,8 @@ import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PaymentFormComponent } from './payment-form/payment-form.component';
+import { PaymentCorrectionDialogComponent } from './payment-correction-dialog/payment-correction-dialog.component';
+import { AuthService } from '../../core/auth/auth.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -56,7 +58,7 @@ import { formatDate } from '@angular/common';
 export class PaymentHistoryComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = [
-    'paymentDate', 'driver', 'vehicle', 'expectedAmount', 'paidAmount', 'differenceAmount', 'status'];
+    'paymentDate', 'driver', 'vehicle', 'expectedAmount', 'paidAmount', 'differenceAmount', 'status', 'actions'];
 
   dataSource = new MatTableDataSource<DriverPayment>([]);
   
@@ -71,7 +73,8 @@ export class PaymentHistoryComponent implements OnInit, AfterViewInit {
 
 
   constructor(private revenuePaymentApi: RevenuePaymentApiService, private dialog: MatDialog, 
-    private fb: FormBuilder, private driverService: DriverService, private vehicleService: VehicleService
+    private fb: FormBuilder, private driverService: DriverService, private vehicleService: VehicleService,
+    public auth: AuthService
   ) {}
 
   ngOnInit(): void {    
@@ -152,6 +155,13 @@ export class PaymentHistoryComponent implements OnInit, AfterViewInit {
         this.loadPayments(this.pageIndex, this.pageSize);
       }
     });
+  }
+
+  openPayment(payment: DriverPayment): void {
+    this.dialog.open(PaymentCorrectionDialogComponent, { width: '640px', data: payment })
+      .afterClosed().subscribe(changed => {
+        if (changed) this.loadPayments(this.pageIndex, this.pageSize);
+      });
   }
 
   getTotalPaid(): number {

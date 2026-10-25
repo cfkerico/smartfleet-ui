@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>Versement du {{ data.paymentDate | date:'dd/MM/yyyy' }}</h2>
+<mat-dialog-content class="dialog-content">
+  <p><strong>{{ data.driverFullName }}</strong> — {{ data.vehicleLabel }}</p>
+  <p>Montant attendu : {{ data.expectedAmount }} FCFA · Versé : {{ data.paidAmount }} FCFA</p>
+
+  @if (auth.isAdmin()) {
+    <form [formGroup]="form" class="correction-form" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Montant corrigé (FCFA)</mat-label>
+        <input matInput type="number" min="1" formControlName="correctedAmount">
+        @if (form.controls.correctedAmount.touched && form.controls.correctedAmount.invalid) {
+          <mat-error>Saisissez un montant positif.</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Motif de la correction</mat-label>
+        <textarea matInput rows="3" formControlName="reason"></textarea>
+        @if (form.controls.reason.touched && form.controls.reason.invalid) {
+          <mat-error>Le motif est obligatoire (1000 caractères maximum).</mat-error>
+        }
+      </mat-form-field>
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+        Enregistrer la correction
+      </button>
+    </form>
+  }
+
+  <h3>Historique des corrections</h3>
+  @if (loading) {
+    <p>Chargement de l'historique...</p>
+  } @else if (corrections.length === 0) {
+    <p>Aucune correction enregistrée.</p>
+  } @else {
+    <ol class="history">
+      @for (item of corrections; track item.id) {
+        <li>
+          <strong>{{ item.previousAmount }} → {{ item.correctedAmount }} FCFA</strong>
+          <span>{{ item.correctedAt | date:'dd/MM/yyyy HH:mm' }} · {{ item.correctedBy }}</span>
+          <span>Motif : {{ item.reason }}</span>
+        </li>
+      }
+    </ol>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="close()">Fermer</button>
+</mat-dialog-actions>

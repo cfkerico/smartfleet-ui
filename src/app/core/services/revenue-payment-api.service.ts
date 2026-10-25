@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PageResult } from '../../models/page-result.model';
-import { DriverPayment } from '../../models/payment.model';
+import { DriverPayment, DriverPaymentCorrection } from '../../models/payment.model';
 import { API_ENDPOINTS } from '../config/api-endpoints';
 
 @Injectable({
@@ -43,6 +43,14 @@ console.log('--------- avant Filters :', filters);
       console.log('--------- Filters:', filters);
 
       return this.http.get<PageResult<DriverPayment>>(this.apiUrl, {params});
+  }
+
+  getCorrections(paymentId: number): Observable<DriverPaymentCorrection[]> {
+    return this.http.get<DriverPaymentCorrection[]>(`${this.apiUrl}/${paymentId}/corrections`);
+  }
+
+  correctPayment(paymentId: number, payload: { correctedAmount: number; reason: string }): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/${paymentId}/correction`, payload);
   }
 
   createPayment(payload: { driverId: number; vehicleId: number; paidAmount: number; paymentDate: string }) {

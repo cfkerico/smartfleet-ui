@@ -92,9 +92,18 @@ export class PaymentFormComponent implements OnInit {
       paymentDate: formatDate(raw.paymentDate, 'yyyy-MM-dd', 'en-US')
     };
 
-    this.revenuePaymentApi.createPayment(payload).subscribe(() => {
-      this.notification.success('Versement enregistré avec succès');
+    this.revenuePaymentApi.createPayment(payload).subscribe({
+      next: () => {
+        this.notification.success('Versement enregistré avec succès');
         this.dialogRef.close(true);
+      },
+      error: error => {
+        const duplicate = error?.status === 409 &&
+          String(error?.error?.message ?? '').includes('already exists');
+        this.notification.error(duplicate
+          ? 'Un versement existe déjà pour ce chauffeur, ce véhicule et cette date. Demandez une correction à un administrateur.'
+          : 'Impossible d’enregistrer le versement');
+      },
     });
   }
 

@@ -115,6 +115,15 @@
         </td>
     </ng-container>
 
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let payment">
+            <button mat-button type="button" (click)="openPayment(payment)">
+                {{ auth.isAdmin() ? 'Voir / corriger' : 'Voir l’historique' }}
+            </button>
+        </td>
+    </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"
