@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
-import { AssignmentApiService } from '../../../core/services/assignment-api.service';
+import { VehicleService } from '../../../core/services/vehicle.service';
 import { ExpenseApiService } from '../../../core/services/expense-api.service';
+import { Vehicle } from '../../../models/vehicle';
 
 import { ExpenseListComponent } from './expense-list.component';
 import { ExpenseRequest, ExpenseStatus } from '../../../models/expense.model';
@@ -10,13 +11,17 @@ import { ExpenseRequest, ExpenseStatus } from '../../../models/expense.model';
 describe('ExpenseListComponent', () => {
   let component: ExpenseListComponent;
   let fixture: ComponentFixture<ExpenseListComponent>;
+  const vehicleOptions = [
+    { id: 1, label: 'Toyota Yaris', vehicleStatus: 'ASSIGNED' },
+    { id: 2, label: 'Renault Clio', vehicleStatus: 'INACTIVE' },
+  ] as Vehicle[];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ExpenseListComponent],
       providers: [
         provideRouter([]),
-        { provide: AssignmentApiService, useValue: { findVehicles: () => of([]) } },
+        { provide: VehicleService, useValue: { getOptions: () => of(vehicleOptions) } },
         {
           provide: ExpenseApiService,
           useValue: {
@@ -29,6 +34,10 @@ describe('ExpenseListComponent', () => {
     fixture = TestBed.createComponent(ExpenseListComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
+  });
+
+  it('includes assigned and inactive vehicles in the historical filter', () => {
+    expect(component.vehicles.map(vehicle => vehicle.id)).toEqual([1, 2]);
   });
 
   it('should create', () => {

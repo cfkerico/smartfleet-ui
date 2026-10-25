@@ -13,7 +13,7 @@
                 <mat-label>Véhicule</mat-label>
 
                 <mat-select formControlName="vehicleId" placeholder="Sélectionner un véhicule">
-                    <mat-option [value]="">Tous</mat-option>
+                    <mat-option [value]="null">Tous</mat-option>
 
                     @for (vehicle of vehicles; track vehicle.id) {
                         <mat-option [value]="vehicle.id">{{ vehicle.label }}</mat-option>

@@ -20,6 +20,10 @@ export class DriverService {
         return this.http.get<PageResponse<Driver>>(this.apiUrl, {params});
     }
 
+    getOptions(): Observable<Driver[]> {
+      return this.http.get<Driver[]>(`${this.apiUrl}/options`);
+    }
+
     getById(driverId: number): Observable<Driver> {
       return this.http.get<Driver>(`${this.apiUrl}/${driverId}`);
     }

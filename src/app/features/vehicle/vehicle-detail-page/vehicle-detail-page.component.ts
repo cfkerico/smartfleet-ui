@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AssignmentFormComponent, AssignmentFormData } from '../../assignment/assignment-form/assignment-form.component';
 import { AssignmentApiService } from '../../../core/services/assignment-api.service';
 import { PaymentFormComponent, PaymentFormData } from '../../payment/payment-form/payment-form.component';
+import { CreateExpenseDialogComponent, CreateExpenseDialogData } from '../../expenses/create-expense-dialog/create-expense-dialog.component';
 import { VehicleAssignment } from '../../../models/assignment.model';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -51,6 +52,16 @@ export class VehicleDetailPageComponent implements OnInit {
       width: '800px', maxWidth: '96vw', maxHeight: '90vh', data,
     }).afterClosed().subscribe(created => {
       if (created === true) this.loadVehicle(vehicle.id);
+    });
+  }
+
+  openExpense(): void {
+    const vehicle = this.vehicle();
+    if (!vehicle || vehicle.vehicleStatus === 'INACTIVE' || vehicle.vehicleStatus === 'SOLD') return;
+
+    const data: CreateExpenseDialogData = { preselectedVehicle: vehicle };
+    this.dialog.open<CreateExpenseDialogComponent, CreateExpenseDialogData, boolean>(CreateExpenseDialogComponent, {
+      width: '680px', maxWidth: '96vw', maxHeight: '90vh', data,
     });
   }
 

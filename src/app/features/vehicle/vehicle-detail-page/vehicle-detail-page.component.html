@@ -61,6 +61,10 @@
             [disabled]="currentVehicle.vehicleStatus === 'INACTIVE' || activeAssignments().length === 0">
             <mat-icon>payments</mat-icon>Nouvelle recette
           </button>
+          <button mat-stroked-button type="button" (click)="openExpense()"
+            [disabled]="currentVehicle.vehicleStatus === 'INACTIVE' || currentVehicle.vehicleStatus === 'SOLD'">
+            <mat-icon>receipt_long</mat-icon>Nouvelle dépense
+          </button>
           <a mat-stroked-button [routerLink]="['/vehicles', currentVehicle.id, 'documents']">
             <mat-icon>folder</mat-icon>Dossier documentaire
           </a>

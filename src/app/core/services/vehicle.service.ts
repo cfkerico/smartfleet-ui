@@ -34,6 +34,10 @@ export class VehicleService {
     return this.http.get<PageResponse<Vehicle>>(`${this.baseUrl}`, {params});
   }
   
+  getOptions(): Observable<Vehicle[]> {
+    return this.http.get<Vehicle[]>(`${this.baseUrl}/options`);
+  }
+
   getById(vehicleId: number): Observable<Vehicle> {
     return this.http.get<Vehicle>(`${this.baseUrl}/${vehicleId}`);
   }

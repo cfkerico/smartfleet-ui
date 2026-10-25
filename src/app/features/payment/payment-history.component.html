@@ -13,7 +13,7 @@
         <mat-label>Chauffeur</mat-label>
 
         <mat-select formControlName="driverId">
-            <mat-option value="">Tous</mat-option>
+            <mat-option [value]="null">Tous</mat-option>
             @for (driver of drivers; track driver.id) {
                 <mat-option [value]="driver.id">
                     {{ driver.fullName }}
@@ -25,7 +25,7 @@
     <mat-form-field appearance="outline">
         <mat-label>Véhicule</mat-label>
         <mat-select formControlName="vehicleId">
-            <mat-option value="">Tous</mat-option>
+            <mat-option [value]="null">Tous</mat-option>
             @for (vehicle of vehicles; track vehicle.id) {
                 <mat-option [value]="vehicle.id">
                     <!-- {{ vehicle.brand }} {{ vehicle.model }} {{ vehicle.year }} {{ vehicle.fuelType }} ({{ vehicle.vin === null ? vehicle.registrationNumber : vehicle.vin }}) -->

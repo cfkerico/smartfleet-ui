@@ -92,6 +92,22 @@ describe('VehicleDetailPageComponent', () => {
     expect(open).not.toHaveBeenCalled();
   });
 
+  it('opens an expense with this vehicle locked and blocks inactive vehicles', async () => {
+    getById.mockReturnValue(of(vehicle));
+    const fixture = await create('9');
+    const expenseButton = [...fixture.nativeElement.querySelectorAll('button')]
+      .find((button: HTMLButtonElement) => button.textContent?.includes('Nouvelle dépense'));
+    expect(expenseButton.disabled).toBe(false);
+    fixture.componentInstance.openExpense();
+    expect(open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: { preselectedVehicle: vehicle },
+    }));
+
+    fixture.componentInstance.vehicle.set({ ...vehicle, vehicleStatus: 'INACTIVE' });
+    fixture.componentInstance.openExpense();
+    expect(open).toHaveBeenCalledTimes(1);
+  });
+
   it('rejects an invalid route id without calling the API', async () => {
     const fixture = await create('0');
     expect(getById).not.toHaveBeenCalled();

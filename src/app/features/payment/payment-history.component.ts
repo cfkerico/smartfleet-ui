@@ -19,7 +19,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
 
-import { AssignmentApiService } from '../../core/services/assignment-api.service';
+import { DriverService } from '../../core/services/driver.service';
+import { VehicleService } from '../../core/services/vehicle.service';
 import { Driver } from '../../models/driver.model';
 import { Vehicle } from '../../models/vehicle';
 
@@ -70,7 +71,7 @@ export class PaymentHistoryComponent implements OnInit, AfterViewInit {
 
 
   constructor(private revenuePaymentApi: RevenuePaymentApiService, private dialog: MatDialog, 
-    private fb: FormBuilder, private assignmentService: AssignmentApiService
+    private fb: FormBuilder, private driverService: DriverService, private vehicleService: VehicleService
   ) {}
 
   ngOnInit(): void {    
@@ -114,11 +115,11 @@ export class PaymentHistoryComponent implements OnInit, AfterViewInit {
   }
 
   private loadFiltersData(): void {
-    this.assignmentService.findDrivers().subscribe(drivers => {
+    this.driverService.getOptions().subscribe(drivers => {
       this.drivers = drivers;
     });
 
-    this.assignmentService.findVehicles().subscribe(vehicles => {      
+    this.vehicleService.getOptions().subscribe(vehicles => {      
       this.vehicles = vehicles;
     });
   }

@@ -13,7 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ExpensePriority, ExpenseRequest, ExpenseStatus, ExpenseType } from '../../../models/expense.model';
 import { Vehicle } from '../../../models/vehicle';
 import { ExpenseApiService } from '../../../core/services/expense-api.service';
-import { AssignmentApiService } from '../../../core/services/assignment-api.service';
+import { VehicleService } from '../../../core/services/vehicle.service';
 import { Router } from "@angular/router";
 import { CreateExpenseDialogComponent } from '../create-expense-dialog/create-expense-dialog.component';
 import { ExpenseReasonDialogComponent } from '../expense-reason-dialog/expense-reason-dialog.component';
@@ -60,7 +60,7 @@ export class ExpenseListComponent implements OnInit {
   pageSize = 10;
   pageIndex = 0;
 
-  constructor(private fb: FormBuilder,private expenseApi: ExpenseApiService, private assignmentApi: AssignmentApiService,
+  constructor(private fb: FormBuilder,private expenseApi: ExpenseApiService, private vehicleService: VehicleService,
      private dialog: MatDialog, private router: Router) {}
 
   ngOnInit(): void {
@@ -79,7 +79,7 @@ export class ExpenseListComponent implements OnInit {
   }
 
   private loadVehicles(): void {
-    this.assignmentApi.findVehicles().subscribe(
+    this.vehicleService.getOptions().subscribe(
       vehicles => {
         this.vehicles = vehicles;
       });

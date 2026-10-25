@@ -1,23 +1,29 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { AssignmentApiService } from '../../core/services/assignment-api.service';
+import { DriverService } from '../../core/services/driver.service';
+import { VehicleService } from '../../core/services/vehicle.service';
 import { RevenuePaymentApiService } from '../../core/services/revenue-payment-api.service';
 
 import { PaymentHistoryComponent } from './payment-history.component';
 import { DriverPayment } from '../../models/payment.model';
+import { Driver } from '../../models/driver.model';
+import { Vehicle } from '../../models/vehicle';
 
 describe('PaymentHistoryComponent', () => {
   let component: PaymentHistoryComponent;
   let fixture: ComponentFixture<PaymentHistoryComponent>;
+  const driverOptions = [{ id: 1, fullName: 'Jean Dupont', status: 'INACTIVE' }] as Driver[];
+  const vehicleOptions = [{ id: 2, label: 'Toyota Yaris', vehicleStatus: 'ASSIGNED' }] as Vehicle[];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PaymentHistoryComponent],
       providers: [
         {
-          provide: AssignmentApiService,
-          useValue: { findDrivers: () => of([]), findVehicles: () => of([]) },
+          provide: DriverService,
+          useValue: { getOptions: () => of(driverOptions) },
         },
+        { provide: VehicleService, useValue: { getOptions: () => of(vehicleOptions) } },
         {
           provide: RevenuePaymentApiService,
           useValue: {
@@ -32,6 +38,11 @@ describe('PaymentHistoryComponent', () => {
     fixture = TestBed.createComponent(PaymentHistoryComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
+  });
+
+  it('includes inactive drivers and assigned vehicles in historical filters', () => {
+    expect(component.drivers.map(driver => driver.id)).toEqual([1]);
+    expect(component.vehicles.map(vehicle => vehicle.id)).toEqual([2]);
   });
 
   it('should create', () => {
