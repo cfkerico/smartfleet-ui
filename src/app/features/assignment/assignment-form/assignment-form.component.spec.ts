@@ -71,6 +71,24 @@ describe('AssignmentFormComponent', () => {
     expect(createAssignment).not.toHaveBeenCalled();
   });
 
+  it('shows a distinct empty-state message for each missing resource', () => {
+    expect(component.availabilityMessage()).toBeNull();
+
+    component.drivers = [];
+    expect(component.availabilityMessage()).toContain('Aucun chauffeur disponible');
+    component.vehicles = [];
+    expect(component.availabilityMessage()).toContain('Aucun chauffeur ni véhicule disponible');
+    component.drivers = [driver];
+    expect(component.availabilityMessage()).toContain('Aucun véhicule disponible');
+  });
+
+  it('does not offer a driver already assigned', () => {
+    component.assignments = [{ driverId: driver.id, status: 'ACTIVE' } as any];
+    expect(component.availableDrivers).toEqual([]);
+    expect(component.availabilityMessage()).toContain('Aucun chauffeur disponible');
+    expect(component.canCreateAssignment()).toBe(false);
+  });
+
   it('should submit only the resources, type and ISO start date', () => {
     createAssignment.mockClear();
     close.mockClear();

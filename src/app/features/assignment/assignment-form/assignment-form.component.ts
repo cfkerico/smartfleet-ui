@@ -111,6 +111,26 @@ export class AssignmentFormComponent implements OnInit {
     });
   }
 
+  get availableDrivers(): Driver[] {
+    return this.drivers.filter(driver => this.assignableDriverIds.has(driver.id)
+      && !this.isDriverAlreadyAssigned(driver.id));
+  }
+
+  get availableVehicles(): Vehicle[] {
+    return this.vehicles.filter(vehicle => this.assignableVehicleIds.has(vehicle.id)
+      && !this.isVehicleAlreadyAssigned(vehicle.id));
+  }
+
+  availabilityMessage(): string | null {
+    if (this.data.mode !== 'CREATE' || !this.availabilityChecked()) return null;
+    const noDrivers = this.availableDrivers.length === 0;
+    const noVehicles = this.availableVehicles.length === 0;
+    if (noDrivers && noVehicles) return 'Aucun chauffeur ni véhicule disponible : tous sont déjà affectés ou indisponibles.';
+    if (noDrivers) return 'Aucun chauffeur disponible : tous sont déjà affectés ou indisponibles.';
+    if (noVehicles) return 'Aucun véhicule disponible : tous sont déjà affectés ou indisponibles.';
+    return null;
+  }
+
   private availabilityChecked(): boolean {
     return this.driversLoaded && this.vehiclesLoaded && this.assignmentsLoaded;
   }

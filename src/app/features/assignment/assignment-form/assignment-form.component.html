@@ -12,9 +12,9 @@
           <mat-form-field appearance="outline">
             <mat-label>Chauffeur</mat-label>
             <mat-select formControlName="driverId">
-              @for (driver of drivers; track driver.id) {
-                <mat-option [value]="driver.id" [disabled]="isDriverAlreadyAssigned(driver.id)">
-                  {{ driver.nom }} {{ driver.prenom }}{{ isDriverAlreadyAssigned(driver.id) ? ' — Déjà affecté' : '' }}
+              @for (driver of availableDrivers; track driver.id) {
+                <mat-option [value]="driver.id">
+                  {{ driver.nom }} {{ driver.prenom }}
                 </mat-option>
               }
             </mat-select>
@@ -26,9 +26,9 @@
           <mat-form-field appearance="outline">
             <mat-label>Véhicule</mat-label>
             <mat-select formControlName="vehicleId">
-              @for (vehicle of vehicles; track vehicle.id) {
-                <mat-option [value]="vehicle.id" [disabled]="isVehicleAlreadyAssigned(vehicle.id)">
-                  {{ vehicle.brand }} {{ vehicle.model }} — {{ vehicle.registrationNumber }}{{ isVehicleAlreadyAssigned(vehicle.id) ? ' — Déjà affecté' : '' }}
+              @for (vehicle of availableVehicles; track vehicle.id) {
+                <mat-option [value]="vehicle.id">
+                  {{ vehicle.brand }} {{ vehicle.model }} — {{ vehicle.registrationNumber }}
                 </mat-option>
               }
             </mat-select>
@@ -38,6 +38,10 @@
           </mat-form-field>
         </div>
       </section>
+
+      @if (availabilityMessage(); as message) {
+        <p class="availability-note" role="alert">{{ message }}</p>
+      }
 
       @if (contextUnavailable()) {
         <p class="availability-note" role="alert">
