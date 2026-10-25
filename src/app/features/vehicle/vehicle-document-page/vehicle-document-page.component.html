@@ -3,10 +3,10 @@
     <header class="page-toolbar">
         <a 
             mat-button
-            routerLink="/vehicles"
-            aria-label="Retour à la liste des véhicules">
+            [routerLink]="vehicleId() ? ['/vehicles', vehicleId()] : ['/vehicles']"
+            aria-label="Retour à la fiche véhicule">
             <mat-icon>arrow_back</mat-icon>
-            Retour aux véhicules
+            Retour à la fiche véhicule
         </a>
     </header>
 

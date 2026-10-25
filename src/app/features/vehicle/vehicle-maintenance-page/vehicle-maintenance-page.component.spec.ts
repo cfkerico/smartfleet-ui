@@ -45,6 +45,7 @@ describe('VehicleMaintenancePageComponent', () => {
     fixture.detectChanges();
 
     expect(vehicleService.getById).toHaveBeenCalledWith(1);
+    expect(fixture.nativeElement.querySelector('a[href="/vehicles/1"]')).toBeTruthy();
     expect(maintenanceService.findByVehicle).toHaveBeenCalledWith(1, 0, 10);
     expect(fixture.nativeElement.querySelector('a[href="/vehicles/1/maintenances/new"]')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('a[href="/vehicles/1/maintenance-plans"]')).toBeTruthy();

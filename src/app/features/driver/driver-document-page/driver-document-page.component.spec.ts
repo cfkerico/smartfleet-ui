@@ -116,6 +116,7 @@ describe('DriverDocumentPageComponent', () => {
     expect(content).toContain('Dupont Jean');
     expect(content).toContain('Conformité documentaire');
     expect(content).toContain('Documents archivés');
+    expect(fixture.nativeElement.querySelector('a[href="/drivers/10"]')).toBeTruthy();
   });
 
   it('should show an error when the driver cannot be loaded', async () => {

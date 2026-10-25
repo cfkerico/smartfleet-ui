@@ -1,7 +1,7 @@
 <section class="maintenance-page">
-  <a mat-button routerLink="/vehicles" class="back-link">
+  <a mat-button [routerLink]="vehicle() ? ['/vehicles', vehicle()!.id] : ['/vehicles']" class="back-link">
     <mat-icon>arrow_back</mat-icon>
-    Retour aux véhicules
+    Retour à la fiche véhicule
   </a>
 
   @if (loadingVehicle()) {

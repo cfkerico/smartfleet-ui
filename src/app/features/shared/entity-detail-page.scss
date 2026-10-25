@@ -18,6 +18,7 @@
 .detail-list dd { margin: 0; color: #172b3f; font-weight: 600; overflow-wrap: anywhere; }
 .detail-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .detail-actions a { display: inline-flex; align-items: center; gap: 8px; }
+.detail-help { margin: 14px 0 0; color: #526577; font-size: .9rem; line-height: 1.4; }
 .page-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; min-height: 300px; padding: 30px; text-align: center; color: #526577; }
 .page-state h1, .page-state p { margin: 0; }
 .page-state mat-icon { width: 44px; height: 44px; font-size: 44px; }

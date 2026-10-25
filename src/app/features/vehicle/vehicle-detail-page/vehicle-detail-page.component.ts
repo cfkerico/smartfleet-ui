@@ -31,6 +31,8 @@ export class VehicleDetailPageComponent implements OnInit {
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
   readonly activeAssignments = signal<VehicleAssignment[]>([]);
+  readonly assignmentsLoaded = signal(false);
+  readonly assignmentsError = signal(false);
 
   ngOnInit(): void {
     const vehicleId = Number(this.route.snapshot.paramMap.get('vehicleId'));
@@ -62,6 +64,8 @@ export class VehicleDetailPageComponent implements OnInit {
     const data: CreateExpenseDialogData = { preselectedVehicle: vehicle };
     this.dialog.open<CreateExpenseDialogComponent, CreateExpenseDialogData, boolean>(CreateExpenseDialogComponent, {
       width: '680px', maxWidth: '96vw', maxHeight: '90vh', data,
+    }).afterClosed().subscribe(created => {
+      if (created === true) this.loadVehicle(vehicle.id);
     });
   }
 
@@ -72,14 +76,24 @@ export class VehicleDetailPageComponent implements OnInit {
     const data: PaymentFormData = { vehicleId: vehicle.id };
     this.dialog.open<PaymentFormComponent, PaymentFormData, boolean>(PaymentFormComponent, {
       width: '720px', maxWidth: '96vw', maxHeight: '90vh', data,
+    }).afterClosed().subscribe(created => {
+      if (created === true) this.loadVehicle(vehicle.id);
     });
   }
 
   private loadActiveAssignments(vehicleId: number): void {
     this.activeAssignments.set([]);
+    this.assignmentsLoaded.set(false);
+    this.assignmentsError.set(false);
     this.assignmentService.findActiveAssignments().subscribe({
-      next: assignments => this.activeAssignments.set(assignments.filter(a => a.vehicleId === vehicleId)),
-      error: () => this.activeAssignments.set([]),
+      next: assignments => {
+        this.activeAssignments.set(assignments.filter(a => a.vehicleId === vehicleId));
+        this.assignmentsLoaded.set(true);
+      },
+      error: () => {
+        this.assignmentsError.set(true);
+        this.assignmentsLoaded.set(true);
+      },
     });
   }
 
@@ -92,7 +106,11 @@ export class VehicleDetailPageComponent implements OnInit {
       next: vehicle => {
         this.vehicle.set(vehicle);
         if (vehicle.vehicleStatus !== 'INACTIVE') this.loadActiveAssignments(vehicle.id);
-        else this.activeAssignments.set([]);
+        else {
+          this.activeAssignments.set([]);
+          this.assignmentsLoaded.set(true);
+          this.assignmentsError.set(false);
+        }
       },
       error: () => {
         this.vehicle.set(null);

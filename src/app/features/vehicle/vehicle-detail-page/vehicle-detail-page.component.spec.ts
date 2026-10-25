@@ -36,7 +36,8 @@ describe('VehicleDetailPageComponent', () => {
 
   beforeEach(() => {
     getById.mockReset();
-    open.mockClear();
+    open.mockReset();
+    open.mockReturnValue({ afterClosed: () => of(false) });
     findActiveAssignments.mockReset();
     findActiveAssignments.mockReturnValue(of([]));
   });
@@ -88,6 +89,7 @@ describe('VehicleDetailPageComponent', () => {
     const paymentButton = [...fixture.nativeElement.querySelectorAll('button')]
       .find((button: HTMLButtonElement) => button.textContent?.includes('Nouvelle recette'));
     expect(paymentButton.disabled).toBe(true);
+    expect(fixture.nativeElement.textContent).toContain('Aucune affectation active');
     fixture.componentInstance.openPayment();
     expect(open).not.toHaveBeenCalled();
   });
@@ -106,6 +108,16 @@ describe('VehicleDetailPageComponent', () => {
     fixture.componentInstance.vehicle.set({ ...vehicle, vehicleStatus: 'INACTIVE' });
     fixture.componentInstance.openExpense();
     expect(open).toHaveBeenCalledTimes(1);
+  });
+
+  it('distinguishes an assignment loading error from an empty assignment list', async () => {
+    getById.mockReturnValue(of(vehicle));
+    findActiveAssignments.mockReturnValue(throwError(() => new Error('network error')));
+    const fixture = await create('9');
+
+    expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent)
+      .toContain('Impossible de vérifier les affectations actives');
+    expect(fixture.nativeElement.textContent).not.toContain('Aucune affectation active');
   });
 
   it('keeps an inactive vehicle and its histories accessible without creation actions', async () => {
@@ -127,6 +139,28 @@ describe('VehicleDetailPageComponent', () => {
     fixture.componentInstance.openPayment();
     fixture.componentInstance.openExpense();
     expect(open).not.toHaveBeenCalled();
+  });
+
+  it('reloads the vehicle after successful contextual creations', async () => {
+    getById.mockReturnValue(of(vehicle));
+    findActiveAssignments.mockReturnValue(of([{ id: 3, driverId: 7, vehicleId: 9 }] as VehicleAssignment[]));
+    open.mockReturnValue({ afterClosed: () => of(true) });
+    const fixture = await create('9');
+
+    fixture.componentInstance.openAssignment();
+    expect(getById).toHaveBeenCalledTimes(2);
+    fixture.componentInstance.openPayment();
+    expect(getById).toHaveBeenCalledTimes(3);
+    fixture.componentInstance.openExpense();
+    expect(getById).toHaveBeenCalledTimes(4);
+  });
+
+  it('does not reload the vehicle after a cancelled dialog', async () => {
+    getById.mockReturnValue(of(vehicle));
+    const fixture = await create('9');
+
+    fixture.componentInstance.openExpense();
+    expect(getById).toHaveBeenCalledTimes(1);
   });
 
   it('rejects an invalid route id without calling the API', async () => {

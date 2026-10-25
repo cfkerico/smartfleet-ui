@@ -68,6 +68,13 @@
             Dossier documentaire
           </a>
         </div>
+        @if (currentDriver.status === 'ACTIVE' && assignmentsLoaded()) {
+          @if (assignmentsError()) {
+            <p class="detail-help" role="alert">Impossible de vérifier les affectations actives.</p>
+          } @else if (activeAssignments().length === 0) {
+            <p class="detail-help">Aucune affectation active : la saisie d’une recette est indisponible.</p>
+          }
+        }
       </section>
     </div>
   }

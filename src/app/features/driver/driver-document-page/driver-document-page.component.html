@@ -1,8 +1,8 @@
 <section class="driver-document-page">
     <header class="page-toolbar">
-        <a mat-button routerLink="/drivers">
+        <a mat-button [routerLink]="driverId() ? ['/drivers', driverId()] : ['/drivers']">
             <mat-icon>arrow_back</mat-icon>
-            Retour aux chauffeurs
+            Retour à la fiche chauffeur
         </a>
     </header>
 

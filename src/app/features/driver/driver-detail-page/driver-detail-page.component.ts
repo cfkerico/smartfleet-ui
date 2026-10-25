@@ -29,6 +29,8 @@ export class DriverDetailPageComponent implements OnInit {
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
   readonly activeAssignments = signal<VehicleAssignment[]>([]);
+  readonly assignmentsLoaded = signal(false);
+  readonly assignmentsError = signal(false);
 
   ngOnInit(): void {
     const driverId = Number(this.route.snapshot.paramMap.get('driverId'));
@@ -60,14 +62,24 @@ export class DriverDetailPageComponent implements OnInit {
     const data: PaymentFormData = { driverId: driver.id };
     this.dialog.open<PaymentFormComponent, PaymentFormData, boolean>(PaymentFormComponent, {
       width: '720px', maxWidth: '96vw', maxHeight: '90vh', data,
+    }).afterClosed().subscribe(created => {
+      if (created === true) this.loadDriver(driver.id);
     });
   }
 
   private loadActiveAssignments(driverId: number): void {
     this.activeAssignments.set([]);
+    this.assignmentsLoaded.set(false);
+    this.assignmentsError.set(false);
     this.assignmentService.findActiveAssignments().subscribe({
-      next: assignments => this.activeAssignments.set(assignments.filter(a => a.driverId === driverId)),
-      error: () => this.activeAssignments.set([]),
+      next: assignments => {
+        this.activeAssignments.set(assignments.filter(a => a.driverId === driverId));
+        this.assignmentsLoaded.set(true);
+      },
+      error: () => {
+        this.assignmentsError.set(true);
+        this.assignmentsLoaded.set(true);
+      },
     });
   }
 
@@ -80,7 +92,11 @@ export class DriverDetailPageComponent implements OnInit {
       next: driver => {
         this.driver.set(driver);
         if (driver.status === 'ACTIVE') this.loadActiveAssignments(driver.id);
-        else this.activeAssignments.set([]);
+        else {
+          this.activeAssignments.set([]);
+          this.assignmentsLoaded.set(true);
+          this.assignmentsError.set(false);
+        }
       },
       error: () => {
         this.driver.set(null);

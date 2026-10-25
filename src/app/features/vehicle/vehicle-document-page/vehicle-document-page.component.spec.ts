@@ -138,6 +138,7 @@ describe('VehicleDocumentPageComponent', () => {
     expect(content).toContain('Toyota');
     expect(content).toContain('Corolla');
     expect(content).toContain('Conformité documentaire');
+    expect(fixture.nativeElement.querySelector('a[href="/vehicles/10"]')).toBeTruthy();
 
     expect(documentApiServiceMock.findByOwner).toHaveBeenCalledWith({
       ownerType: 'VEHICLE',

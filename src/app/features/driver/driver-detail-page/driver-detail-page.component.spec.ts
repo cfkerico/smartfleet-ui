@@ -37,7 +37,8 @@ describe('DriverDetailPageComponent', () => {
 
   beforeEach(() => {
     getById.mockReset();
-    open.mockClear();
+    open.mockReset();
+    open.mockReturnValue({ afterClosed: () => of(false) });
     findActiveAssignments.mockReset();
     findActiveAssignments.mockReturnValue(of([]));
   });
@@ -87,8 +88,19 @@ describe('DriverDetailPageComponent', () => {
     const paymentButton = [...fixture.nativeElement.querySelectorAll('button')]
       .find((button: HTMLButtonElement) => button.textContent?.includes('Nouvelle recette'));
     expect(paymentButton.disabled).toBe(true);
+    expect(fixture.nativeElement.textContent).toContain('Aucune affectation active');
     fixture.componentInstance.openPayment();
     expect(open).not.toHaveBeenCalled();
+  });
+
+  it('distinguishes an assignment loading error from an empty assignment list', async () => {
+    getById.mockReturnValue(of(driver));
+    findActiveAssignments.mockReturnValue(throwError(() => new Error('network error')));
+    const fixture = await create('7');
+
+    expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent)
+      .toContain('Impossible de vérifier les affectations actives');
+    expect(fixture.nativeElement.textContent).not.toContain('Aucune affectation active');
   });
 
   it('keeps an inactive driver and its document history accessible without creation actions', async () => {
@@ -106,6 +118,26 @@ describe('DriverDetailPageComponent', () => {
     fixture.componentInstance.openAssignment();
     fixture.componentInstance.openPayment();
     expect(open).not.toHaveBeenCalled();
+  });
+
+  it('reloads the driver after a successful contextual creation', async () => {
+    getById.mockReturnValue(of(driver));
+    findActiveAssignments.mockReturnValue(of([{ id: 3, driverId: 7, vehicleId: 9 }] as VehicleAssignment[]));
+    open.mockReturnValue({ afterClosed: () => of(true) });
+    const fixture = await create('7');
+
+    fixture.componentInstance.openAssignment();
+    expect(getById).toHaveBeenCalledTimes(2);
+    fixture.componentInstance.openPayment();
+    expect(getById).toHaveBeenCalledTimes(3);
+  });
+
+  it('does not reload the driver after a cancelled dialog', async () => {
+    getById.mockReturnValue(of(driver));
+    const fixture = await create('7');
+
+    fixture.componentInstance.openAssignment();
+    expect(getById).toHaveBeenCalledTimes(1);
   });
 
   it('rejects an invalid route id without calling the API', async () => {

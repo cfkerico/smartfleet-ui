@@ -46,6 +46,7 @@ describe('VehicleMaintenancePlansPageComponent', () => {
     fixture.detectChanges();
 
     expect(schedules.findByVehicle).toHaveBeenCalledWith(1);
+    expect(fixture.nativeElement.querySelector('a[href="/vehicles/1"]')).toBeTruthy();
     expect(fixture.nativeElement.textContent).toContain('Vidange');
     expect(fixture.nativeElement.textContent).toContain('111,000 km');
     expect(fixture.nativeElement.textContent).toContain('À jour');

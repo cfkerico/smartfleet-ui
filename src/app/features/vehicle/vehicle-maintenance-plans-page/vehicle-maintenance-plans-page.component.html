@@ -1,6 +1,6 @@
 <section class="plans-page">
-  <a mat-button [routerLink]="vehicle() ? ['/vehicles', vehicle()!.id, 'maintenances'] : ['/vehicles']" class="back-link">
-    <mat-icon>arrow_back</mat-icon> Retour aux entretiens
+  <a mat-button [routerLink]="vehicle() ? ['/vehicles', vehicle()!.id] : ['/vehicles']" class="back-link">
+    <mat-icon>arrow_back</mat-icon> Retour à la fiche véhicule
   </a>
 
   @if (loadingVehicle()) {
