@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -18,8 +18,8 @@ import { DriverPayment, DriverPaymentCorrection } from '../../../models/payment.
   styleUrl: './payment-correction-dialog.component.scss',
 })
 export class PaymentCorrectionDialogComponent implements OnInit {
-  corrections: DriverPaymentCorrection[] = [];
-  loading = true;
+  readonly corrections = signal<DriverPaymentCorrection[]>([]);
+  readonly loading = signal(true);
   submitting = false;
   readonly form;
 
@@ -37,8 +37,8 @@ export class PaymentCorrectionDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.payments.getCorrections(this.data.id).subscribe({
-      next: history => { this.corrections = history; this.loading = false; },
-      error: () => { this.loading = false; this.notifications.error('Impossible de charger les corrections'); },
+      next: history => { this.corrections.set(history); this.loading.set(false); },
+      error: () => { this.loading.set(false); this.notifications.error('Impossible de charger les corrections'); },
     });
   }
 

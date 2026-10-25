@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { AuthService } from '../../../core/auth/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { RevenuePaymentApiService } from '../../../core/services/revenue-payment-api.service';
-import { DriverPayment } from '../../../models/payment.model';
+import { DriverPayment, DriverPaymentCorrection } from '../../../models/payment.model';
 import { PaymentCorrectionDialogComponent } from './payment-correction-dialog.component';
 
 describe('PaymentCorrectionDialogComponent', () => {
@@ -57,5 +57,24 @@ describe('PaymentCorrectionDialogComponent', () => {
     fixture.componentInstance.submit();
     expect(fixture.nativeElement.textContent).not.toContain('Enregistrer la correction');
     expect(correctPayment).not.toHaveBeenCalled();
+  });
+  it('shows asynchronously loaded history to a non-admin without another click', async () => {
+    isAdmin.mockReturnValue(false);
+    const history$ = new Subject<DriverPaymentCorrection[]>();
+    vi.spyOn(TestBed.inject(RevenuePaymentApiService), 'getCorrections').mockReturnValue(history$);
+    const fixture = TestBed.createComponent(PaymentCorrectionDialogComponent);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain("Chargement de l'historique");
+
+    history$.next([{
+      id: 1, paymentId: 7, previousAmount: 8000, correctedAmount: 10000,
+      reason: 'Erreur de saisie', correctedBy: 'admin', correctedAt: '2026-10-25T19:03:00Z',
+    }]);
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.textContent).toContain('8000');
+    expect(fixture.nativeElement.textContent).toContain('Erreur de saisie');
+    expect(fixture.nativeElement.textContent).not.toContain("Chargement de l'historique");
+    expect(fixture.nativeElement.textContent).not.toContain('Enregistrer la correction');
   });
 });

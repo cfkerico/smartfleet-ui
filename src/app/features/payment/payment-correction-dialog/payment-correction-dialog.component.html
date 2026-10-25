@@ -26,13 +26,13 @@
   }
 
   <h3>Historique des corrections</h3>
-  @if (loading) {
+  @if (loading()) {
     <p>Chargement de l'historique...</p>
-  } @else if (corrections.length === 0) {
+  } @else if (corrections().length === 0) {
     <p>Aucune correction enregistrée.</p>
   } @else {
     <ol class="history">
-      @for (item of corrections; track item.id) {
+      @for (item of corrections(); track item.id) {
         <li>
           <strong>{{ item.previousAmount }} → {{ item.correctedAmount }} FCFA</strong>
           <span>{{ item.correctedAt | date:'dd/MM/yyyy HH:mm' }} · {{ item.correctedBy }}</span>
