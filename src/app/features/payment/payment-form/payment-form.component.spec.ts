@@ -12,15 +12,18 @@ describe('PaymentFormComponent', () => {
   let component: PaymentFormComponent;
   let fixture: ComponentFixture<PaymentFormComponent>;
   const createPayment = vi.fn(() => of(undefined));
+  const findActiveAssignments = vi.fn(() => of([] as VehicleAssignment[]));
   const close = vi.fn();
 
   beforeEach(async () => {
+    findActiveAssignments.mockReset();
+    findActiveAssignments.mockReturnValue(of([]));
     await TestBed.configureTestingModule({
       imports: [PaymentFormComponent],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: null },
         { provide: MatDialogRef, useValue: { close } },
-        { provide: AssignmentApiService, useValue: { findActiveAssignments: () => of([]) } },
+        { provide: AssignmentApiService, useValue: { findActiveAssignments } },
         { provide: RevenuePaymentApiService, useValue: { createPayment } },
         { provide: NotificationService, useValue: { success: () => undefined, error: () => undefined } },
       ],
@@ -37,6 +40,23 @@ describe('PaymentFormComponent', () => {
 
   it('should not submit an invalid form', () => {
     createPayment.mockClear();
+    component.onSubmit();
+    expect(createPayment).not.toHaveBeenCalled();
+  });
+
+  it('locks a single contextual assignment and rejects another one', () => {
+    findActiveAssignments.mockReturnValue(of([
+      { id: 3, driverId: 4, vehicleId: 5 },
+      { id: 8, driverId: 9, vehicleId: 6 },
+    ] as VehicleAssignment[]));
+    component.data = { driverId: 4 };
+    component.ngOnInit();
+    expect(component.assignments.map(a => a.id)).toEqual([3]);
+    expect(component.form.get('assignmentId')?.disabled).toBe(true);
+    expect(component.form.getRawValue().assignmentId).toBe(3);
+
+    createPayment.mockClear();
+    component.form.patchValue({ assignmentId: 8, paidAmount: 12000 });
     component.onSubmit();
     expect(createPayment).not.toHaveBeenCalled();
   });

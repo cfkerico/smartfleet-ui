@@ -57,6 +57,10 @@
             [disabled]="currentVehicle.vehicleStatus !== 'AVAILABLE'">
             <mat-icon>add</mat-icon>Nouvelle affectation
           </button>
+          <button mat-stroked-button type="button" (click)="openPayment()"
+            [disabled]="currentVehicle.vehicleStatus === 'INACTIVE' || activeAssignments().length === 0">
+            <mat-icon>payments</mat-icon>Nouvelle recette
+          </button>
           <a mat-stroked-button [routerLink]="['/vehicles', currentVehicle.id, 'documents']">
             <mat-icon>folder</mat-icon>Dossier documentaire
           </a>

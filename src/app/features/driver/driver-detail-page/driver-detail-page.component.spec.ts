@@ -1,4 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { AssignmentApiService } from '../../../core/services/assignment-api.service';
+import { VehicleAssignment } from '../../../models/assignment.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
@@ -14,6 +16,7 @@ describe('DriverDetailPageComponent', () => {
     hireDate: '2025-01-01', status: 'ACTIVE', workedDays: 20,
   };
   const getById = vi.fn();
+  const findActiveAssignments = vi.fn(() => of([] as VehicleAssignment[]));
   const open = vi.fn(() => ({ afterClosed: () => of(false) }));
 
   async function create(id: string | null) {
@@ -24,6 +27,7 @@ describe('DriverDetailPageComponent', () => {
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap(id === null ? {} : { driverId: id }) } } },
         { provide: DriverService, useValue: { getById } },
         { provide: MatDialog, useValue: { open } },
+        { provide: AssignmentApiService, useValue: { findActiveAssignments } },
       ],
     }).compileComponents();
     const fixture = TestBed.createComponent(DriverDetailPageComponent);
@@ -34,6 +38,8 @@ describe('DriverDetailPageComponent', () => {
   beforeEach(() => {
     getById.mockReset();
     open.mockClear();
+    findActiveAssignments.mockReset();
+    findActiveAssignments.mockReturnValue(of([]));
   });
 
   it('loads the driver and links to its document dossier', async () => {
@@ -54,6 +60,35 @@ describe('DriverDetailPageComponent', () => {
     fixture.componentInstance.driver.set({ ...driver, status: 'INACTIVE' });
     fixture.componentInstance.openAssignment();
     expect(open).toHaveBeenCalledTimes(1);
+  });
+
+  it('enables contextual payment only with an active assignment for this driver', async () => {
+    getById.mockReturnValue(of(driver));
+    findActiveAssignments.mockReturnValue(of([
+      { id: 2, driverId: 99, vehicleId: 8 },
+      { id: 3, driverId: 7, vehicleId: 9 },
+    ] as VehicleAssignment[]));
+    const fixture = await create('7');
+    const paymentButton = [...fixture.nativeElement.querySelectorAll('button')]
+      .find((button: HTMLButtonElement) => button.textContent?.includes('Nouvelle recette'));
+    expect(paymentButton.disabled).toBe(false);
+    fixture.componentInstance.openPayment();
+    expect(open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ data: { driverId: 7 } }));
+
+    fixture.componentInstance.driver.set({ ...driver, status: 'INACTIVE' });
+    fixture.componentInstance.openPayment();
+    expect(open).toHaveBeenCalledTimes(1);
+  });
+
+  it('disables payment when no active assignment matches this driver', async () => {
+    getById.mockReturnValue(of(driver));
+    findActiveAssignments.mockReturnValue(of([]));
+    const fixture = await create('7');
+    const paymentButton = [...fixture.nativeElement.querySelectorAll('button')]
+      .find((button: HTMLButtonElement) => button.textContent?.includes('Nouvelle recette'));
+    expect(paymentButton.disabled).toBe(true);
+    fixture.componentInstance.openPayment();
+    expect(open).not.toHaveBeenCalled();
   });
 
   it('rejects an invalid route id without calling the API', async () => {

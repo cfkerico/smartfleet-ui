@@ -15,6 +15,11 @@ import { AssignmentApiService } from '../../../core/services/assignment-api.serv
 import { RevenuePaymentApiService } from '../../../core/services/revenue-payment-api.service';
 import { VehicleAssignment } from '../../../models/assignment.model';
 
+export interface PaymentFormData {
+  driverId?: number;
+  vehicleId?: number;
+}
+
 @Component({
   standalone: true,
   selector: 'app-payment-form',
@@ -33,7 +38,7 @@ export class PaymentFormComponent implements OnInit {
   constructor(private fb: FormBuilder, private notification: NotificationService, 
     private assignmentService: AssignmentApiService, private revenuePaymentApi: RevenuePaymentApiService,
     private dialogRef: MatDialogRef<PaymentFormComponent>, 
-    @Inject(MAT_DIALOG_DATA) public data: any) {}
+    @Inject(MAT_DIALOG_DATA) public data: PaymentFormData | null) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -50,7 +55,16 @@ export class PaymentFormComponent implements OnInit {
 
   private loadData(): void {
     this.assignmentService.findActiveAssignments().subscribe(assignments => {
-      this.assignments = assignments;
+      this.assignments = assignments.filter(assignment =>
+        (this.data?.driverId == null || assignment.driverId === this.data.driverId) &&
+        (this.data?.vehicleId == null || assignment.vehicleId === this.data.vehicleId)
+      );
+      if (this.assignments.length === 1) {
+        this.form.patchValue({ assignmentId: this.assignments[0].id });
+        if (this.data?.driverId != null || this.data?.vehicleId != null) {
+          this.form.get('assignmentId')?.disable();
+        }
+      }
     });
     
   }

@@ -1,4 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { AssignmentApiService } from '../../../core/services/assignment-api.service';
+import { VehicleAssignment } from '../../../models/assignment.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
@@ -13,6 +15,7 @@ describe('VehicleDetailPageComponent', () => {
     registrationNumber: 'CE 135 FG', acquisitionMileage: 100000, currentMileage: 101000,
   };
   const getById = vi.fn();
+  const findActiveAssignments = vi.fn(() => of([] as VehicleAssignment[]));
   const open = vi.fn(() => ({ afterClosed: () => of(false) }));
 
   async function create(id: string | null) {
@@ -23,6 +26,7 @@ describe('VehicleDetailPageComponent', () => {
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap(id === null ? {} : { vehicleId: id }) } } },
         { provide: VehicleService, useValue: { getById } },
         { provide: MatDialog, useValue: { open } },
+        { provide: AssignmentApiService, useValue: { findActiveAssignments } },
       ],
     }).compileComponents();
     const fixture = TestBed.createComponent(VehicleDetailPageComponent);
@@ -33,6 +37,8 @@ describe('VehicleDetailPageComponent', () => {
   beforeEach(() => {
     getById.mockReset();
     open.mockClear();
+    findActiveAssignments.mockReset();
+    findActiveAssignments.mockReturnValue(of([]));
   });
 
   it('loads the vehicle and links to its existing pages', async () => {
@@ -55,6 +61,35 @@ describe('VehicleDetailPageComponent', () => {
     fixture.componentInstance.vehicle.set({ ...vehicle, vehicleStatus: 'INACTIVE' });
     fixture.componentInstance.openAssignment();
     expect(open).toHaveBeenCalledTimes(1);
+  });
+
+  it('enables contextual payment only with an active assignment for this vehicle', async () => {
+    getById.mockReturnValue(of({ ...vehicle, vehicleStatus: 'ASSIGNED' }));
+    findActiveAssignments.mockReturnValue(of([
+      { id: 2, driverId: 4, vehicleId: 99 },
+      { id: 3, driverId: 7, vehicleId: 9 },
+    ] as VehicleAssignment[]));
+    const fixture = await create('9');
+    const paymentButton = [...fixture.nativeElement.querySelectorAll('button')]
+      .find((button: HTMLButtonElement) => button.textContent?.includes('Nouvelle recette'));
+    expect(paymentButton.disabled).toBe(false);
+    fixture.componentInstance.openPayment();
+    expect(open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ data: { vehicleId: 9 } }));
+
+    fixture.componentInstance.vehicle.set({ ...vehicle, vehicleStatus: 'INACTIVE' });
+    fixture.componentInstance.openPayment();
+    expect(open).toHaveBeenCalledTimes(1);
+  });
+
+  it('disables payment when no active assignment matches this vehicle', async () => {
+    getById.mockReturnValue(of(vehicle));
+    findActiveAssignments.mockReturnValue(of([]));
+    const fixture = await create('9');
+    const paymentButton = [...fixture.nativeElement.querySelectorAll('button')]
+      .find((button: HTMLButtonElement) => button.textContent?.includes('Nouvelle recette'));
+    expect(paymentButton.disabled).toBe(true);
+    fixture.componentInstance.openPayment();
+    expect(open).not.toHaveBeenCalled();
   });
 
   it('rejects an invalid route id without calling the API', async () => {

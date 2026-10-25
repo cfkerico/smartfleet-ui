@@ -4,6 +4,9 @@ import { finalize } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { AssignmentFormComponent, AssignmentFormData } from '../../assignment/assignment-form/assignment-form.component';
+import { AssignmentApiService } from '../../../core/services/assignment-api.service';
+import { PaymentFormComponent, PaymentFormData } from '../../payment/payment-form/payment-form.component';
+import { VehicleAssignment } from '../../../models/assignment.model';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { VehicleService } from '../../../core/services/vehicle.service';
@@ -20,11 +23,13 @@ import { VehiclePageHeaderComponent } from '../components/vehicle-page-header/ve
 export class VehicleDetailPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly vehicleService = inject(VehicleService);
+  private readonly assignmentService = inject(AssignmentApiService);
   private readonly dialog = inject(MatDialog);
 
   readonly vehicle = signal<Vehicle | null>(null);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
+  readonly activeAssignments = signal<VehicleAssignment[]>([]);
 
   ngOnInit(): void {
     const vehicleId = Number(this.route.snapshot.paramMap.get('vehicleId'));
@@ -49,13 +54,35 @@ export class VehicleDetailPageComponent implements OnInit {
     });
   }
 
+  openPayment(): void {
+    const vehicle = this.vehicle();
+    if (!vehicle || vehicle.vehicleStatus === 'INACTIVE' || this.activeAssignments().length === 0) return;
+
+    const data: PaymentFormData = { vehicleId: vehicle.id };
+    this.dialog.open<PaymentFormComponent, PaymentFormData, boolean>(PaymentFormComponent, {
+      width: '720px', maxWidth: '96vw', maxHeight: '90vh', data,
+    });
+  }
+
+  private loadActiveAssignments(vehicleId: number): void {
+    this.activeAssignments.set([]);
+    this.assignmentService.findActiveAssignments().subscribe({
+      next: assignments => this.activeAssignments.set(assignments.filter(a => a.vehicleId === vehicleId)),
+      error: () => this.activeAssignments.set([]),
+    });
+  }
+
   private loadVehicle(vehicleId: number): void {
     this.loading.set(true);
     this.error.set(null);
     this.vehicleService.getById(vehicleId).pipe(
       finalize(() => this.loading.set(false)),
     ).subscribe({
-      next: vehicle => this.vehicle.set(vehicle),
+      next: vehicle => {
+        this.vehicle.set(vehicle);
+        if (vehicle.vehicleStatus !== 'INACTIVE') this.loadActiveAssignments(vehicle.id);
+        else this.activeAssignments.set([]);
+      },
       error: () => {
         this.vehicle.set(null);
         this.error.set('Impossible de charger ce véhicule.');

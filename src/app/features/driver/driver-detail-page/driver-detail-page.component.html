@@ -59,6 +59,10 @@
             [disabled]="currentDriver.status !== 'ACTIVE'">
             <mat-icon>add</mat-icon>Nouvelle affectation
           </button>
+          <button mat-stroked-button type="button" (click)="openPayment()"
+            [disabled]="currentDriver.status !== 'ACTIVE' || activeAssignments().length === 0">
+            <mat-icon>payments</mat-icon>Nouvelle recette
+          </button>
           <a mat-stroked-button [routerLink]="['/drivers', currentDriver.id, 'documents']">
             <mat-icon>folder</mat-icon>
             Dossier documentaire
