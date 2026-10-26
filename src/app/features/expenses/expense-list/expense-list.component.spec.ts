@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { VehicleService } from '../../../core/services/vehicle.service';
 import { ExpenseApiService } from '../../../core/services/expense-api.service';
+import { AuthService } from '../../../core/auth/auth.service';
 import { Vehicle } from '../../../models/vehicle';
 
 import { ExpenseListComponent } from './expense-list.component';
@@ -11,16 +12,20 @@ import { ExpenseRequest, ExpenseStatus } from '../../../models/expense.model';
 describe('ExpenseListComponent', () => {
   let component: ExpenseListComponent;
   let fixture: ComponentFixture<ExpenseListComponent>;
+  let roles = ['ADMIN'];
+  const authMock = { hasRole: (role: string) => roles.includes(role) };
   const vehicleOptions = [
     { id: 1, label: 'Toyota Yaris', vehicleStatus: 'ASSIGNED' },
     { id: 2, label: 'Renault Clio', vehicleStatus: 'INACTIVE' },
   ] as Vehicle[];
 
   beforeEach(async () => {
+    roles = ['ADMIN'];
     await TestBed.configureTestingModule({
       imports: [ExpenseListComponent],
       providers: [
         provideRouter([]),
+        { provide: AuthService, useValue: authMock },
         { provide: VehicleService, useValue: { getOptions: () => of(vehicleOptions) } },
         {
           provide: ExpenseApiService,
@@ -34,6 +39,17 @@ describe('ExpenseListComponent', () => {
     fixture = TestBed.createComponent(ExpenseListComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
+  });
+
+  it('limits approval and disbursement actions to their roles', () => {
+    expect(component.canApprove()).toBe(true);
+    expect(component.canDisburse()).toBe(false);
+    roles = ['TREASURER'];
+    expect(component.canApprove()).toBe(false);
+    expect(component.canDisburse()).toBe(true);
+    roles = [];
+    expect(component.canApprove()).toBe(false);
+    expect(component.canDisburse()).toBe(false);
   });
 
   it('includes assigned and inactive vehicles in the historical filter', () => {

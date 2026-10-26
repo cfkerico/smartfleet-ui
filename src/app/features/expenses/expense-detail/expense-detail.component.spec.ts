@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { of, throwError } from 'rxjs';
 import { ExpenseApiService } from '../../../core/services/expense-api.service';
+import { AuthService } from '../../../core/auth/auth.service';
 import { ExpenseDetailView } from '../../../models/expense.model';
 
 import { ExpenseDetailComponent } from './expense-detail.component';
@@ -13,6 +14,8 @@ describe('ExpenseDetailComponent', () => {
   let component: ExpenseDetailComponent;
   let fixture: ComponentFixture<ExpenseDetailComponent>;
   const expenseApiMock = { findExpenseDetail: vi.fn() };
+  let roles = ['ADMIN'];
+  const authMock = { hasRole: (role: string) => roles.includes(role) };
   const queryParams = { tab: null as string | null };
 
   const expenseDetail: ExpenseDetailView = {
@@ -38,6 +41,7 @@ describe('ExpenseDetailComponent', () => {
 
   beforeEach(async () => {
     vi.resetAllMocks();
+    roles = ['ADMIN'];
     queryParams.tab = null;
     expenseApiMock.findExpenseDetail.mockReturnValue(of(expenseDetail));
 
@@ -55,6 +59,7 @@ describe('ExpenseDetailComponent', () => {
           },
         },
         { provide: ExpenseApiService, useValue: expenseApiMock },
+        { provide: AuthService, useValue: authMock },
         { provide: MatDialog, useValue: { open: vi.fn() } },
       ],
     }).compileComponents();
@@ -63,7 +68,35 @@ describe('ExpenseDetailComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('opens the Documents tab when requested by the URL', async () => {
+  it('shows disbursement only to TREASURER on an approved expense', async () => {
+    roles = ['TREASURER'];
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Décaisser');
+  });
+
+  it('hides approval from TREASURER without ADMIN on a requested expense', async () => {
+    roles = ['TREASURER'];
+    expenseApiMock.findExpenseDetail.mockReturnValue(of({
+      ...expenseDetail,
+      request: { ...expenseDetail.request, status: 'REQUESTED' },
+    }));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).not.toContain('Approuver');
+  });
+
+  it('hides disbursement from ADMIN without TREASURER', async () => {
+    roles = ['ADMIN'];
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).not.toContain('Décaisser');
+  });
+
+  it('opens the Documents tab when requested by the URL' , async () => {
     queryParams.tab = 'documents';
     fixture.detectChanges();
     await fixture.whenStable();

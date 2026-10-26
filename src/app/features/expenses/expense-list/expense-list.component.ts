@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ExpensePriority, ExpenseRequest, ExpenseStatus, ExpenseType } from '../../../models/expense.model';
 import { Vehicle } from '../../../models/vehicle';
 import { ExpenseApiService } from '../../../core/services/expense-api.service';
+import { AuthService } from '../../../core/auth/auth.service';
 import { VehicleService } from '../../../core/services/vehicle.service';
 import { Router } from "@angular/router";
 import { CreateExpenseDialogComponent } from '../create-expense-dialog/create-expense-dialog.component';
@@ -61,7 +62,7 @@ export class ExpenseListComponent implements OnInit {
   pageIndex = 0;
 
   constructor(private fb: FormBuilder,private expenseApi: ExpenseApiService, private vehicleService: VehicleService,
-     private dialog: MatDialog, private router: Router) {}
+     private dialog: MatDialog, private router: Router, private auth: AuthService) {}
 
   ngOnInit(): void {
     this.initFilters();
@@ -129,13 +130,19 @@ export class ExpenseListComponent implements OnInit {
     });
   }
 
+  canApprove(): boolean { return this.auth.hasRole('ADMIN'); }
+
+  canDisburse(): boolean { return this.auth.hasRole('TREASURER'); }
+
   approve(expense: ExpenseRequest): void {
+    if (!this.canApprove()) return;
     this.expenseApi.approveExpense(expense.id).subscribe(() => {
       this.loadExpenses(this.pageIndex, this.pageSize);
     });
   }
 
   reject(expense: ExpenseRequest): void {
+    if (!this.canApprove()) return;
     const dialogRef = this.dialog.open(
       ExpenseReasonDialogComponent,
       {
@@ -186,6 +193,7 @@ export class ExpenseListComponent implements OnInit {
   }
 
   disburse(expense: ExpenseRequest): void {
+    if (!this.canDisburse()) return;
     const dialogRef = this.dialog.open(
       DisburseExpenseDialogComponent, {
         width: '680px',

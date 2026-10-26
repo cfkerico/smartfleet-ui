@@ -27,7 +27,7 @@
                 </div>
 
                 <div class="action-buttons">
-                    @if (request.status === 'REQUESTED') {
+                    @if (request.status === 'REQUESTED' && canApprove()) {
                         <button mat-raised-button color="primary" type="button" (click)="approve()">
                             <mat-icon>check_circle</mat-icon>
                             Approuver
@@ -39,7 +39,7 @@
                         </button>
                     }
 
-                    @if (request.status === 'APPROVED' || request.status === 'PARTIALLY_DISBURSED') {
+                    @if ((request.status === 'APPROVED' || request.status === 'PARTIALLY_DISBURSED') && canDisburse()) {
                         <button mat-raised-button color="accent" type="button" (click)="disburse()">
                             <mat-icon>payments</mat-icon>
                             Décaisser
@@ -145,7 +145,7 @@
                                 <p>
                                     Aucun paiement n’a encore été enregistré pour cette dépense.
                                 </p>
-                                @if (request.status === 'APPROVED' || request.status === 'PARTIALLY_DISBURSED') {
+                                @if ((request.status === 'APPROVED' || request.status === 'PARTIALLY_DISBURSED') && canDisburse()) {
                                     <button mat-flat-button color="primary" type="button" (click)="disburse()">
                                         <mat-icon>add</mat-icon>
                                         Enregistrer un décaissement
@@ -156,7 +156,7 @@
                             <div class="tab-toolbar">
                                 <h3>Historique des décaissements</h3>
 
-                                @if (request.status === 'APPROVED' || request.status === 'PARTIALLY_DISBURSED') {
+                                @if ((request.status === 'APPROVED' || request.status === 'PARTIALLY_DISBURSED') && canDisburse()) {
                                     <button mat-raised-button color="primary" type="button" (click)="disburse()">
                                         <mat-icon>add</mat-icon>
                                         Nouveau décaissement

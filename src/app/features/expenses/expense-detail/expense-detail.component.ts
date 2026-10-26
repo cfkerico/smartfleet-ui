@@ -13,6 +13,7 @@ import { ChangeDetectorRef } from '@angular/core';
 
 import { ExpenseDetailView, ExpensePriority, ExpenseRequest, ExpenseStatus, ExpenseType, PaymentMethod } from '../../../models/expense.model';
 import { ExpenseApiService } from '../../../core/services/expense-api.service';
+import { AuthService } from '../../../core/auth/auth.service';
 import { DisburseExpenseDialogComponent } from '../disburse-expense-dialog/disburse-expense-dialog.component';
 import { ExpenseReasonDialogComponent } from '../expense-reason-dialog/expense-reason-dialog.component';
 
@@ -52,7 +53,7 @@ export class ExpenseDetailComponent implements OnInit {
   ];
 
 
-  constructor(private route: ActivatedRoute, private router: Router, private expenseApi: ExpenseApiService, private cdr: ChangeDetectorRef, private dialog: MatDialog) {}
+  constructor(private route: ActivatedRoute, private router: Router, private expenseApi: ExpenseApiService, private cdr: ChangeDetectorRef, private dialog: MatDialog, private auth: AuthService) {}
 
   ngOnInit(): void {
     this.selectedTabIndex = this.route.snapshot.queryParamMap.get('tab') === 'documents' ? 3 : 0;
@@ -134,8 +135,12 @@ export class ExpenseDetailComponent implements OnInit {
     return this.expenseDetail?.request;
   }
 
+  canApprove(): boolean { return this.auth.hasRole('ADMIN'); }
+
+  canDisburse(): boolean { return this.auth.hasRole('TREASURER'); }
+
   approve(): void {
-    if (!this.request) {
+    if (!this.canApprove() || !this.request) {
       return;
     }
 
@@ -145,7 +150,7 @@ export class ExpenseDetailComponent implements OnInit {
   }
 
   reject(): void {
-    if (!this.request) {
+    if (!this.canApprove() || !this.request) {
       return;
     }
 
@@ -200,7 +205,7 @@ export class ExpenseDetailComponent implements OnInit {
     }
 
   disburse(): void {
-    if (!this.request) {
+    if (!this.canDisburse() || !this.request) {
       return;
     }
 
