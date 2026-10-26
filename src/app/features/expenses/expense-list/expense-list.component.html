@@ -120,28 +120,33 @@
                         <mat-icon>folder</mat-icon>
                     </a>
 
-                    <button mat-icon-button type="button" (click)="openDetail(expense)">
+                    <button mat-icon-button type="button" matTooltip="Voir le détail"
+                            [attr.aria-label]="'Voir la dépense ' + expense.id" (click)="openDetail(expense)">
                         <mat-icon>visibility</mat-icon>
                     </button>
                     
                     @if (expense.status === 'REQUESTED' && canApprove()) {
-                        <button mat-icon-button color="primary" (click)="approve(expense)">
+                        <button mat-icon-button color="primary" matTooltip="Approuver"
+                                [attr.aria-label]="'Approuver la dépense ' + expense.id" (click)="approve(expense)">
                             <mat-icon>check_circle</mat-icon>
                         </button>
 
-                        <button mat-icon-button color="warn" (click)="reject(expense)">
+                        <button mat-icon-button color="warn" matTooltip="Rejeter"
+                                [attr.aria-label]="'Rejeter la dépense ' + expense.id" (click)="reject(expense)">
                             <mat-icon>cancel</mat-icon>
                         </button>
                     }
                     
                     @if ((expense.status === 'APPROVED' || expense.status === 'PARTIALLY_DISBURSED') && canDisburse()) {
-                        <button mat-icon-button color="accent" (click)="disburse(expense)">
+                        <button mat-icon-button color="accent" matTooltip="Décaisser"
+                                [attr.aria-label]="'Décaisser la dépense ' + expense.id" (click)="disburse(expense)">
                             <mat-icon>payments</mat-icon>
                         </button>
                     }                   
 
                     @if (expense.status === 'REQUESTED' || expense.status === 'APPROVED') {
-                        <button mat-icon-button color="warn" (click)="cancel(expense)">
+                        <button mat-icon-button color="warn" matTooltip="Annuler la dépense"
+                                [attr.aria-label]="'Annuler la dépense ' + expense.id" (click)="cancel(expense)">
                             <mat-icon>block</mat-icon>
                         </button>
                     }

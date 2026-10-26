@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpErrorResponse } from '@angular/common/http';
 import { By } from '@angular/platform-browser';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -6,6 +7,7 @@ import { MatTabGroup } from '@angular/material/tabs';
 import { of, throwError } from 'rxjs';
 import { ExpenseApiService } from '../../../core/services/expense-api.service';
 import { AuthService } from '../../../core/auth/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { ExpenseDetailView } from '../../../models/expense.model';
 
 import { ExpenseDetailComponent } from './expense-detail.component';
@@ -13,7 +15,9 @@ import { ExpenseDetailComponent } from './expense-detail.component';
 describe('ExpenseDetailComponent', () => {
   let component: ExpenseDetailComponent;
   let fixture: ComponentFixture<ExpenseDetailComponent>;
-  const expenseApiMock = { findExpenseDetail: vi.fn() };
+  const expenseApiMock = { findExpenseDetail: vi.fn(), disburseExpense: vi.fn() };
+  const dialogMock = { open: vi.fn() };
+  const notify = { success: vi.fn(), error: vi.fn() };
   let roles = ['ADMIN'];
   const authMock = { hasRole: (role: string) => roles.includes(role) };
   const queryParams = { tab: null as string | null };
@@ -44,6 +48,7 @@ describe('ExpenseDetailComponent', () => {
     roles = ['ADMIN'];
     queryParams.tab = null;
     expenseApiMock.findExpenseDetail.mockReturnValue(of(expenseDetail));
+    expenseApiMock.disburseExpense.mockReturnValue(of(undefined));
 
     await TestBed.configureTestingModule({
       imports: [ExpenseDetailComponent],
@@ -60,12 +65,38 @@ describe('ExpenseDetailComponent', () => {
         },
         { provide: ExpenseApiService, useValue: expenseApiMock },
         { provide: AuthService, useValue: authMock },
-        { provide: MatDialog, useValue: { open: vi.fn() } },
+        { provide: MatDialog, useValue: dialogMock },
+        { provide: NotificationService, useValue: notify },
       ],
+    }).overrideComponent(ExpenseDetailComponent, {
+      add: { providers: [{ provide: MatDialog, useValue: dialogMock }] },
     }).compileComponents();
 
     fixture = TestBed.createComponent(ExpenseDetailComponent);
     component = fixture.componentInstance;
+  });
+
+  it('notifies a successful disbursement from the detail', () => {
+    roles = ['TREASURER'];
+    fixture.detectChanges();
+    const payment = { paidAmount: 1000, paymentMethod: 'CASH' };
+    dialogMock.open.mockReturnValue({ afterClosed: () => of(payment) });
+    component.disburse();
+    expect(expenseApiMock.disburseExpense).toHaveBeenCalledWith(10, payment);
+    expect(notify.success).toHaveBeenCalledWith('Décaissement enregistré avec succès.');
+    expect(expenseApiMock.findExpenseDetail).toHaveBeenCalledTimes(2);
+  });
+
+  it('shows an explanatory error from the detail when the amount exceeds the balance', () => {
+    roles = ['TREASURER'];
+    fixture.detectChanges();
+    dialogMock.open.mockReturnValue({ afterClosed: () => of({ paidAmount: 30000 }) });
+    expenseApiMock.disburseExpense.mockReturnValue(throwError(() => new HttpErrorResponse({
+      status: 409, error: { message: 'Total disbursed amount cannot exceed requested amount.' },
+    })));
+    component.disburse();
+    expect(notify.error).toHaveBeenCalledWith('Le montant saisi dépasse le solde restant à décaisser.');
+    expect(notify.success).not.toHaveBeenCalled();
   });
 
   it('shows disbursement only to TREASURER on an approved expense', async () => {

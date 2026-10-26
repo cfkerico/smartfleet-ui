@@ -10,10 +10,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ExpensePriority, ExpenseRequest, ExpenseStatus, ExpenseType } from '../../../models/expense.model';
 import { Vehicle } from '../../../models/vehicle';
 import { ExpenseApiService } from '../../../core/services/expense-api.service';
 import { AuthService } from '../../../core/auth/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { disbursementErrorMessage } from '../disbursement-error-message';
 import { VehicleService } from '../../../core/services/vehicle.service';
 import { Router } from "@angular/router";
 import { CreateExpenseDialogComponent } from '../create-expense-dialog/create-expense-dialog.component';
@@ -36,6 +40,7 @@ import { RouterLink } from '@angular/router';
     MatTableModule,
     MatPaginatorModule,
     MatIconModule,
+    MatTooltipModule,
     RouterLink
 ],
   templateUrl: './expense-list.component.html',
@@ -62,7 +67,8 @@ export class ExpenseListComponent implements OnInit {
   pageIndex = 0;
 
   constructor(private fb: FormBuilder,private expenseApi: ExpenseApiService, private vehicleService: VehicleService,
-     private dialog: MatDialog, private router: Router, private auth: AuthService) {}
+     private dialog: MatDialog, private router: Router, private auth: AuthService,
+     private notification: NotificationService) {}
 
   ngOnInit(): void {
     this.initFilters();
@@ -208,8 +214,13 @@ export class ExpenseListComponent implements OnInit {
         return;
       }
 
-      this.expenseApi.disburseExpense(expense.id, result).subscribe(() => {
-        this.loadExpenses(this.pageIndex, this.pageSize);
+      this.expenseApi.disburseExpense(expense.id, result).subscribe({
+        next: () => {
+          this.notification.success('Décaissement enregistré avec succès.');
+          this.loadExpenses(this.pageIndex, this.pageSize);
+        },
+        error: (error: HttpErrorResponse) =>
+          this.notification.error(disbursementErrorMessage(error)),
       });
     });
   }

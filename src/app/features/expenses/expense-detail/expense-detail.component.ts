@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +15,8 @@ import { ChangeDetectorRef } from '@angular/core';
 import { ExpenseDetailView, ExpensePriority, ExpenseRequest, ExpenseStatus, ExpenseType, PaymentMethod } from '../../../models/expense.model';
 import { ExpenseApiService } from '../../../core/services/expense-api.service';
 import { AuthService } from '../../../core/auth/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { disbursementErrorMessage } from '../disbursement-error-message';
 import { DisburseExpenseDialogComponent } from '../disburse-expense-dialog/disburse-expense-dialog.component';
 import { ExpenseReasonDialogComponent } from '../expense-reason-dialog/expense-reason-dialog.component';
 
@@ -53,7 +56,7 @@ export class ExpenseDetailComponent implements OnInit {
   ];
 
 
-  constructor(private route: ActivatedRoute, private router: Router, private expenseApi: ExpenseApiService, private cdr: ChangeDetectorRef, private dialog: MatDialog, private auth: AuthService) {}
+  constructor(private route: ActivatedRoute, private router: Router, private expenseApi: ExpenseApiService, private cdr: ChangeDetectorRef, private dialog: MatDialog, private auth: AuthService, private notification: NotificationService) {}
 
   ngOnInit(): void {
     this.selectedTabIndex = this.route.snapshot.queryParamMap.get('tab') === 'documents' ? 3 : 0;
@@ -223,8 +226,14 @@ export class ExpenseDetailComponent implements OnInit {
         return;
       }
 
-      this.expenseApi.disburseExpense(this.request!.id, result).subscribe(() => {
-        this.loadExpense(this.request!.id);
+      const expenseId = this.request!.id;
+      this.expenseApi.disburseExpense(expenseId, result).subscribe({
+        next: () => {
+          this.notification.success('Décaissement enregistré avec succès.');
+          this.loadExpense(expenseId);
+        },
+        error: (error: HttpErrorResponse) =>
+          this.notification.error(disbursementErrorMessage(error)),
       });
     });
   }
