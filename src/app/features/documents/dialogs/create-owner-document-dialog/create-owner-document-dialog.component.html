@@ -1,24 +1,19 @@
 <form class="document-form" [formGroup]="form" (ngSubmit)="submit()">
 
-    <header class="dialog-header">
-        <div>
-            <h2 mat-dialog-title>Ajouter un document</h2>
+    <h2 mat-dialog-title>Ajouter un document</h2>
 
-            <p>{{ data.item.documentTypeLabel }}</p>
-        </div>
+    <mat-dialog-content class="dialog-content">
+        <p class="dialog-intro">Renseignez les informations du document et joignez son fichier.</p>
 
-        <button 
-            mat-icon-button 
-            type="button"
-            aria-label="Fermer"
-            [disabled]="submitting()"
-            (click)="cancel()">
-            <mat-icon>close</mat-icon>
-        </button>
-    </header>
+        <section class="form-section context-section">
+            <h3>Document attendu</h3>
+            <strong>{{ data.item.documentTypeLabel }}</strong>
+            <p>Le document sera ajouté au dossier consulté.</p>
+        </section>
 
-    <mat-dialog-content>
-        <div class="form-grid">
+        <section class="form-section">
+            <h3>Identification</h3>
+            <div class="form-grid">
 
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Titre</mat-label>
@@ -34,12 +29,26 @@
                 <mat-label>Numéro du document</mat-label>
 
                 <input matInput formControlName="documentNumber">
+                <mat-hint>Facultatif</mat-hint>
             </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Commentaire</mat-label>
+                <textarea matInput rows="3" formControlName="comment"></textarea>
+                <mat-hint>Facultatif</mat-hint>
+            </mat-form-field>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h3>Dates</h3>
+            <div class="form-grid">
 
             <mat-form-field appearance="outline">
                 <mat-label>Date d'émission</mat-label>
 
                 <input matInput type="date" formControlName="issuedDate">
+                <mat-hint>Facultative</mat-hint>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
@@ -52,14 +61,13 @@
                 }
             </mat-form-field>
 
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Commentaire</mat-label>
+            </div>
+        </section>
 
-                <textarea matInput rows="3" formControlName="comment"></textarea>
-            </mat-form-field>
-
-            <div class="file-field full-width">
-                <label for="document-file">Fichier</label>
+        <section class="form-section">
+            <h3>Pièce jointe</h3>
+            <div class="file-field">
+                <label for="document-file">Fichier à téléverser <span aria-hidden="true">*</span></label>
 
                 <input id="document-file" type="file" [disabled]="submitting()" (change)="onFileSelected($event)">
 
@@ -81,13 +89,14 @@
                 }
             </div>
 
+        </section>
+
             @if (error()) {
-                <div class="submission-error full-width" role="alert">
+                <div class="submission-error" role="alert">
                     <mat-icon>error_outline</mat-icon>
                     <span>{{ error() }}</span>
                 </div>
             }
-        </div>
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
@@ -102,13 +111,13 @@
         <button 
             mat-flat-button
             type="submit"
-            [disabled]="submitting()">
+            [disabled]="submitting() || form.invalid">
             @if (submitting()) {
                 <mat-spinner diameter="18"/>
             } @else {
                 <mat-icon>upload_file</mat-icon>
             }
-            Enregistrer
+            Ajouter le document
         </button>
     </mat-dialog-actions>
     

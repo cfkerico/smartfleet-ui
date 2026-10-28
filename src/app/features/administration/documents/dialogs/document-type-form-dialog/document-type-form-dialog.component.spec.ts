@@ -30,4 +30,14 @@ describe('DocumentTypeFormDialogComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should show the harmonized form and require its identification fields', () => {
+    fixture.detectChanges();
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Identification');
+    expect(text).toContain('Informations complémentaires');
+    expect(text).toContain('Créer le type');
+    expect((fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement).disabled)
+      .toBe(true);
+  });
 });

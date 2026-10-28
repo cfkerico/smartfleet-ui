@@ -152,4 +152,15 @@ describe('CreateOwnerDocumentDialogComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should display the harmonized sections and disable submission until complete', () => {
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Document attendu');
+    expect(text).toContain('Identification');
+    expect(text).toContain('Dates');
+    expect(text).toContain('Pièce jointe');
+    expect(text).toContain('Ajouter le document');
+    expect((fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement).disabled)
+      .toBe(true);
+  });
 });

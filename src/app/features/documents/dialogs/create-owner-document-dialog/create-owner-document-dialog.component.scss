@@ -3,38 +3,46 @@
 }
 
 .document-form {
-  width: min(680px, 92vw);
+  width: min(720px, 92vw);
 }
 
-.dialog-header {
+.dialog-content {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 20px;
+  padding-top: 12px;
+}
 
-  padding: 20px 20px 10px;
+.dialog-intro {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.5;
+}
 
-  h2 {
-    margin: 0;
-    color: #172b3f;
-  }
+.form-section {
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
 
-  p {
-    margin: 4px 0 0;
-    color: #607386;
+  h3 {
+    margin: 0 0 16px;
+    color: #1e293b;
+    font-size: 16px;
   }
 }
 
-mat-dialog-content {
-  padding-top: 12px;
+.context-section {
+  strong { color: #172b3f; }
+  p { margin: 6px 0 0; color: #64748b; }
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 4px 16px;
+  gap: 10px 16px;
 
-  padding-top: 4px;
+  mat-form-field { width: 100%; }
 }
 
 .full-width {
@@ -134,7 +142,8 @@ mat-dialog-content {
 }
 
 mat-dialog-actions {
-  padding: 12px 20px 20px;
+  gap: 8px;
+  padding: 16px 24px 20px;
 
   button[mat-flat-button] {
     min-width: 132px;
