@@ -1,0 +1,59 @@
+<section class="deposit-detail-page">
+  <a mat-button routerLink="/treasury/deposits" class="back-link"><mat-icon>arrow_back</mat-icon> Retour aux dépôts</a>
+
+  @if (loading()) {
+    <div class="page-state" aria-live="polite"><mat-spinner diameter="40"/><p>Chargement du dépôt...</p></div>
+  } @else if (error()) {
+    <div class="page-state error-state" role="alert"><mat-icon>error_outline</mat-icon><p>{{ error() }}</p></div>
+  } @else if (deposit(); as item) {
+    <header class="page-header">
+      <div class="header-icon"><mat-icon>account_balance</mat-icon></div>
+      <div>
+        <span class="eyebrow">DÉPÔT DE TRÉSORERIE</span>
+        <h1>Dépôt #{{ item.id }}</h1>
+        <p>Préparé le {{ item.createdAt | date:'dd/MM/yyyy à HH:mm' }}</p>
+      </div>
+      <span class="status" [class.preparing]="item.status === 'PREPARING'">
+        {{ item.status === 'CONFIRMED' ? 'Confirmé' : 'En préparation' }}
+      </span>
+    </header>
+
+    <div class="detail-grid">
+      <mat-card class="detail-card">
+        <h2>Opération</h2>
+        <dl>
+          <div><dt>Montant</dt><dd>{{ item.amount | number:'1.2-2' }}</dd></div>
+          <div><dt>Compte cible</dt><dd>#{{ item.targetAccountId }}</dd></div>
+          <div><dt>Identifiant d'opération</dt><dd class="identifier">{{ item.operationId }}</dd></div>
+          <div><dt>Préparé par</dt><dd class="identifier">{{ item.createdBy }}</dd></div>
+          @if (item.confirmedAt) {
+            <div><dt>Confirmé le</dt><dd>{{ item.confirmedAt | date:'dd/MM/yyyy à HH:mm' }}</dd></div>
+            <div><dt>Confirmé par</dt><dd class="identifier">{{ item.confirmedBy }}</dd></div>
+          }
+        </dl>
+      </mat-card>
+
+      <mat-card class="detail-card">
+        <h2>Justificatif</h2>
+        @if (item.proofDocumentId) {
+          <p>Document #{{ item.proofDocumentId }}</p>
+          <button mat-stroked-button type="button" (click)="viewProof()">
+            <mat-icon>visibility</mat-icon> Voir le justificatif
+          </button>
+        } @else {
+          <p>Aucun justificatif lié à ce dépôt en préparation.</p>
+        }
+      </mat-card>
+    </div>
+
+    <mat-card class="detail-card allocations-card">
+      <h2>Recettes rapprochées</h2>
+      <p>Montants attribués à chaque versement chauffeur.</p>
+      <div class="allocation-list">
+        @for (allocation of item.allocations; track allocation.paymentId) {
+          <div><span>Versement #{{ allocation.paymentId }}</span><strong>{{ allocation.amount | number:'1.2-2' }}</strong></div>
+        }
+      </div>
+    </mat-card>
+  }
+</section>

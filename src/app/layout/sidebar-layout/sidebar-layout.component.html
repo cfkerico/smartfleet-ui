@@ -74,6 +74,15 @@
           <span>Dépenses</span>
         }
       </a>
+
+      @if (auth.isAdmin() || auth.hasRole('TREASURER')) {
+        <a routerLink="/treasury/deposits" routerLinkActive="active" class="menu-item" title="Dépôts de trésorerie">
+          <mat-icon>account_balance</mat-icon>
+          @if (!layoutStateService.sidebarCollapsed()) {
+            <span>Dépôts de trésorerie</span>
+          }
+        </a>
+      }
     </section>
 
     <section class="menu-section">

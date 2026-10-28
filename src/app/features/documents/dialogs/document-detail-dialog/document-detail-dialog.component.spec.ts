@@ -140,6 +140,7 @@ describe('DocumentDetailDialogComponent', () => {
   });
 
   afterEach(() => {
+    dialogData.readOnly = false;
     vi.clearAllMocks();
   });
 
@@ -195,6 +196,12 @@ describe('DocumentDetailDialogComponent', () => {
 
     component.archiveDocument();
 
+    expect(matDialogMock.open).not.toHaveBeenCalled();
+  });
+
+  it('should only allow consultation when opened read-only', () => {
+    dialogData.readOnly = true;
+    component.archiveDocument();
     expect(matDialogMock.open).not.toHaveBeenCalled();
   });
 

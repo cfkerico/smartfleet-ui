@@ -119,6 +119,18 @@ export const routes: Routes = [
               import('./features/expenses/expense-list/expense-list.component').then(m => m.ExpenseListComponent)
           },
           {
+            path: 'treasury/deposits',
+            canActivate: [authGuard],
+            loadComponent: () =>
+              import('./features/treasury/deposit-list/deposit-list.component').then(m => m.DepositListComponent)
+          },
+          {
+            path: 'treasury/deposits/:depositId',
+            canActivate: [authGuard],
+            loadComponent: () =>
+              import('./features/treasury/deposit-detail/deposit-detail.component').then(m => m.DepositDetailComponent)
+          },
+          {
             path: 'expenses/:id/documents',
             canActivate: [authGuard],
             loadComponent: () => 

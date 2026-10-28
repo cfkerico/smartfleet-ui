@@ -1,0 +1,27 @@
+:host { display: block; }
+.deposit-detail-page { max-width: 1200px; margin: 0 auto; padding: 24px; }
+.back-link { margin-bottom: 16px; }
+.page-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding: 22px 24px; border: 1px solid #dfe5ec; border-radius: 16px; background: #f8fafc; }
+.header-icon { display: grid; place-items: center; flex: 0 0 auto; width: 54px; height: 54px; border-radius: 14px; background: #e7f1f8; color: #1f5f8b; }
+.eyebrow { color: #64748b; font-size: .75rem; font-weight: 700; letter-spacing: .05em; }
+h1 { margin: 2px 0 4px; color: #172b3f; }
+.page-header p { margin: 0; color: #64748b; }
+.status { margin-left: auto; padding: 6px 12px; border-radius: 999px; background: #def4e7; color: #17613a; font-size: .85rem; font-weight: 700; white-space: nowrap; }
+.status.preparing { background: #fff0cf; color: #744a00; }
+.detail-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: 16px; }
+.detail-card { padding: 20px 24px; border: 1px solid #dfe5ec; border-radius: 16px; }
+.detail-card h2 { margin: 0 0 16px; font-size: 1.1rem; }
+.detail-card p { color: #64748b; }
+dl { display: grid; gap: 12px; margin: 0; }
+dl div { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; }
+dt { color: #64748b; }
+dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.identifier { font-size: .9rem; }
+.allocations-card { margin-top: 16px; }
+.allocations-card > p { margin-top: -8px; }
+.allocation-list { display: grid; gap: 8px; }
+.allocation-list div { display: flex; justify-content: space-between; gap: 20px; padding: 12px 14px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc; }
+.page-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 190px; text-align: center; color: #526577; }
+.page-state p { margin: 0; }
+.error-state { color: #a83232; }
+@media (max-width: 700px) { .deposit-detail-page { padding: 16px; } .page-header { flex-wrap: wrap; } .status { margin-left: 0; } .detail-grid { grid-template-columns: 1fr; } dl div { grid-template-columns: 1fr; gap: 2px; } }

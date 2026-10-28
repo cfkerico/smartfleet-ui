@@ -16,6 +16,7 @@ import { ArchiveDocumentDialogComponent, ArchiveDocumentDialogData } from '../ar
 export interface DocumentDetailDialogData {
   documentId: number;
   documentTypeLabel: string;
+  readOnly?: boolean;
 }
 
 @Component({
@@ -106,7 +107,7 @@ export class DocumentDetailDialogComponent implements OnInit {
   archiveDocument(): void {
     const documentDetail = this.detail();
 
-    if (documentDetail === null || documentDetail.status === 'ARCHIVED') {
+    if (this.data.readOnly || documentDetail === null || documentDetail.status === 'ARCHIVED') {
       return;
     }
 

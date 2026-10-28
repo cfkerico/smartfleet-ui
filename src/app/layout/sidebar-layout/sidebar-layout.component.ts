@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {MatIcon} from '@angular/material/icon';
 import {RouterLink, RouterLinkActive} from '@angular/router';
 import { LayoutStateService } from '../../core/services/layout-state.service';
+import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   standalone: true,
@@ -16,5 +17,5 @@ import { LayoutStateService } from '../../core/services/layout-state.service';
 })
 export class SidebarLayoutComponent {
 
-  constructor(public layoutStateService: LayoutStateService) {}
+  constructor(public layoutStateService: LayoutStateService, public auth: AuthService) {}
 }
