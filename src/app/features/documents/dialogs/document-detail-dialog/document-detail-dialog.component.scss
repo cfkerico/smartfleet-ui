@@ -1,5 +1,6 @@
 :host {
   display: block;
+  min-width: 0;
 }
 
 .dialog-header {
@@ -10,9 +11,18 @@
 
   padding: 20px 20px 10px;
 
+  > div {
+    min-width: 0;
+  }
+
   h2 {
     margin: 0;
+    padding: 0;
     color: #172b3f;
+  }
+
+  button {
+    flex: 0 0 auto;
   }
 
   p {
@@ -22,7 +32,8 @@
 }
 
 mat-dialog-content {
-  width: min(980px, 92vw);
+  box-sizing: border-box;
+  width: 100%;
   min-height: 300px;
   padding-top: 12px;
 }

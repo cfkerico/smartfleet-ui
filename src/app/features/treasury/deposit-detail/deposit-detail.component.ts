@@ -51,7 +51,7 @@ export class DepositDetailComponent implements OnInit {
     const proofDocumentId = this.deposit()?.proofDocumentId;
     if (proofDocumentId == null) return;
     this.dialog.open(DocumentDetailDialogComponent, {
-      width: '760px', maxWidth: '96vw', maxHeight: '92vh',
+      width: '900px', maxWidth: '96vw', maxHeight: '92vh',
       data: { documentId: proofDocumentId, documentTypeLabel: 'Justificatif de dépôt', readOnly: true },
     });
   }
