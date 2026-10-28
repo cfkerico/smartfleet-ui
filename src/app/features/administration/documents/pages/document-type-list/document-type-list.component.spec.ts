@@ -24,4 +24,8 @@ describe('DocumentTypeListComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should offer treasury deposits in the owner filter', () => {
+    expect(component.ownerTypes).toContain('TREASURY_DEPOSIT');
+  });
 });

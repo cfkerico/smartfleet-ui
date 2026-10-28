@@ -21,4 +21,10 @@ describe('OwnerChipComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should display the treasury deposit label', () => {
+    fixture.componentRef.setInput('ownerType', 'TREASURY_DEPOSIT');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Dépôt de trésorerie');
+  });
 });

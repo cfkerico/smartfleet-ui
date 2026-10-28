@@ -63,7 +63,8 @@ export class DocumentRequirementListComponent implements OnInit, OnDestroy {
     'VEHICLE',
     'EXPENSE',
     'MAINTENANCE',
-    'COMPANY'
+    'COMPANY',
+    'TREASURY_DEPOSIT'
   ];
 
   readonly ownerTypeControl = new FormControl<DocumentOwnerType>('VEHICLE', { nonNullable: true });
@@ -214,7 +215,8 @@ export class DocumentRequirementListComponent implements OnInit, OnDestroy {
       VEHICLE: 'Vehicule',
       EXPENSE: 'Dépense',
       MAINTENANCE: 'Maintenance',
-      COMPANY: 'Companie'
+      COMPANY: 'Companie',
+      TREASURY_DEPOSIT: 'Dépôt de trésorerie'
     };
 
     return labels[ownerType];

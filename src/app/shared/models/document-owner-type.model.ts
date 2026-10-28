@@ -3,4 +3,5 @@ export type DocumentOwnerType =
   | 'VEHICLE'
   | 'EXPENSE'
   | 'MAINTENANCE'
-  | 'COMPANY';
+  | 'COMPANY'
+  | 'TREASURY_DEPOSIT';

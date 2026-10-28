@@ -54,7 +54,8 @@ export class DocumentTypeListComponent implements OnInit {
     'VEHICLE',
     'EXPENSE',
     'MAINTENANCE',
-    'COMPANY'
+    'COMPANY',
+    'TREASURY_DEPOSIT'
   ];
 
   readonly ownerTypeControl = new FormControl<DocumentOwnerType>('VEHICLE', { nonNullable: true });

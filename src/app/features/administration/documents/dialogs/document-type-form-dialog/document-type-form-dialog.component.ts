@@ -51,7 +51,8 @@ export class DocumentTypeFormDialogComponent {
     'VEHICLE',
     'EXPENSE',
     'MAINTENANCE',
-    'COMPANY'
+    'COMPANY',
+    'TREASURY_DEPOSIT'
   ];
 
   readonly form = this.fb.group({

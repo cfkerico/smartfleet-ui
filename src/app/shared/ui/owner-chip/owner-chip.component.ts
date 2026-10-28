@@ -33,6 +33,11 @@ const OWNER_PRESENTATIONS: Record<DocumentOwnerType, OwnerPresentation> = {
   COMPANY: {
     label: 'Compagnie',
     icon: 'business'
+  },
+
+  TREASURY_DEPOSIT: {
+    label: 'Dépôt de trésorerie',
+    icon: 'account_balance'
   }
 }
 

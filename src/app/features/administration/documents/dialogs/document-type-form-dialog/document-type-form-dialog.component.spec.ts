@@ -40,4 +40,10 @@ describe('DocumentTypeFormDialogComponent', () => {
     expect((fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement).disabled)
       .toBe(true);
   });
+
+  it('should allow a document type for a treasury deposit', () => {
+    expect(component.ownerTypes).toContain('TREASURY_DEPOSIT');
+    component.form.controls.applicableOwnerType.setValue('TREASURY_DEPOSIT');
+    expect(component.form.controls.applicableOwnerType.value).toBe('TREASURY_DEPOSIT');
+  });
 });
