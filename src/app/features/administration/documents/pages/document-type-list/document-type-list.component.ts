@@ -21,6 +21,7 @@ import { PageHeaderComponent } from '../../../../../shared/ui/page-header/page-h
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
 import { StatusBadgeComponent } from '../../../../../shared/ui/status-badge/status-badge.component';
 import { OwnerChipComponent } from '../../../../../shared/ui/owner-chip/owner-chip.component';
+import { NotificationService } from '../../../../../core/services/notification.service';
 
 
 @Component({
@@ -72,7 +73,9 @@ export class DocumentTypeListComponent implements OnInit {
 
   readonly dataSource = new MatTableDataSource<DocumentTypeView>([]);
 
-  constructor(private readonly api: DocumentAdministrationApiService, private readonly dialog: MatDialog) {}
+  constructor(private readonly api: DocumentAdministrationApiService,
+              private readonly dialog: MatDialog,
+              private readonly notification: NotificationService) {}
 
   ngOnInit(): void {
     this.loadDocumentTypes();
@@ -103,6 +106,7 @@ export class DocumentTypeListComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
         this.loadDocumentTypes();
+        this.notification.success('Type de document créé avec succès.');
       }
     });
   }
@@ -122,6 +126,7 @@ export class DocumentTypeListComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
         this.loadDocumentTypes();
+        this.notification.success('Type de document mis à jour.');
       }
     });
   }

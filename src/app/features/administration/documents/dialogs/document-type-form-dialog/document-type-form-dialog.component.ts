@@ -13,6 +13,7 @@ import { DocumentTypeView } from '../../models/document-admin.model';
 import { DocumentOwnerType } from '../../../../../shared/models/document-owner-type.model'; 
 
 import { DocumentAdministrationApiService } from '../../services/document-administration-api.service';
+import { NotificationService } from '../../../../../core/services/notification.service';
 
 interface DocumentTypeDialogData {
   mode: 'CREATE' | 'EDIT';
@@ -40,6 +41,7 @@ export class DocumentTypeFormDialogComponent {
 
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(DocumentAdministrationApiService);
+  private readonly notification = inject(NotificationService);
   private readonly dialogRef = inject(MatDialogRef<DocumentTypeFormDialogComponent>);
 
   readonly data = inject<DocumentTypeDialogData>(MAT_DIALOG_DATA);
@@ -102,8 +104,9 @@ export class DocumentTypeFormDialogComponent {
           label: raw.label!,
           description: raw.description || null,
           applicableOwnerType: raw.applicableOwnerType!
-        }).subscribe(() => {
-          this.dialogRef.close(true);
+        }).subscribe({
+          next: () => this.dialogRef.close(true),
+          error: () => this.notification.error('Impossible de créer le type de document.')
         });
 
         return;
@@ -114,7 +117,10 @@ export class DocumentTypeFormDialogComponent {
           label: raw.label!,
           description: raw.description || null
         }
-      ).subscribe(() => { this.dialogRef.close(true)});
+      ).subscribe({
+        next: () => this.dialogRef.close(true),
+        error: () => this.notification.error('Impossible de modifier le type de document.')
+      });
     }
 
     close(): void {

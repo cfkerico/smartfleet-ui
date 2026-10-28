@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
+import { NotificationService } from '../../../../../core/services/notification.service';
 import { DocumentAdministrationApiService } from '../../services/document-administration-api.service';
 
 import { DocumentTypeFormDialogComponent } from './document-type-form-dialog.component';
@@ -8,17 +9,21 @@ import { DocumentTypeFormDialogComponent } from './document-type-form-dialog.com
 describe('DocumentTypeFormDialogComponent', () => {
   let component: DocumentTypeFormDialogComponent;
   let fixture: ComponentFixture<DocumentTypeFormDialogComponent>;
+  const notification = { success: vi.fn(), error: vi.fn() };
+  const api = {
+    createDocumentType: vi.fn(() => of(null)),
+    updateDocumentType: vi.fn(() => of(null)),
+  };
 
   beforeEach(async () => {
+    vi.clearAllMocks();
     await TestBed.configureTestingModule({
       imports: [DocumentTypeFormDialogComponent],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: { mode: 'CREATE', ownerType: 'VEHICLE' } },
         { provide: MatDialogRef, useValue: { close: () => undefined } },
-        {
-          provide: DocumentAdministrationApiService,
-          useValue: { createDocumentType: () => of(null), updateDocumentType: () => of(null) },
-        },
+        { provide: DocumentAdministrationApiService, useValue: api },
+        { provide: NotificationService, useValue: notification },
       ],
     }).compileComponents();
 
@@ -45,5 +50,12 @@ describe('DocumentTypeFormDialogComponent', () => {
     expect(component.ownerTypes).toContain('TREASURY_DEPOSIT');
     component.form.controls.applicableOwnerType.setValue('TREASURY_DEPOSIT');
     expect(component.form.controls.applicableOwnerType.value).toBe('TREASURY_DEPOSIT');
+  });
+
+  it('should notify when creation fails without closing the dialog', () => {
+    api.createDocumentType.mockImplementationOnce(() => throwError(() => new Error('Network')));
+    component.form.patchValue({ code: 'PROOF', label: 'Justificatif', applicableOwnerType: 'TREASURY_DEPOSIT' });
+    component.submit();
+    expect(notification.error).toHaveBeenCalledWith('Impossible de créer le type de document.');
   });
 });
