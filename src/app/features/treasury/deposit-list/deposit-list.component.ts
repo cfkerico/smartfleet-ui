@@ -50,6 +50,10 @@ export class DepositListComponent implements OnInit {
     return this.auth.isAdmin() || this.auth.hasRole('TREASURER');
   }
 
+  canPrepare(): boolean {
+    return this.auth.hasRole('TREASURER');
+  }
+
   onPageChange(event: PageEvent): void {
     this.pageIndex.set(event.pageIndex);
     this.pageSize.set(event.pageSize);

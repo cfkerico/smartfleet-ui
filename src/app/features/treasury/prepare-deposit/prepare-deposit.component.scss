@@ -1,0 +1,28 @@
+:host { display: block; }
+.prepare-page { max-width: 1280px; margin: 0 auto; padding: 24px; }
+.back-link { margin-bottom: 10px; }
+.page-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding: 22px 24px; border: 1px solid #dfe5ec; border-radius: 16px; background: #f8fafc; }
+.header-icon { display: grid; place-items: center; flex: 0 0 auto; width: 54px; height: 54px; border-radius: 14px; background: #e7f1f8; color: #1f5f8b; }
+.eyebrow { color: #64748b; font-size: .75rem; font-weight: 700; letter-spacing: .05em; }
+h1 { margin: 2px 0 4px; color: #172b3f; }
+.page-header p, .section-heading p, .summary-card p { margin: 0; color: #64748b; }
+.form-card, .summary-card { margin-bottom: 18px; padding: 22px 24px; border: 1px solid #dfe5ec; border-radius: 16px; }
+h2 { margin: 0 0 14px; color: #172b3f; font-size: 1.15rem; }
+mat-form-field { width: min(520px, 100%); }
+.section-heading { display: flex; justify-content: space-between; gap: 16px; align-items: start; }
+.count { flex: 0 0 auto; padding: 6px 10px; color: #1f5f8b; background: #e7f1f8; border-radius: 999px; font-size: .8rem; font-weight: 700; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 14px 10px; border-bottom: 1px solid #e6ebf0; text-align: left; white-space: nowrap; }
+th { color: #40566b; font-size: .8rem; }
+td { color: #263b50; }
+input[type=number] { box-sizing: border-box; width: 120px; padding: 9px 10px; border: 1px solid #b8c5d2; border-radius: 8px; font: inherit; }
+input[type=number]:focus { outline: 2px solid #3b82f6; outline-offset: 1px; }
+.summary-card { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 24px; }
+.summary-card div { display: flex; flex-direction: column; gap: 4px; }
+.summary-card p { flex: 1 1 300px; }
+.summary-card button { margin-left: auto; }
+.state { display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 150px; padding: 24px; text-align: center; color: #526577; }
+.error { color: #a83232; }
+.empty-note { color: #64748b; }
+@media (max-width: 640px) { .prepare-page { padding: 16px; } .form-card, .summary-card { padding: 18px; } .section-heading { flex-wrap: wrap; } .summary-card button { margin-left: 0; width: 100%; } }

@@ -6,6 +6,11 @@
       <h1>Dépôts</h1>
       <p>Consultez les dépôts préparés et confirmés de votre société.</p>
     </div>
+    @if (canPrepare()) {
+      <a mat-flat-button class="prepare-link" routerLink="/treasury/deposits/prepare">
+        <mat-icon>add</mat-icon> Préparer un dépôt
+      </a>
+    }
   </header>
 
   @if (!canRead()) {

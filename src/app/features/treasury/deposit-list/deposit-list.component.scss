@@ -1,6 +1,7 @@
 :host { display: block; }
 .deposit-page { max-width: 1440px; margin: 0 auto; padding: 24px; }
 .page-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding: 22px 24px; border: 1px solid #dfe5ec; border-radius: 16px; background: #f8fafc; }
+.prepare-link { margin-left: auto; white-space: nowrap; }
 .header-icon { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 14px; background: #e7f1f8; color: #1f5f8b; }
 .eyebrow { color: #64748b; font-size: .75rem; font-weight: 700; letter-spacing: .05em; }
 h1 { margin: 2px 0 4px; color: #172b3f; }
@@ -19,4 +20,4 @@ th { color: #40566b; font-weight: 700; }
 .page-state p { margin: 0; }
 .page-state mat-icon { width: 36px; height: 36px; font-size: 36px; }
 .error-state { color: #a83232; }
-@media (max-width: 600px) { .deposit-page { padding: 16px; } .list-heading { align-items: stretch; flex-direction: column; } .list-heading mat-form-field { width: 100%; } }
+@media (max-width: 600px) { .deposit-page { padding: 16px; } .page-header { flex-wrap: wrap; } .prepare-link { margin-left: 0; width: 100%; } .list-heading { align-items: stretch; flex-direction: column; } .list-heading mat-form-field { width: 100%; } }

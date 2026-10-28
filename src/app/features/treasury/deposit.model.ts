@@ -28,3 +28,37 @@ export interface DepositPage {
   totalPages: number;
   last: boolean;
 }
+
+export interface EligibleDepositPayment {
+  paymentId: number;
+  driverId: number;
+  vehicleId: number;
+  paymentDate: string;
+  paidAmount: number;
+  alreadyDeposited: number;
+  remainingAmount: number;
+}
+
+export interface EligibleDepositPaymentPage {
+  content: EligibleDepositPayment[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+}
+
+export interface ExternalTreasuryAccount {
+  id: number;
+  type: 'BANK' | 'MOBILE_MONEY';
+  name: string;
+  currencyCode: string;
+  balance: number;
+  active: boolean;
+}
+
+export interface PrepareDepositRequest {
+  targetAccountId: number;
+  operationId: string;
+  allocations: DepositAllocation[];
+}
