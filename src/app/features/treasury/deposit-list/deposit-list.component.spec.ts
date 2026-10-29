@@ -55,4 +55,16 @@ describe('DepositListComponent', () => {
     expect(api.list).not.toHaveBeenCalled();
     expect(fixture.nativeElement.textContent).toContain('réservée aux administrateurs');
   });
+
+  it('shows the preparation action when the user has both ADMIN and TREASURER', async () => {
+    auth.isAdmin.mockReturnValue(true);
+    auth.hasRole.mockImplementation((role: string) => ['ADMIN', 'TREASURER'].includes(role));
+    const fixture = TestBed.createComponent(DepositListComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.canPrepare()).toBe(true);
+    expect(fixture.nativeElement.querySelector('a[href="/treasury/deposits/prepare"]')).toBeTruthy();
+  });
 });

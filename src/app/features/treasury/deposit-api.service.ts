@@ -32,4 +32,9 @@ export class DepositApiService {
   prepare(request: PrepareDepositRequest): Observable<TreasuryDeposit> {
     return this.http.post<TreasuryDeposit>(`${API_ENDPOINTS.treasury}/deposits`, request);
   }
+
+  confirm(depositId: number, proofDocumentId: number): Observable<TreasuryDeposit> {
+    return this.http.post<TreasuryDeposit>(
+      `${API_ENDPOINTS.treasury}/deposits/${depositId}/confirmation`, { proofDocumentId });
+  }
 }

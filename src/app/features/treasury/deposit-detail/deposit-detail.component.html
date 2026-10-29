@@ -40,8 +40,53 @@
           <button mat-stroked-button type="button" (click)="viewProof()">
             <mat-icon>visibility</mat-icon> Voir le justificatif
           </button>
+        } @else if (item.status === 'PREPARING') {
+          <p>Un justificatif valide est obligatoire avant la confirmation. La préparation seule ne modifie pas les soldes.</p>
+          @if (proofLoading()) {
+            <div class="proof-state" aria-live="polite"><mat-spinner diameter="28"/> Chargement des justificatifs...</div>
+          } @else if (proofError()) {
+            <p class="proof-error" role="alert">{{ proofError() }}</p>
+            <button mat-stroked-button type="button" (click)="loadProofOptions()">Réessayer</button>
+          } @else {
+            @if (proofTypes().length === 0 && canManage()) {
+              <p class="proof-error">Aucun type de document actif pour les dépôts de trésorerie. Configurez-en un avant d’ajouter un justificatif.</p>
+            } @else if (canManage()) {
+              @if (proofTypes().length > 1) {
+                <mat-form-field appearance="outline" class="proof-field">
+                  <mat-label>Type de justificatif</mat-label>
+                  <mat-select [formControl]="selectedTypeId">
+                    @for (type of proofTypes(); track type.id) {
+                      <mat-option [value]="type.id">{{ type.label }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              }
+              <button mat-stroked-button type="button" [disabled]="!selectedTypeId.value" (click)="uploadProof()">
+                <mat-icon>upload_file</mat-icon> Ajouter un justificatif
+              </button>
+            }
+            @if (validProofs().length > 0) {
+              <mat-form-field appearance="outline" class="proof-field">
+                <mat-label>Justificatif à utiliser</mat-label>
+                <mat-select [formControl]="selectedProofId">
+                  @for (proof of validProofs(); track proof.documentId) {
+                    <mat-option [value]="proof.documentId">{{ proof.title }} — #{{ proof.documentId }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <button mat-button type="button" (click)="viewSelectedProof()">Voir le justificatif sélectionné</button>
+              @if (canManage()) {
+                <button mat-flat-button type="button" class="confirm-button"
+                  [disabled]="!selectedProofId.value || confirming()" (click)="confirmDeposit()">
+                  @if (confirming()) { Confirmation... } @else { Confirmer le dépôt }
+                </button>
+              }
+            } @else {
+              <p>Aucun justificatif valide encore ajouté à ce dépôt.</p>
+            }
+          }
         } @else {
-          <p>Aucun justificatif lié à ce dépôt en préparation.</p>
+          <p>Aucun justificatif lié à ce dépôt.</p>
         }
       </mat-card>
     </div>
