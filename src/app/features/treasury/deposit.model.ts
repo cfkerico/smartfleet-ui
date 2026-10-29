@@ -65,6 +65,27 @@ export interface ExternalTreasuryAccount {
   active: boolean;
 }
 
+export interface CashTreasuryAccount extends Omit<ExternalTreasuryAccount, 'type'> {
+  type: 'COLLECTION_CASH' | 'EXPENSE_CASH';
+}
+
+export interface TransferCollectionCashRequest {
+  collectionAccountId: number;
+  expenseCashAccountId: number;
+  amount: number;
+  operationId: string;
+}
+
+export interface TransferCollectionCashResult {
+  reference: string;
+  collectionAccountId: number;
+  collectionBalance: number;
+  expenseCashAccountId: number;
+  expenseCashBalance: number;
+  transferredAmount: number;
+  transferredAt: string;
+}
+
 export interface PrepareDepositRequest {
   targetAccountId: number;
   operationId: string;

@@ -83,6 +83,15 @@
           }
         </a>
       }
+      @if (auth.hasRole('TREASURER')) {
+        <a routerLink="/treasury/transfers/collection-to-expenses" routerLinkActive="active"
+           class="menu-item" title="Transfert entre caisses">
+          <mat-icon>swap_horiz</mat-icon>
+          @if (!layoutStateService.sidebarCollapsed()) {
+            <span>Transfert entre caisses</span>
+          }
+        </a>
+      }
     </section>
 
     <section class="menu-section">

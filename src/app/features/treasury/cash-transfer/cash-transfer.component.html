@@ -1,0 +1,54 @@
+<section class="transfer-page">
+  <a mat-button routerLink="/treasury/deposits"><mat-icon>arrow_back</mat-icon> Retour aux dépôts</a>
+  <header class="page-header">
+    <mat-icon>swap_horiz</mat-icon>
+    <div><span class="eyebrow">TRÉSORERIE</span><h1>Transfert entre caisses</h1>
+      <p>Approvisionnez la caisse de dépenses depuis les recettes collectées.</p></div>
+  </header>
+  @if (!canTransfer()) {
+    <mat-card class="notice" role="alert">Cette opération est réservée aux trésoriers.</mat-card>
+  } @else {
+    @if (loading()) { <p class="notice">Chargement des soldes...</p> }
+    @if (error()) {
+      <p class="notice error" role="alert">{{ error() }}</p>
+      @if (!uncertain()) { <button mat-stroked-button type="button" (click)="load()">Réessayer</button> }
+    }
+    @if (collection(); as source) {
+      @if (expenses(); as target) {
+        <div class="accounts">
+          <mat-card><span>CAISSE SOURCE</span><h2>{{ source.name }}</h2>
+            <strong>{{ source.balance | number:'1.2-2' }} {{ source.currencyCode }}</strong></mat-card>
+          <mat-icon class="direction">arrow_forward</mat-icon>
+          <mat-card><span>CAISSE CIBLE</span><h2>{{ target.name }}</h2>
+            <strong>{{ target.balance | number:'1.2-2' }} {{ target.currencyCode }}</strong></mat-card>
+        </div>
+        @if (!result()) {
+          <mat-card class="form-card">
+            <h2>Montant à transférer</h2>
+            <p>Le solde de la caisse source ne peut pas devenir négatif.</p>
+            <mat-form-field appearance="outline">
+              <mat-label>Montant ({{ source.currencyCode }})</mat-label>
+              <input matInput type="number" min="0.01" step="0.01" [readonly]="uncertain()" [formControl]="amount">
+              @if (amount.value !== null && amount.value > source.balance) {
+                <mat-hint>Montant supérieur au solde disponible.</mat-hint>
+              }
+            </mat-form-field>
+            <button mat-flat-button type="button" [disabled]="!canSubmit()" (click)="submit()">
+              <mat-icon>swap_horiz</mat-icon> {{ submitting() ? 'Transfert en cours...' : 'Transférer' }}
+            </button>
+            @if (uncertain()) { <p>Une nouvelle tentative utilise le même identifiant d’opération.</p> }
+          </mat-card>
+        } @else {
+          <mat-card class="notice success" role="status">
+            <h2>Transfert effectué</h2>
+            <p>{{ result()!.transferredAmount | number:'1.2-2' }} {{ source.currencyCode }} transférés.</p>
+            <small>Référence : {{ result()!.reference }}</small>
+            <button mat-stroked-button type="button" (click)="newOperation()">Nouvelle opération</button>
+          </mat-card>
+        }
+      }
+    } @else if (!loading() && !error()) {
+      <mat-card class="notice">Les caisses internes ne sont pas disponibles. Initialisez la trésorerie de la société.</mat-card>
+    }
+  }
+</section>

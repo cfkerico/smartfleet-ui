@@ -3,7 +3,8 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_ENDPOINTS } from '../../core/config/api-endpoints';
 import { DepositAllocationDetails, DepositPage, EligibleDepositPaymentPage, ExternalTreasuryAccount,
-  PrepareDepositRequest, TreasuryDeposit, TreasuryDepositStatus } from './deposit.model';
+  PrepareDepositRequest, TreasuryDeposit, TreasuryDepositStatus, CashTreasuryAccount,
+  TransferCollectionCashRequest, TransferCollectionCashResult } from './deposit.model';
 
 @Injectable({ providedIn: 'root' })
 export class DepositApiService {
@@ -35,6 +36,15 @@ export class DepositApiService {
 
   disbursementAccounts(): Observable<ExternalTreasuryAccount[]> {
     return this.http.get<ExternalTreasuryAccount[]>(`${API_ENDPOINTS.treasury}/accounts/disbursement`);
+  }
+
+  cashAccounts(): Observable<CashTreasuryAccount[]> {
+    return this.http.get<CashTreasuryAccount[]>(`${API_ENDPOINTS.treasury}/accounts/cash`);
+  }
+
+  transferCollectionCash(request: TransferCollectionCashRequest): Observable<TransferCollectionCashResult> {
+    return this.http.post<TransferCollectionCashResult>(
+      `${API_ENDPOINTS.treasury}/transfers/collection-to-expenses`, request);
   }
 
   prepare(request: PrepareDepositRequest): Observable<TreasuryDeposit> {
