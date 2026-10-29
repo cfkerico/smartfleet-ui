@@ -54,7 +54,11 @@
                 <tr>
                   <td>#{{ payment.paymentId }}</td>
                   <td>{{ payment.paymentDate | date:'dd/MM/yyyy' }}</td>
-                  <td>Chauffeur #{{ payment.driverId }} · Véhicule #{{ payment.vehicleId }}</td>
+                  <td>
+                    {{ payment.driverName || 'Chauffeur inconnu' }}
+                    · {{ payment.vehicleLabel || 'Véhicule inconnu' }}
+                    <small>Chauffeur #{{ payment.driverId }} · Véhicule #{{ payment.vehicleId }}</small>
+                  </td>
                   <td>{{ payment.paidAmount | number:'1.2-2' }}</td>
                   <td>{{ payment.alreadyDeposited | number:'1.2-2' }}</td>
                   <td>{{ payment.remainingAmount | number:'1.2-2' }}</td>

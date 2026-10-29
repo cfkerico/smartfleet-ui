@@ -39,6 +39,8 @@ export interface EligibleDepositPayment {
   paymentId: number;
   driverId: number;
   vehicleId: number;
+  driverName: string | null;
+  vehicleLabel: string | null;
   paymentDate: string;
   paidAmount: number;
   alreadyDeposited: number;

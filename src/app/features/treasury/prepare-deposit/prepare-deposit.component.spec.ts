@@ -7,7 +7,8 @@ import { DepositApiService } from '../deposit-api.service';
 import { PrepareDepositComponent } from './prepare-deposit.component';
 
 describe('PrepareDepositComponent', () => {
-  const payment = { paymentId: 39, driverId: 5, vehicleId: 7, paymentDate: '2026-07-03',
+  const payment = { paymentId: 39, driverId: 5, vehicleId: 7,
+    driverName: 'Dupont Jean', vehicleLabel: 'CE 135 FG - Toyota Yaris', paymentDate: '2026-07-03',
     paidAmount: 11000, alreadyDeposited: 5000, remainingAmount: 6000 };
   const account = { id: 2, type: 'BANK', name: 'Banque', currencyCode: 'XAF', balance: 100,
     active: true };
@@ -39,6 +40,8 @@ describe('PrepareDepositComponent', () => {
     expect(api.externalAccounts).toHaveBeenCalledOnce();
     expect(api.eligiblePayments).toHaveBeenCalledWith(0, 10);
     expect(fixture.nativeElement.textContent).toContain('6,000');
+    expect(fixture.nativeElement.textContent).toContain('Dupont Jean');
+    expect(fixture.nativeElement.textContent).toContain('CE 135 FG - Toyota Yaris');
     expect(fixture.componentInstance.canSubmit()).toBe(false);
   });
 

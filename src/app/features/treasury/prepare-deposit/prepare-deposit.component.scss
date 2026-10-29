@@ -16,6 +16,7 @@ table { width: 100%; border-collapse: collapse; }
 th, td { padding: 14px 10px; border-bottom: 1px solid #e6ebf0; text-align: left; white-space: nowrap; }
 th { color: #40566b; font-size: .8rem; }
 td { color: #263b50; }
+td small { display: block; margin-top: 3px; color: #64748b; font-size: .75rem; }
 input[type=number] { box-sizing: border-box; width: 120px; padding: 9px 10px; border: 1px solid #b8c5d2; border-radius: 8px; font: inherit; }
 input[type=number]:focus { outline: 2px solid #3b82f6; outline-offset: 1px; }
 .summary-card { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 24px; }
