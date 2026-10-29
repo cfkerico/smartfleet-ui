@@ -57,6 +57,7 @@ export type PaymentMethod =
     id: number;
     paidAmount: number;
     paymentMethod: PaymentMethod;
+    sourceAccountId?: number | null;
     beneficiary?: string | null;
     referenceNumber?: string | null;
     comment?: string | null;

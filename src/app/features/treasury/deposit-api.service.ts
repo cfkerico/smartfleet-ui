@@ -33,6 +33,10 @@ export class DepositApiService {
     return this.http.get<ExternalTreasuryAccount[]>(`${API_ENDPOINTS.treasury}/accounts/external`);
   }
 
+  disbursementAccounts(): Observable<ExternalTreasuryAccount[]> {
+    return this.http.get<ExternalTreasuryAccount[]>(`${API_ENDPOINTS.treasury}/accounts/disbursement`);
+  }
+
   prepare(request: PrepareDepositRequest): Observable<TreasuryDeposit> {
     return this.http.post<TreasuryDeposit>(`${API_ENDPOINTS.treasury}/deposits`, request);
   }

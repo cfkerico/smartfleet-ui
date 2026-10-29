@@ -19,6 +19,8 @@ import { NotificationService } from '../../../core/services/notification.service
 import { disbursementErrorMessage } from '../disbursement-error-message';
 import { DisburseExpenseDialogComponent } from '../disburse-expense-dialog/disburse-expense-dialog.component';
 import { ExpenseReasonDialogComponent } from '../expense-reason-dialog/expense-reason-dialog.component';
+import { DepositApiService } from '../../treasury/deposit-api.service';
+import { ExternalTreasuryAccount } from '../../treasury/deposit.model';
 
 @Component({
   selector: 'app-expense-detail',
@@ -42,6 +44,7 @@ export class ExpenseDetailComponent implements OnInit {
   expenseId!: number;
   loading = true;
   loadError = false;
+  disbursementAccounts: ExternalTreasuryAccount[] = [];
 
   selectedTabIndex = 0;
 
@@ -49,6 +52,7 @@ export class ExpenseDetailComponent implements OnInit {
     'paymentDate',
     'paidAmount',
     'paymentMethod',
+    'sourceAccount',
     'beneficiary',
     'referenceNumber',
     'createdBy',
@@ -56,7 +60,7 @@ export class ExpenseDetailComponent implements OnInit {
   ];
 
 
-  constructor(private route: ActivatedRoute, private router: Router, private expenseApi: ExpenseApiService, private cdr: ChangeDetectorRef, private dialog: MatDialog, private auth: AuthService, private notification: NotificationService) {}
+  constructor(private route: ActivatedRoute, private router: Router, private expenseApi: ExpenseApiService, private cdr: ChangeDetectorRef, private dialog: MatDialog, private auth: AuthService, private notification: NotificationService, private treasuryApi: DepositApiService) {}
 
   ngOnInit(): void {
     this.selectedTabIndex = this.route.snapshot.queryParamMap.get('tab') === 'documents' ? 3 : 0;
@@ -67,7 +71,18 @@ export class ExpenseDetailComponent implements OnInit {
       return;
     }
     this.expenseId = id;
+    if (this.auth.hasRole('ADMIN') || this.auth.hasRole('TREASURER')) {
+      this.treasuryApi.disbursementAccounts().subscribe({
+        next: accounts => { this.disbursementAccounts = accounts; this.cdr.markForCheck(); },
+        error: () => { this.disbursementAccounts = []; },
+      });
+    }
     this.loadExpense(id);
+  }
+
+  sourceAccountLabel(accountId: number | null | undefined): string {
+    if (accountId == null) return 'Historique antérieur à la bascule';
+    return this.disbursementAccounts.find(account => account.id === accountId)?.name ?? `Compte #${accountId}`;
   }
 
   loadExpense(id: number): void {

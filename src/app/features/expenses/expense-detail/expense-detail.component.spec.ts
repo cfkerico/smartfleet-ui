@@ -11,11 +11,13 @@ import { NotificationService } from '../../../core/services/notification.service
 import { ExpenseDetailView } from '../../../models/expense.model';
 
 import { ExpenseDetailComponent } from './expense-detail.component';
+import { DepositApiService } from '../../treasury/deposit-api.service';
 
 describe('ExpenseDetailComponent', () => {
   let component: ExpenseDetailComponent;
   let fixture: ComponentFixture<ExpenseDetailComponent>;
   const expenseApiMock = { findExpenseDetail: vi.fn(), disburseExpense: vi.fn() };
+  const treasuryApiMock = { disbursementAccounts: vi.fn(() => of([])) };
   const dialogMock = { open: vi.fn() };
   const notify = { success: vi.fn(), error: vi.fn() };
   let roles = ['ADMIN'];
@@ -64,6 +66,7 @@ describe('ExpenseDetailComponent', () => {
           },
         },
         { provide: ExpenseApiService, useValue: expenseApiMock },
+        { provide: DepositApiService, useValue: treasuryApiMock },
         { provide: AuthService, useValue: authMock },
         { provide: MatDialog, useValue: dialogMock },
         { provide: NotificationService, useValue: notify },

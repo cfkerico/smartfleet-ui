@@ -80,10 +80,11 @@ export class ExpenseApiService {
   disburseExpense(id: number, payload: {
     paidAmount: number;
     paymentMethod: PaymentMethod;
-    paymentReference?: string | null;
+    referenceNumber?: string | null;
     beneficiary?: string | null;
-    comments?: string | null;
+    comment?: string | null;
     paymentDate?: string | null;
+    sourceAccountId?: number | null;
    }): Observable<void> {
     return this.http.patch<void>(`${this.apiUrl}/${id}/disburse`, payload);
   }

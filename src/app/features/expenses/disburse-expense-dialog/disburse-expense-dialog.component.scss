@@ -43,6 +43,8 @@
 }
 
 .full-width { grid-column: 1 / -1; }
+.account-error { grid-column: 1 / -1; margin: 0; color: #a83232; }
+.legacy-note { grid-column: 1 / -1; margin: 0; color: #64748b; }
 
 mat-dialog-actions {
   gap: 8px;

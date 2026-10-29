@@ -43,6 +43,27 @@
           }
         </mat-form-field>
 
+        @if (!legacyWithoutTreasury()) {
+          <mat-form-field appearance="outline">
+            <mat-label>Compte à débiter</mat-label>
+            <mat-select formControlName="sourceAccountId" required>
+              @for (account of availableAccounts(); track account.id) {
+                <mat-option [value]="account.id">{{ account.name }} — {{ account.balance }} {{ account.currencyCode }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.sourceAccountId.touched && form.controls.sourceAccountId.invalid) {
+              <mat-error>Choisissez le compte débité.</mat-error>
+            }
+          </mat-form-field>
+        } @else {
+          <p class="legacy-note">Trésorerie non initialisée : ce décaissement restera dans l’historique sans mouvement de compte.</p>
+        }
+        @if (accountsError()) {
+          <p class="account-error">Impossible de charger les comptes de trésorerie. Fermez puis réessayez.</p>
+        } @else if (!legacyWithoutTreasury() && !accountsLoading() && form.controls.paymentMethod.value && availableAccounts().length === 0) {
+          <p class="account-error">Aucun compte actif compatible avec ce mode de paiement.</p>
+        }
+
         <mat-form-field appearance="outline">
           <mat-label>Date de paiement</mat-label>
           <input matInput [matDatepicker]="paymentPicker" formControlName="paymentDate" required>
@@ -81,6 +102,6 @@
 
   <mat-dialog-actions align="end">
     <button mat-button type="button" (click)="close()">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">Confirmer le décaissement</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || accountsLoading() || accountsError()">Confirmer le décaissement</button>
   </mat-dialog-actions>
 </form>

@@ -6,6 +6,12 @@ export function disbursementErrorMessage(error: HttpErrorResponse): string {
   if (message === 'Total disbursed amount cannot exceed requested amount.') {
     return 'Le montant saisi dépasse le solde restant à décaisser.';
   }
+  if (message === 'Insufficient treasury balance.') {
+    return 'Solde insuffisant sur le compte choisi. Aucun décaissement n’a été enregistré.';
+  }
+  if (message.includes('Source account') || message.includes('treasury disbursement')) {
+    return 'Compte source invalide ou incompatible avec le mode de paiement.';
+  }
   if (error.status === 403) {
     return 'Seul un trésorier peut enregistrer un décaissement.';
   }

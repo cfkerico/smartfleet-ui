@@ -58,7 +58,7 @@ export interface EligibleDepositPaymentPage {
 
 export interface ExternalTreasuryAccount {
   id: number;
-  type: 'BANK' | 'MOBILE_MONEY';
+  type: 'EXPENSE_CASH' | 'BANK' | 'MOBILE_MONEY';
   name: string;
   currencyCode: string;
   balance: number;
