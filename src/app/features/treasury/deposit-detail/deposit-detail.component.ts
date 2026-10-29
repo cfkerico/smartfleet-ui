@@ -20,7 +20,7 @@ import { DocumentDetailDialogComponent } from '../../documents/dialogs/document-
 import { DocumentApiService } from '../../documents/services/document-api.service';
 import { DocumentComplianceItem, DocumentSummary } from '../../documents/models/document.model';
 import { DepositApiService } from '../deposit-api.service';
-import { TreasuryDeposit } from '../deposit.model';
+import { DepositAllocationDetails, ExternalTreasuryAccount, TreasuryDeposit } from '../deposit.model';
 
 @Component({
   selector: 'app-deposit-detail',
@@ -40,6 +40,10 @@ export class DepositDetailComponent implements OnInit {
   private readonly notification = inject(NotificationService);
 
   readonly deposit = signal<TreasuryDeposit | null>(null);
+  readonly accounts = signal<ExternalTreasuryAccount[]>([]);
+  readonly accountsUnavailable = signal(false);
+  readonly allocationDetails = signal<DepositAllocationDetails[]>([]);
+  readonly allocationDetailsUnavailable = signal(false);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
   readonly proofTypes = signal<DocumentTypeView[]>([]);
@@ -62,9 +66,17 @@ export class DepositDetailComponent implements OnInit {
       this.error.set('Identifiant du dépôt invalide.');
       return;
     }
+    this.api.externalAccounts().subscribe({
+      next: accounts => this.accounts.set(accounts),
+      error: () => this.accountsUnavailable.set(true),
+    });
     this.api.findById(id).pipe(finalize(() => this.loading.set(false))).subscribe({
       next: deposit => {
         this.deposit.set(deposit);
+        this.api.allocationDetails(deposit.id).subscribe({
+          next: details => this.allocationDetails.set(details),
+          error: () => this.allocationDetailsUnavailable.set(true),
+        });
         if (deposit.status === 'PREPARING') this.loadProofOptions();
       },
       error: () => this.error.set('Dépôt introuvable ou inaccessible.'),
@@ -77,6 +89,24 @@ export class DepositDetailComponent implements OnInit {
 
   canRead(): boolean {
     return this.auth.isAdmin() || this.canManage();
+  }
+
+  accountName(accountId: number): string {
+    return this.accounts().find(account => account.id === accountId)?.name ?? `Compte #${accountId}`;
+  }
+
+  accountDescription(accountId: number): string {
+    const account = this.accounts().find(item => item.id === accountId);
+    if (!account) return `Réf. #${accountId}`;
+    return `${account.type === 'BANK' ? 'Banque' : 'Mobile money'} · ${account.currencyCode} · Réf. #${accountId}`;
+  }
+
+  accountCurrency(accountId: number): string {
+    return this.accounts().find(item => item.id === accountId)?.currencyCode ?? '';
+  }
+
+  allocationInfo(paymentId: number): DepositAllocationDetails | undefined {
+    return this.allocationDetails().find(item => item.paymentId === paymentId);
   }
 
   loadProofOptions(): void {

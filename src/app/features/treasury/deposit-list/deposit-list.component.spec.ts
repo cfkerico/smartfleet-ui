@@ -6,7 +6,7 @@ import { DepositApiService } from '../deposit-api.service';
 import { DepositListComponent } from './deposit-list.component';
 
 describe('DepositListComponent', () => {
-  const api = { list: vi.fn() };
+  const api = { list: vi.fn(), externalAccounts: vi.fn() };
   const auth = { isAdmin: vi.fn(() => false), hasRole: vi.fn((role: string) => role === 'TREASURER') };
   const deposit = {
     id: 3, companyId: 1, targetAccountId: 2, amount: 40000,
@@ -21,6 +21,9 @@ describe('DepositListComponent', () => {
     auth.hasRole.mockImplementation((role: string) => role === 'TREASURER');
     api.list.mockReturnValue(of({ content: [deposit], page: 0, size: 10,
       totalElements: 1, totalPages: 1, last: true }));
+    api.externalAccounts.mockReturnValue(of([
+      { id: 2, name: 'Banque principale', type: 'BANK', currencyCode: 'XAF', balance: 40000, active: true },
+    ]));
     await TestBed.configureTestingModule({
       imports: [DepositListComponent],
       providers: [provideRouter([]),
@@ -36,6 +39,8 @@ describe('DepositListComponent', () => {
     fixture.detectChanges();
     expect(api.list).toHaveBeenCalledWith(null, 0, 10);
     expect(fixture.nativeElement.textContent).toContain('Confirmé');
+    expect(fixture.nativeElement.textContent).toContain('Banque principale');
+    expect(fixture.nativeElement.textContent).toContain('Dépôt du 28/10/2026');
     expect(fixture.nativeElement.querySelector('a[href="/treasury/deposits/3"]')).toBeTruthy();
   });
 

@@ -5,6 +5,12 @@ export interface DepositAllocation {
   amount: number;
 }
 
+export interface DepositAllocationDetails extends DepositAllocation {
+  paymentDate: string;
+  driverName: string;
+  vehicleLabel: string;
+}
+
 export interface TreasuryDeposit {
   id: number;
   companyId: number;

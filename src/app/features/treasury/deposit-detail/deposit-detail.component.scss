@@ -20,11 +20,14 @@ dl { display: grid; gap: 12px; margin: 0; }
 dl div { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; }
 dt { color: #64748b; }
 dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+dd small, .detail-card p small { display: block; margin-top: 3px; color: #64748b; font-size: .78rem; font-weight: 400; }
+.account-warning { margin-bottom: 0; color: #8a5a10 !important; }
 .identifier { font-size: .9rem; }
 .allocations-card { margin-top: 16px; }
 .allocations-card > p { margin-top: -8px; }
 .allocation-list { display: grid; gap: 8px; }
 .allocation-list div { display: flex; justify-content: space-between; gap: 20px; padding: 12px 14px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc; }
+.allocation-list small { display: block; margin-top: 3px; color: #64748b; font-size: .78rem; }
 .page-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 190px; text-align: center; color: #526577; }
 .page-state p { margin: 0; }
 .error-state { color: #a83232; }

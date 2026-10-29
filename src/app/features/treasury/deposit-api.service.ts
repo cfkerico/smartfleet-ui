@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_ENDPOINTS } from '../../core/config/api-endpoints';
-import { DepositPage, EligibleDepositPaymentPage, ExternalTreasuryAccount,
+import { DepositAllocationDetails, DepositPage, EligibleDepositPaymentPage, ExternalTreasuryAccount,
   PrepareDepositRequest, TreasuryDeposit, TreasuryDepositStatus } from './deposit.model';
 
 @Injectable({ providedIn: 'root' })
@@ -17,6 +17,10 @@ export class DepositApiService {
 
   findById(id: number): Observable<TreasuryDeposit> {
     return this.http.get<TreasuryDeposit>(`${API_ENDPOINTS.treasury}/deposits/${id}`);
+  }
+
+  allocationDetails(id: number): Observable<DepositAllocationDetails[]> {
+    return this.http.get<DepositAllocationDetails[]>(`${API_ENDPOINTS.treasury}/deposits/${id}/allocation-details`);
   }
 
   eligiblePayments(page: number, size: number): Observable<EligibleDepositPaymentPage> {

@@ -10,8 +10,8 @@
       <div class="header-icon"><mat-icon>account_balance</mat-icon></div>
       <div>
         <span class="eyebrow">DÉPÔT DE TRÉSORERIE</span>
-        <h1>Dépôt #{{ item.id }}</h1>
-        <p>Préparé le {{ item.createdAt | date:'dd/MM/yyyy à HH:mm' }}</p>
+        <h1>Dépôt du {{ item.createdAt | date:'dd/MM/yyyy' }}</h1>
+        <p>Réf. #{{ item.id }} · Préparé à {{ item.createdAt | date:'HH:mm' }}</p>
       </div>
       <span class="status" [class.preparing]="item.status === 'PREPARING'">
         {{ item.status === 'CONFIRMED' ? 'Confirmé' : 'En préparation' }}
@@ -22,8 +22,8 @@
       <mat-card class="detail-card">
         <h2>Opération</h2>
         <dl>
-          <div><dt>Montant</dt><dd>{{ item.amount | number:'1.2-2' }}</dd></div>
-          <div><dt>Compte cible</dt><dd>#{{ item.targetAccountId }}</dd></div>
+          <div><dt>Montant</dt><dd>{{ item.amount | number:'1.2-2' }} {{ accountCurrency(item.targetAccountId) }}</dd></div>
+          <div><dt>Compte cible</dt><dd>{{ accountName(item.targetAccountId) }}<small>{{ accountDescription(item.targetAccountId) }}</small></dd></div>
           <div><dt>Identifiant d'opération</dt><dd class="identifier">{{ item.operationId }}</dd></div>
           <div><dt>Préparé par</dt><dd class="identifier">{{ item.createdBy }}</dd></div>
           @if (item.confirmedAt) {
@@ -31,12 +31,15 @@
             <div><dt>Confirmé par</dt><dd class="identifier">{{ item.confirmedBy }}</dd></div>
           }
         </dl>
+        @if (accountsUnavailable()) {
+          <p class="account-warning">Le nom du compte est momentanément indisponible ; sa référence reste affichée.</p>
+        }
       </mat-card>
 
       <mat-card class="detail-card">
         <h2>Justificatif</h2>
         @if (item.proofDocumentId) {
-          <p>Document #{{ item.proofDocumentId }}</p>
+          <p>Justificatif du dépôt <small>Réf. document #{{ item.proofDocumentId }}</small></p>
           <button mat-stroked-button type="button" (click)="viewProof()">
             <mat-icon>visibility</mat-icon> Voir le justificatif
           </button>
@@ -96,9 +99,22 @@
       <p>Montants attribués à chaque versement chauffeur.</p>
       <div class="allocation-list">
         @for (allocation of item.allocations; track allocation.paymentId) {
-          <div><span>Versement #{{ allocation.paymentId }}</span><strong>{{ allocation.amount | number:'1.2-2' }}</strong></div>
+          <div>
+            <span>
+              @if (allocationInfo(allocation.paymentId); as info) {
+                <b>Versement du {{ info.paymentDate | date:'dd/MM/yyyy' }}</b>
+                <small>{{ info.driverName }} · {{ info.vehicleLabel }} · Réf. #{{ allocation.paymentId }}</small>
+              } @else {
+                <b>Versement #{{ allocation.paymentId }}</b>
+              }
+            </span>
+            <strong>{{ allocation.amount | number:'1.2-2' }} {{ accountCurrency(item.targetAccountId) }}</strong>
+          </div>
         }
       </div>
+      @if (allocationDetailsUnavailable()) {
+        <p class="account-warning">Le détail des recettes est momentanément indisponible ; leurs références restent affichées.</p>
+      }
     </mat-card>
   }
 </section>

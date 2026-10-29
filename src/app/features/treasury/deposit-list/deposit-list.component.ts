@@ -13,7 +13,7 @@ import { MatTableModule } from '@angular/material/table';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/auth/auth.service';
 import { DepositApiService } from '../deposit-api.service';
-import { TreasuryDeposit, TreasuryDepositStatus } from '../deposit.model';
+import { ExternalTreasuryAccount, TreasuryDeposit, TreasuryDepositStatus } from '../deposit.model';
 
 @Component({
   selector: 'app-deposit-list',
@@ -30,6 +30,8 @@ export class DepositListComponent implements OnInit {
 
   readonly status = new FormControl<TreasuryDepositStatus | null>(null);
   readonly deposits = signal<TreasuryDeposit[]>([]);
+  readonly accounts = signal<ExternalTreasuryAccount[]>([]);
+  readonly accountsUnavailable = signal(false);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
   readonly totalElements = signal(0);
@@ -43,7 +45,15 @@ export class DepositListComponent implements OnInit {
       this.pageIndex.set(0);
       this.load();
     });
+    this.loadAccounts();
     this.load();
+  }
+
+  private loadAccounts(): void {
+    this.api.externalAccounts().subscribe({
+      next: accounts => this.accounts.set(accounts),
+      error: () => this.accountsUnavailable.set(true),
+    });
   }
 
   canRead(): boolean {
@@ -80,5 +90,15 @@ export class DepositListComponent implements OnInit {
 
   statusLabel(status: TreasuryDepositStatus): string {
     return status === 'CONFIRMED' ? 'Confirmé' : 'En préparation';
+  }
+
+  accountName(accountId: number): string {
+    return this.accounts().find(account => account.id === accountId)?.name ?? `Compte #${accountId}`;
+  }
+
+  accountDescription(accountId: number): string {
+    const account = this.accounts().find(item => item.id === accountId);
+    if (!account) return `Réf. #${accountId}`;
+    return `${account.type === 'BANK' ? 'Banque' : 'Mobile money'} · ${account.currencyCode} · Réf. #${accountId}`;
   }
 }

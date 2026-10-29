@@ -13,7 +13,7 @@ import { DocumentAdministrationApiService } from '../../administration/documents
 import { NotificationService } from '../../../core/services/notification.service';
 
 describe('DepositDetailComponent', () => {
-  const api = { findById: vi.fn(), confirm: vi.fn() };
+  const api = { findById: vi.fn(), confirm: vi.fn(), externalAccounts: vi.fn(), allocationDetails: vi.fn() };
   const dialog = { open: vi.fn() };
   const documents = { findByOwner: vi.fn() };
   const documentAdmin = { findDocumentTypes: vi.fn() };
@@ -33,6 +33,13 @@ describe('DepositDetailComponent', () => {
     auth.isAdmin.mockReturnValue(false);
     api.findById.mockReturnValue(of(confirmedDeposit));
     api.confirm.mockReturnValue(of(confirmedDeposit));
+    api.externalAccounts.mockReturnValue(of([
+      { id: 2, name: 'Banque principale', type: 'BANK', currencyCode: 'XAF', balance: 40000, active: true },
+    ]));
+    api.allocationDetails.mockReturnValue(of([
+      { paymentId: 11, amount: 40000, paymentDate: '2026-10-27',
+        driverName: 'Jean Dupont', vehicleLabel: 'Toyota Yaris' },
+    ]));
     documents.findByOwner.mockReturnValue(of({ content: [{ documentId: 9, title: 'Reçu', status: 'VALID' }],
       page: 0, size: 100, totalElements: 1, totalPages: 1, last: true }));
     documentAdmin.findDocumentTypes.mockReturnValue(of([{ id: 4, code: 'DEPOSIT_PROOF', label: 'Reçu', active: true }]));
@@ -58,8 +65,10 @@ describe('DepositDetailComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
     expect(api.findById).toHaveBeenCalledWith(3);
-    expect(fixture.nativeElement.textContent).toContain('Versement #11');
-    expect(fixture.nativeElement.textContent).toContain('Document #9');
+    expect(fixture.nativeElement.textContent).toContain('Versement du 27/10/2026');
+    expect(fixture.nativeElement.textContent).toContain('Jean Dupont');
+    expect(fixture.nativeElement.textContent).toContain('Banque principale');
+    expect(fixture.nativeElement.textContent).toContain('Réf. document #9');
     fixture.componentInstance.viewProof();
     expect(dialog.open).toHaveBeenCalledWith(DocumentDetailDialogComponent,
       expect.objectContaining({ data: { documentId: 9, documentTypeLabel: 'Justificatif de dépôt', readOnly: true } }));

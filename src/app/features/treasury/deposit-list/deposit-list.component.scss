@@ -14,6 +14,9 @@ h1 { margin: 2px 0 4px; color: #172b3f; }
 table { width: 100%; }
 th, td { padding: 12px 16px; }
 th { color: #40566b; font-weight: 700; }
+.primary-label { display: block; color: #172b3f; font-weight: 600; }
+td small { display: block; margin-top: 3px; color: #64748b; font-size: .75rem; }
+.account-warning { margin: 0; padding: 8px 24px; color: #8a5a10; background: #fff8e7; font-size: .85rem; }
 .status { display: inline-block; padding: 5px 10px; border-radius: 999px; background: #def4e7; color: #17613a; font-size: .8rem; font-weight: 700; }
 .status.preparing { background: #fff0cf; color: #744a00; }
 .page-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 190px; padding: 24px; text-align: center; color: #526577; }
