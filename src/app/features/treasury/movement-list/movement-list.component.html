@@ -1,0 +1,67 @@
+<section class="movement-page">
+  <header class="page-header"><div class="header-icon"><mat-icon>receipt_long</mat-icon></div>
+    <div><span class="eyebrow">TRÉSORERIE</span><h1>Journal des mouvements</h1>
+      <p>Consultez les entrées et sorties de chaque compte de votre société.</p></div>
+  </header>
+  @if (!canRead()) {
+    <mat-card class="state error" role="alert">Consultation réservée aux administrateurs et trésoriers.</mat-card>
+  } @else {
+    <mat-card class="filters">
+      <div class="filter-grid">
+        <mat-form-field appearance="outline"><mat-label>Compte</mat-label>
+          <mat-select [formControl]="account"><mat-option [value]="null">Tous les comptes</mat-option>
+            @for (item of accounts(); track item.id) {
+              <mat-option [value]="item.id">{{ item.name }} ({{ item.currencyCode }})</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Opération</mat-label>
+          <mat-select [formControl]="prefix"><mat-option [value]="null">Toutes</mat-option>
+            <mat-option value="PAYMENT-">Recettes et corrections</mat-option>
+            <mat-option value="TRANSFER-">Transferts</mat-option>
+            <mat-option value="DEPOSIT-">Dépôts</mat-option>
+            <mat-option value="EXPENSE-DISBURSEMENT-">Décaissements</mat-option>
+            <mat-option value="OPENING-">Soldes d’ouverture</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Du (UTC)</mat-label>
+          <input matInput type="date" [formControl]="from"></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Au (UTC)</mat-label>
+          <input matInput type="date" [formControl]="to"></mat-form-field>
+      </div>
+      <div class="filter-actions"><button mat-flat-button type="button" (click)="applyFilters()">Filtrer</button>
+        <button mat-button type="button" (click)="resetFilters()">Réinitialiser</button></div>
+      @if (accountsError()) {
+        <p class="warning">Les noms des comptes sont indisponibles ; leurs références restent visibles.</p>
+      }
+    </mat-card>
+    <mat-card class="list-card">
+      @if (loading()) { <p class="state">Chargement des mouvements...</p> }
+      @else if (error()) { <div class="state error" role="alert"><p>{{ error() }}</p>
+        <button mat-stroked-button type="button" (click)="load()">Réessayer</button></div> }
+      @else if (!movements().length) { <p class="state">Aucun mouvement pour ces filtres.</p> }
+      @else { <div class="table-scroll"><table mat-table [dataSource]="movements()">
+        <ng-container matColumnDef="recordedAt"><th mat-header-cell *matHeaderCellDef>Date</th>
+          <td mat-cell *matCellDef="let item">{{ item.recordedAt | date:'dd/MM/yyyy HH:mm':'UTC' }} UTC</td></ng-container>
+        <ng-container matColumnDef="account"><th mat-header-cell *matHeaderCellDef>Compte</th>
+          <td mat-cell *matCellDef="let item">{{ accountName(item.accountId) }}</td></ng-container>
+        <ng-container matColumnDef="reference"><th mat-header-cell *matHeaderCellDef>Opération</th>
+          <td mat-cell *matCellDef="let item"><strong>{{ category(item.reference) }}</strong>
+            <small>{{ item.reference }}</small></td></ng-container>
+        <ng-container matColumnDef="direction"><th mat-header-cell *matHeaderCellDef>Sens</th>
+          <td mat-cell *matCellDef="let item"><span class="direction" [class.debit]="item.direction === 'DEBIT'">
+            {{ item.direction === 'CREDIT' ? 'Entrée' : 'Sortie' }}</span></td></ng-container>
+        <ng-container matColumnDef="amount"><th mat-header-cell *matHeaderCellDef>Montant</th>
+          <td mat-cell *matCellDef="let item">{{ item.amount | number:'1.2-2' }}</td></ng-container>
+        <ng-container matColumnDef="balanceAfter"><th mat-header-cell *matHeaderCellDef>Solde après</th>
+          <td mat-cell *matCellDef="let item">{{ item.balanceAfter | number:'1.2-2' }}</td></ng-container>
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns"></tr>
+      </table></div> }
+      @if (!error() && totalElements() > 0) {
+        <mat-paginator [length]="totalElements()" [pageIndex]="pageIndex()" [pageSize]="pageSize()"
+          [pageSizeOptions]="[5, 10, 20]" (page)="onPageChange($event)"/>
+      }
+    </mat-card>
+  }
+</section>

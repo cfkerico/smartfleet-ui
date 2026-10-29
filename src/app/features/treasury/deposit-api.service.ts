@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 import { API_ENDPOINTS } from '../../core/config/api-endpoints';
 import { DepositAllocationDetails, DepositPage, EligibleDepositPaymentPage, ExternalTreasuryAccount,
   PrepareDepositRequest, TreasuryDeposit, TreasuryDepositStatus, CashTreasuryAccount,
-  TransferCollectionCashRequest, TransferCollectionCashResult } from './deposit.model';
+  TransferCollectionCashRequest, TransferCollectionCashResult, TreasuryMovementPage,
+  TreasuryMovementPrefix } from './deposit.model';
 
 @Injectable({ providedIn: 'root' })
 export class DepositApiService {
@@ -45,6 +46,16 @@ export class DepositApiService {
   transferCollectionCash(request: TransferCollectionCashRequest): Observable<TransferCollectionCashResult> {
     return this.http.post<TransferCollectionCashResult>(
       `${API_ENDPOINTS.treasury}/transfers/collection-to-expenses`, request);
+  }
+
+  movements(filters: { accountId: number | null; from: string | null; to: string | null;
+    referencePrefix: TreasuryMovementPrefix | null; page: number; size: number }): Observable<TreasuryMovementPage> {
+    let params = new HttpParams().set('page', filters.page).set('size', filters.size);
+    if (filters.accountId !== null) params = params.set('accountId', filters.accountId);
+    if (filters.from) params = params.set('from', filters.from);
+    if (filters.to) params = params.set('to', filters.to);
+    if (filters.referencePrefix) params = params.set('referencePrefix', filters.referencePrefix);
+    return this.http.get<TreasuryMovementPage>(`${API_ENDPOINTS.treasury}/movements`, { params });
   }
 
   prepare(request: PrepareDepositRequest): Observable<TreasuryDeposit> {

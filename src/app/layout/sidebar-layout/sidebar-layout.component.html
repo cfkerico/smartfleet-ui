@@ -92,6 +92,15 @@
           }
         </a>
       }
+      @if (auth.isAdmin() || auth.hasRole('TREASURER')) {
+        <a routerLink="/treasury/movements" routerLinkActive="active" class="menu-item"
+           title="Journal de trésorerie">
+          <mat-icon>receipt_long</mat-icon>
+          @if (!layoutStateService.sidebarCollapsed()) {
+            <span>Journal de trésorerie</span>
+          }
+        </a>
+      }
     </section>
 
     <section class="menu-section">

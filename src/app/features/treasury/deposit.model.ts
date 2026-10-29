@@ -86,6 +86,31 @@ export interface TransferCollectionCashResult {
   transferredAt: string;
 }
 
+export type TreasuryMovementPrefix = 'PAYMENT-' | 'TRANSFER-' | 'DEPOSIT-'
+  | 'EXPENSE-DISBURSEMENT-' | 'OPENING-';
+
+export interface TreasuryMovement {
+  id: number;
+  companyId: number;
+  accountId: number;
+  direction: 'CREDIT' | 'DEBIT';
+  amount: number;
+  balanceBefore: number;
+  balanceAfter: number;
+  reference: string;
+  recordedBy: string;
+  recordedAt: string;
+}
+
+export interface TreasuryMovementPage {
+  content: TreasuryMovement[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+}
+
 export interface PrepareDepositRequest {
   targetAccountId: number;
   operationId: string;

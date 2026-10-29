@@ -131,6 +131,12 @@ export const routes: Routes = [
               .then(m => m.CashTransferComponent)
           },
           {
+            path: 'treasury/movements',
+            canActivate: [authGuard],
+            loadComponent: () => import('./features/treasury/movement-list/movement-list.component')
+              .then(m => m.MovementListComponent)
+          },
+          {
             path: 'treasury/deposits/prepare',
             canActivate: [authGuard],
             loadComponent: () =>
