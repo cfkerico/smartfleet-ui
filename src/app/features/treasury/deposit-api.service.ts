@@ -36,9 +36,12 @@ export class DepositApiService {
   }
 
   createExternalAccount(request: { type: 'BANK' | 'MOBILE_MONEY'; name: string }): Observable<ExternalTreasuryAccount> {
-    console.log('Creating external account with request ------------------ :', request);
-    console.log('API_ENDPOINTS.treasury ------------------ :', API_ENDPOINTS.treasury);
     return this.http.post<ExternalTreasuryAccount>(`${API_ENDPOINTS.treasury}/accounts/external`, request);
+  }
+
+  deactivateExternalAccount(accountId: number): Observable<ExternalTreasuryAccount> {
+    return this.http.post<ExternalTreasuryAccount>(
+      `${API_ENDPOINTS.treasury}/accounts/external/${accountId}/deactivation`, {});
   }
 
   disbursementAccounts(): Observable<ExternalTreasuryAccount[]> {

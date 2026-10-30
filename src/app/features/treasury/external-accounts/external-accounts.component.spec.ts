@@ -1,15 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { AuthService } from '../../../core/auth/auth.service';
+import { ConfirmationService } from '../../../core/services/confirmation.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { DepositApiService } from '../deposit-api.service';
+import { ExternalTreasuryAccount } from '../deposit.model';
 import { ExternalAccountsComponent } from './external-accounts.component';
 
 describe('ExternalAccountsComponent', () => {
-  const api = { externalAccounts: vi.fn(), createExternalAccount: vi.fn() };
+  const api = { externalAccounts: vi.fn(), createExternalAccount: vi.fn(), deactivateExternalAccount: vi.fn() };
   const auth = { isAdmin: vi.fn(), hasRole: vi.fn() };
+  const confirmation = { confirm: vi.fn() };
   const notification = { success: vi.fn(), error: vi.fn() };
-  const account = { id: 3, type: 'BANK', name: 'SCB', currencyCode: 'XAF', balance: 0, active: true };
+  const account: ExternalTreasuryAccount = { id: 3, type: 'BANK', name: 'SCB', currencyCode: 'XAF', balance: 0, active: true };
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -17,11 +20,14 @@ describe('ExternalAccountsComponent', () => {
     auth.hasRole.mockReturnValue(false);
     api.externalAccounts.mockReturnValue(of([account]));
     api.createExternalAccount.mockReturnValue(of({ ...account, id: 4, name: 'Orange Money', type: 'MOBILE_MONEY' }));
+    api.deactivateExternalAccount.mockReturnValue(of({ ...account, active: false }));
+    confirmation.confirm.mockReturnValue(of(true));
     await TestBed.configureTestingModule({
       imports: [ExternalAccountsComponent],
       providers: [
         { provide: DepositApiService, useValue: api },
         { provide: AuthService, useValue: auth },
+        { provide: ConfirmationService, useValue: confirmation },
         { provide: NotificationService, useValue: notification },
       ],
     }).compileComponents();
@@ -64,5 +70,23 @@ describe('ExternalAccountsComponent', () => {
     fixture.detectChanges();
     expect(api.externalAccounts).not.toHaveBeenCalled();
     expect(fixture.nativeElement.textContent).toContain('Accès réservé');
+  });
+
+  it('confirms deactivation of a zero-balance account and keeps it visible as inactive', () => {
+    const fixture = TestBed.createComponent(ExternalAccountsComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.deactivate(account);
+    expect(confirmation.confirm).toHaveBeenCalledOnce();
+    expect(api.deactivateExternalAccount).toHaveBeenCalledExactlyOnceWith(3);
+    expect(fixture.componentInstance.accounts()[0].active).toBe(false);
+    expect(notification.success).toHaveBeenCalledOnce();
+  });
+
+  it('refuses deactivation when the balance is nonzero', () => {
+    const fixture = TestBed.createComponent(ExternalAccountsComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.deactivate({ ...account, balance: 100 });
+    expect(confirmation.confirm).not.toHaveBeenCalled();
+    expect(api.deactivateExternalAccount).not.toHaveBeenCalled();
   });
 });

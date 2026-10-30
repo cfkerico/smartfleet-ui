@@ -50,7 +50,7 @@
       } @else {
         <div class="table-scroll">
           <table>
-            <thead><tr><th>Nom</th><th>Type</th><th>Solde</th><th>État</th></tr></thead>
+            <thead><tr><th>Nom</th><th>Type</th><th>Solde</th><th>État</th>@if (canCreate()) { <th>Actions</th> }</tr></thead>
             <tbody>
               @for (account of accounts(); track account.id) {
                 <tr [class.inactive-row]="!account.active">
@@ -58,6 +58,17 @@
                   <td>{{ typeLabel(account.type) }}</td>
                   <td>{{ account.balance | number:'1.2-2' }} {{ account.currencyCode }}</td>
                   <td><span class="status" [class.inactive]="!account.active">{{ account.active ? 'Actif' : 'Inactif' }}</span></td>
+                  @if (canCreate()) {
+                    <td>
+                      @if (account.active) {
+                        <button mat-button type="button" (click)="deactivate(account)"
+                          [disabled]="account.balance !== 0 || deactivatingId() !== null"
+                          [attr.title]="account.balance !== 0 ? 'Le solde doit être nul pour désactiver ce compte' : 'Désactiver ce compte'">
+                          Désactiver
+                        </button>
+                      }
+                    </td>
+                  }
                 </tr>
               }
             </tbody>

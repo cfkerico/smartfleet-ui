@@ -8,8 +8,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
-import { finalize } from 'rxjs';
+import { filter, finalize, take } from 'rxjs';
 import { AuthService } from '../../../core/auth/auth.service';
+import { ConfirmationService } from '../../../core/services/confirmation.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { DepositApiService } from '../deposit-api.service';
 import { ExternalTreasuryAccount } from '../deposit.model';
@@ -25,11 +26,13 @@ import { ExternalTreasuryAccount } from '../deposit.model';
 export class ExternalAccountsComponent implements OnInit {
   private readonly api = inject(DepositApiService);
   private readonly auth = inject(AuthService);
+  private readonly confirmation = inject(ConfirmationService);
   private readonly notification = inject(NotificationService);
 
   readonly accounts = signal<ExternalTreasuryAccount[]>([]);
   readonly loading = signal(false);
   readonly saving = signal(false);
+  readonly deactivatingId = signal<number | null>(null);
   readonly loadError = signal(false);
   readonly type = new FormControl<'BANK' | 'MOBILE_MONEY' | null>(null, Validators.required);
   readonly name = new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(120)] });
@@ -68,7 +71,6 @@ export class ExternalAccountsComponent implements OnInit {
       return;
     }
     this.saving.set(true);
-    console.log('Creating external account with type+++++++++++++++++ :', this.type.value, 'and name:', name);
     this.api.createExternalAccount({ type: this.type.value!, name })
       .pipe(finalize(() => this.saving.set(false))).subscribe({
         next: account => {
@@ -79,6 +81,26 @@ export class ExternalAccountsComponent implements OnInit {
         },
         error: () => this.notification.error('Impossible de créer le compte de trésorerie.'),
       });
+  }
+
+  deactivate(account: ExternalTreasuryAccount): void {
+    if (!this.canCreate() || !account.active || account.balance !== 0 || this.deactivatingId() !== null) return;
+    this.confirmation.confirm({
+      title: 'Désactiver le compte',
+      message: `Désactiver « ${account.name} » ? Son historique restera consultable et aucun nouveau mouvement ne sera autorisé.`,
+      confirmLabel: 'Désactiver',
+      cancelLabel: 'Annuler',
+    }).pipe(take(1), filter(Boolean)).subscribe(() => {
+      this.deactivatingId.set(account.id);
+      this.api.deactivateExternalAccount(account.id)
+        .pipe(finalize(() => this.deactivatingId.set(null))).subscribe({
+          next: updated => {
+            this.accounts.update(current => current.map(item => item.id === updated.id ? updated : item));
+            this.notification.success('Compte désactivé. Son historique est conservé.');
+          },
+          error: () => this.notification.error('Impossible de désactiver le compte. Vérifiez que son solde est nul.'),
+        });
+    });
   }
 
   typeLabel(type: ExternalTreasuryAccount['type']): string {
