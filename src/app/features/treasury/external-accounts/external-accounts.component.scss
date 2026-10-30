@@ -1,0 +1,26 @@
+:host { display: block; }
+.accounts-page { max-width: 1440px; margin: 0 auto; padding: 24px; }
+.page-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding: 22px 24px; border: 1px solid #dfe5ec; border-radius: 16px; background: #f8fafc; }
+.header-icon { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 14px; background: #e7f1f8; color: #1f5f8b; }
+.eyebrow { color: #64748b; font-size: .75rem; font-weight: 700; letter-spacing: .05em; }
+h1 { margin: 2px 0 4px; color: #172b3f; }
+.page-header p, .create-card p, .list-heading p { margin: 0; color: #64748b; }
+.create-card, .list-card { margin-bottom: 20px; border: 1px solid #dfe5ec; border-radius: 16px; overflow: hidden; }
+.create-card { padding: 20px 24px; }
+h2 { margin: 0 0 5px; font-size: 1.15rem; }
+.create-form { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+.create-form mat-form-field { flex: 1 1 240px; }
+.create-form button { margin-top: 5px; min-height: 48px; }
+.list-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 24px; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 15px 24px; text-align: left; border-top: 1px solid #e1e6ed; }
+th { color: #40566b; font-weight: 700; background: #f8fafc; }
+.account-name { color: #172b3f; font-weight: 600; }
+.inactive-row { color: #64748b; background: #f8fafc; }
+.status { display: inline-block; padding: 5px 10px; border-radius: 999px; background: #def4e7; color: #17613a; font-size: .8rem; font-weight: 700; }
+.status.inactive { background: #e8edf2; color: #526577; }
+.state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 170px; padding: 24px; text-align: center; color: #526577; }
+.state p { margin: 0; }
+.error { color: #a83232; }
+@media (max-width: 600px) { .accounts-page { padding: 16px; } .page-header { padding: 18px; } .list-heading { align-items: flex-start; flex-direction: column; } .create-form button { width: 100%; } }

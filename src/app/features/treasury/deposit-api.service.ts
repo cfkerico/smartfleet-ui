@@ -35,6 +35,12 @@ export class DepositApiService {
     return this.http.get<ExternalTreasuryAccount[]>(`${API_ENDPOINTS.treasury}/accounts/external`);
   }
 
+  createExternalAccount(request: { type: 'BANK' | 'MOBILE_MONEY'; name: string }): Observable<ExternalTreasuryAccount> {
+    console.log('Creating external account with request ------------------ :', request);
+    console.log('API_ENDPOINTS.treasury ------------------ :', API_ENDPOINTS.treasury);
+    return this.http.post<ExternalTreasuryAccount>(`${API_ENDPOINTS.treasury}/accounts/external`, request);
+  }
+
   disbursementAccounts(): Observable<ExternalTreasuryAccount[]> {
     return this.http.get<ExternalTreasuryAccount[]>(`${API_ENDPOINTS.treasury}/accounts/disbursement`);
   }

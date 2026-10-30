@@ -1,0 +1,69 @@
+<section class="accounts-page">
+  <header class="page-header">
+    <div class="header-icon"><mat-icon>account_balance_wallet</mat-icon></div>
+    <div>
+      <span class="eyebrow">TRÉSORERIE</span>
+      <h1>Comptes de trésorerie</h1>
+      <p>Consultez les comptes de votre société et leur solde actuel.</p>
+    </div>
+  </header>
+
+  @if (!canRead()) {
+    <mat-card class="state error" role="alert">Accès réservé aux administrateurs et aux trésoriers.</mat-card>
+  } @else {
+    @if (canCreate()) {
+      <mat-card class="create-card">
+        <h2>Nouveau compte externe</h2>
+        <p>Un compte bancaire ou Mobile Money commence avec un solde nul.</p>
+        <form class="create-form" (submit)="create($event)">
+          <mat-form-field appearance="outline">
+            <mat-label>Type de compte</mat-label>
+            <mat-select [formControl]="type" required>
+              <mat-option value="BANK">Banque</mat-option>
+              <mat-option value="MOBILE_MONEY">Mobile Money</mat-option>
+            </mat-select>
+            @if (type.touched && type.invalid) { <mat-error>Choisissez un type.</mat-error> }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Nom du compte</mat-label>
+            <input matInput [formControl]="name" maxlength="120" required placeholder="Ex. Banque SCB" />
+            @if (name.touched && name.invalid) { <mat-error>Indiquez un nom (120 caractères maximum).</mat-error> }
+          </mat-form-field>
+          <button mat-flat-button type="submit" [disabled]="saving() || type.invalid || name.invalid || !name.value.trim()">
+            <mat-icon>add</mat-icon> {{ saving() ? 'Création...' : 'Créer le compte' }}
+          </button>
+        </form>
+      </mat-card>
+    }
+
+    <mat-card class="list-card">
+      <div class="list-heading">
+        <div><h2>Comptes existants</h2><p>Les comptes inactifs restent visibles pour préserver l’historique.</p></div>
+        <button mat-stroked-button type="button" (click)="load()" [disabled]="loading()">Actualiser</button>
+      </div>
+      @if (loading()) {
+        <div class="state" aria-live="polite"><mat-spinner diameter="36"/><p>Chargement des comptes...</p></div>
+      } @else if (loadError()) {
+        <div class="state error" role="alert"><p>Impossible de charger les comptes.</p><button mat-stroked-button (click)="load()">Réessayer</button></div>
+      } @else if (accounts().length === 0) {
+        <div class="state"><mat-icon>account_balance</mat-icon><p>Aucun compte externe pour cette société.</p></div>
+      } @else {
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Nom</th><th>Type</th><th>Solde</th><th>État</th></tr></thead>
+            <tbody>
+              @for (account of accounts(); track account.id) {
+                <tr [class.inactive-row]="!account.active">
+                  <td class="account-name">{{ account.name }}</td>
+                  <td>{{ typeLabel(account.type) }}</td>
+                  <td>{{ account.balance | number:'1.2-2' }} {{ account.currencyCode }}</td>
+                  <td><span class="status" [class.inactive]="!account.active">{{ account.active ? 'Actif' : 'Inactif' }}</span></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </mat-card>
+  }
+</section>

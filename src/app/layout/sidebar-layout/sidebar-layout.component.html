@@ -76,6 +76,12 @@
       </a>
 
       @if (auth.isAdmin() || auth.hasRole('TREASURER')) {
+        <a routerLink="/treasury/accounts" routerLinkActive="active" class="menu-item" title="Comptes de trésorerie">
+          <mat-icon>account_balance_wallet</mat-icon>
+          @if (!layoutStateService.sidebarCollapsed()) {
+            <span>Comptes de trésorerie</span>
+          }
+        </a>
         <a routerLink="/treasury/deposits" routerLinkActive="active" class="menu-item" title="Dépôts de trésorerie">
           <mat-icon>account_balance</mat-icon>
           @if (!layoutStateService.sidebarCollapsed()) {
