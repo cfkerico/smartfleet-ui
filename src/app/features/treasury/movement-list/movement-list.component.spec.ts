@@ -6,6 +6,34 @@ import { DepositApiService } from '../deposit-api.service';
 import { MovementListComponent } from './movement-list.component';
 
 describe('MovementListComponent', () => {
+  it.skipIf(Intl.DateTimeFormat().resolvedOptions().timeZone !== 'Europe/Paris')(
+    'uses 23-hour and 25-hour local days across Paris daylight-saving changes', () => {
+      const movements = vi.fn().mockReturnValue(of({ content: [], page: 0, size: 10,
+        totalElements: 0, totalPages: 0, last: true }));
+      TestBed.configureTestingModule({ providers: [
+        { provide: DepositApiService, useValue: { movements } },
+        { provide: AuthService, useValue: { isAdmin: () => true, hasRole: () => false } },
+      ] });
+      const component = TestBed.runInInjectionContext(() => new MovementListComponent());
+
+      component.from.setValue('2026-03-29');
+      component.to.setValue('2026-03-29');
+      component.applyFilters();
+      expect(movements).toHaveBeenLastCalledWith(expect.objectContaining({
+        fromInclusive: '2026-03-28T23:00:00.000Z',
+        toExclusive: '2026-03-29T22:00:00.000Z',
+      }));
+
+      component.from.setValue('2026-10-25');
+      component.to.setValue('2026-10-25');
+      component.applyFilters();
+      expect(movements).toHaveBeenLastCalledWith(expect.objectContaining({
+        fromInclusive: '2026-10-24T22:00:00.000Z',
+        toExclusive: '2026-10-25T23:00:00.000Z',
+      }));
+    },
+  );
+
   it('uses local calendar boundaries for a selected day', () => {
     const movements = vi.fn().mockReturnValue(of({ content: [], page: 0, size: 10,
       totalElements: 0, totalPages: 0, last: true }));
