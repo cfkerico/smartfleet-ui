@@ -8,7 +8,8 @@ import { ExternalTreasuryAccount } from '../deposit.model';
 import { ExternalAccountsComponent } from './external-accounts.component';
 
 describe('ExternalAccountsComponent', () => {
-  const api = { externalAccounts: vi.fn(), createExternalAccount: vi.fn(), deactivateExternalAccount: vi.fn() };
+  const api = { externalAccounts: vi.fn(), createExternalAccount: vi.fn(),
+    deactivateExternalAccount: vi.fn(), reactivateExternalAccount: vi.fn() };
   const auth = { isAdmin: vi.fn(), hasRole: vi.fn() };
   const confirmation = { confirm: vi.fn() };
   const notification = { success: vi.fn(), error: vi.fn() };
@@ -21,6 +22,7 @@ describe('ExternalAccountsComponent', () => {
     api.externalAccounts.mockReturnValue(of([account]));
     api.createExternalAccount.mockReturnValue(of({ ...account, id: 4, name: 'Orange Money', type: 'MOBILE_MONEY' }));
     api.deactivateExternalAccount.mockReturnValue(of({ ...account, active: false }));
+    api.reactivateExternalAccount.mockReturnValue(of(account));
     confirmation.confirm.mockReturnValue(of(true));
     await TestBed.configureTestingModule({
       imports: [ExternalAccountsComponent],
@@ -88,5 +90,27 @@ describe('ExternalAccountsComponent', () => {
     fixture.componentInstance.deactivate({ ...account, balance: 100 });
     expect(confirmation.confirm).not.toHaveBeenCalled();
     expect(api.deactivateExternalAccount).not.toHaveBeenCalled();
+  });
+
+  it('confirms reactivation of an inactive account and keeps its identity and balance', () => {
+    const inactive = { ...account, active: false };
+    api.externalAccounts.mockReturnValue(of([inactive]));
+    const fixture = TestBed.createComponent(ExternalAccountsComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.reactivate(inactive);
+    expect(confirmation.confirm).toHaveBeenCalledOnce();
+    expect(api.reactivateExternalAccount).toHaveBeenCalledExactlyOnceWith(3);
+    expect(fixture.componentInstance.accounts()[0]).toEqual(account);
+    expect(notification.success).toHaveBeenCalledOnce();
+  });
+
+  it('does not allow a treasurer to reactivate an account', () => {
+    auth.isAdmin.mockReturnValue(false);
+    auth.hasRole.mockImplementation((role: string) => role === 'TREASURER');
+    const fixture = TestBed.createComponent(ExternalAccountsComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.reactivate({ ...account, active: false });
+    expect(confirmation.confirm).not.toHaveBeenCalled();
+    expect(api.reactivateExternalAccount).not.toHaveBeenCalled();
   });
 });

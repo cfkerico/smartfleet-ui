@@ -33,6 +33,7 @@ export class ExternalAccountsComponent implements OnInit {
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly deactivatingId = signal<number | null>(null);
+  readonly reactivatingId = signal<number | null>(null);
   readonly loadError = signal(false);
   readonly type = new FormControl<'BANK' | 'MOBILE_MONEY' | null>(null, Validators.required);
   readonly name = new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(120)] });
@@ -99,6 +100,26 @@ export class ExternalAccountsComponent implements OnInit {
             this.notification.success('Compte désactivé. Son historique est conservé.');
           },
           error: () => this.notification.error('Impossible de désactiver le compte. Vérifiez que son solde est nul.'),
+        });
+    });
+  }
+
+  reactivate(account: ExternalTreasuryAccount): void {
+    if (!this.canCreate() || account.active || this.reactivatingId() !== null) return;
+    this.confirmation.confirm({
+      title: 'Réactiver le compte',
+      message: `Réactiver « ${account.name} » ? Il pourra de nouveau être utilisé pour les opérations de trésorerie.`,
+      confirmLabel: 'Réactiver',
+      cancelLabel: 'Annuler',
+    }).pipe(take(1), filter(Boolean)).subscribe(() => {
+      this.reactivatingId.set(account.id);
+      this.api.reactivateExternalAccount(account.id)
+        .pipe(finalize(() => this.reactivatingId.set(null))).subscribe({
+          next: updated => {
+            this.accounts.update(current => current.map(item => item.id === updated.id ? updated : item));
+            this.notification.success('Compte réactivé. Il est de nouveau utilisable.');
+          },
+          error: () => this.notification.error('Impossible de réactiver le compte.'),
         });
     });
   }

@@ -44,6 +44,11 @@ export class DepositApiService {
       `${API_ENDPOINTS.treasury}/accounts/external/${accountId}/deactivation`, {});
   }
 
+  reactivateExternalAccount(accountId: number): Observable<ExternalTreasuryAccount> {
+    return this.http.post<ExternalTreasuryAccount>(
+      `${API_ENDPOINTS.treasury}/accounts/external/${accountId}/reactivation`, {});
+  }
+
   disbursementAccounts(): Observable<ExternalTreasuryAccount[]> {
     return this.http.get<ExternalTreasuryAccount[]>(`${API_ENDPOINTS.treasury}/accounts/disbursement`);
   }
