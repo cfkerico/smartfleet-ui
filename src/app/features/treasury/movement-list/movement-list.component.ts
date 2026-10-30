@@ -39,6 +39,20 @@ export class MovementListComponent implements OnInit {
   readonly to = new FormControl<string | null>(null);
   readonly prefix = new FormControl<TreasuryMovementPrefix | null>(null);
   readonly columns = ['recordedAt', 'account', 'reference', 'direction', 'amount', 'balanceAfter'];
+  readonly timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'navigateur';
+
+  private localDayBoundary(value: string | null, followingDay: boolean): string | null {
+    if (!value) return null;
+    const parts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+    if (!parts) throw new Error('Date locale invalide.');
+    const year = Number(parts[1]);
+    const month = Number(parts[2]);
+    const day = Number(parts[3]);
+    const localStart = new Date(year, month - 1, day);
+    if (localStart.getFullYear() !== year || localStart.getMonth() !== month - 1
+        || localStart.getDate() !== day) throw new Error('Date locale invalide.');
+    return (followingDay ? new Date(year, month - 1, day + 1) : localStart).toISOString();
+  }
 
   ngOnInit(): void {
     if (!this.canRead()) return;
@@ -76,9 +90,18 @@ export class MovementListComponent implements OnInit {
   }
   load(): void {
     if (!this.canRead()) return;
+    let fromInclusive: string | null;
+    let toExclusive: string | null;
+    try {
+      fromInclusive = this.localDayBoundary(this.from.value, false);
+      toExclusive = this.localDayBoundary(this.to.value, true);
+    } catch {
+      this.error.set('Une date du filtre est invalide.');
+      return;
+    }
     this.loading.set(true);
     this.error.set(null);
-    this.api.movements({ accountId: this.account.value, from: this.from.value, to: this.to.value,
+    this.api.movements({ accountId: this.account.value, fromInclusive, toExclusive,
       referencePrefix: this.prefix.value, page: this.pageIndex(), size: this.pageSize() })
       .pipe(finalize(() => this.loading.set(false))).subscribe({
         next: result => {

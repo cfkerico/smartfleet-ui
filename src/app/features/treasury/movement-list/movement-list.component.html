@@ -1,7 +1,7 @@
 <section class="movement-page">
   <header class="page-header"><div class="header-icon"><mat-icon>receipt_long</mat-icon></div>
     <div><span class="eyebrow">TRÉSORERIE</span><h1>Journal des mouvements</h1>
-      <p>Consultez les entrées et sorties de chaque compte de votre société.</p></div>
+      <p>Consultez les entrées et sorties de chaque compte de votre société, en heure locale ({{ timeZone }}).</p></div>
   </header>
   @if (!canRead()) {
     <mat-card class="state error" role="alert">Consultation réservée aux administrateurs et trésoriers.</mat-card>
@@ -24,9 +24,9 @@
             <mat-option value="OPENING-">Soldes d’ouverture</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline"><mat-label>Du (UTC)</mat-label>
+        <mat-form-field appearance="outline"><mat-label>Du</mat-label>
           <input matInput type="date" [formControl]="from"></mat-form-field>
-        <mat-form-field appearance="outline"><mat-label>Au (UTC)</mat-label>
+        <mat-form-field appearance="outline"><mat-label>Au</mat-label>
           <input matInput type="date" [formControl]="to"></mat-form-field>
       </div>
       <div class="filter-actions"><button mat-flat-button type="button" (click)="applyFilters()">Filtrer</button>
@@ -42,7 +42,7 @@
       @else if (!movements().length) { <p class="state">Aucun mouvement pour ces filtres.</p> }
       @else { <div class="table-scroll"><table mat-table [dataSource]="movements()">
         <ng-container matColumnDef="recordedAt"><th mat-header-cell *matHeaderCellDef>Date</th>
-          <td mat-cell *matCellDef="let item">{{ item.recordedAt | date:'dd/MM/yyyy HH:mm':'UTC' }} UTC</td></ng-container>
+          <td mat-cell *matCellDef="let item">{{ item.recordedAt | date:'dd/MM/yyyy HH:mm' }}</td></ng-container>
         <ng-container matColumnDef="account"><th mat-header-cell *matHeaderCellDef>Compte</th>
           <td mat-cell *matCellDef="let item">{{ accountName(item.accountId) }}</td></ng-container>
         <ng-container matColumnDef="reference"><th mat-header-cell *matHeaderCellDef>Opération</th>

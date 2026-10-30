@@ -6,6 +6,27 @@ import { DepositApiService } from '../deposit-api.service';
 import { MovementListComponent } from './movement-list.component';
 
 describe('MovementListComponent', () => {
+  it('uses local calendar boundaries for a selected day', () => {
+    const movements = vi.fn().mockReturnValue(of({ content: [], page: 0, size: 10,
+      totalElements: 0, totalPages: 0, last: true }));
+    TestBed.configureTestingModule({ providers: [
+      { provide: DepositApiService, useValue: {
+        cashAccounts: () => of([]), externalAccounts: () => of([]), movements,
+      } },
+      { provide: AuthService, useValue: { isAdmin: () => true, hasRole: () => false } },
+    ] });
+    const component = TestBed.runInInjectionContext(() => new MovementListComponent());
+    component.from.setValue('2026-10-28');
+    component.to.setValue('2026-10-28');
+
+    component.applyFilters();
+
+    expect(movements).toHaveBeenCalledWith(expect.objectContaining({
+      fromInclusive: new Date(2026, 9, 28).toISOString(),
+      toExclusive: new Date(2026, 9, 29).toISOString(),
+    }));
+  });
+
   it('loads the selected server page and uses account names', () => {
     const movements = vi.fn().mockReturnValue(of({ content: [{ id: 1, companyId: 7, accountId: 2,
       direction: 'DEBIT', amount: 30, balanceBefore: 100, balanceAfter: 70,

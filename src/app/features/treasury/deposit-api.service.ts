@@ -48,12 +48,12 @@ export class DepositApiService {
       `${API_ENDPOINTS.treasury}/transfers/collection-to-expenses`, request);
   }
 
-  movements(filters: { accountId: number | null; from: string | null; to: string | null;
+  movements(filters: { accountId: number | null; fromInclusive: string | null; toExclusive: string | null;
     referencePrefix: TreasuryMovementPrefix | null; page: number; size: number }): Observable<TreasuryMovementPage> {
     let params = new HttpParams().set('page', filters.page).set('size', filters.size);
     if (filters.accountId !== null) params = params.set('accountId', filters.accountId);
-    if (filters.from) params = params.set('from', filters.from);
-    if (filters.to) params = params.set('to', filters.to);
+    if (filters.fromInclusive) params = params.set('fromInclusive', filters.fromInclusive);
+    if (filters.toExclusive) params = params.set('toExclusive', filters.toExclusive);
     if (filters.referencePrefix) params = params.set('referencePrefix', filters.referencePrefix);
     return this.http.get<TreasuryMovementPage>(`${API_ENDPOINTS.treasury}/movements`, { params });
   }
