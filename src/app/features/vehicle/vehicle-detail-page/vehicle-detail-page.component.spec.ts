@@ -78,6 +78,12 @@ describe('VehicleDetailPageComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('80');
     expect(fixture.nativeElement.textContent).toContain('50');
     expect(fixture.nativeElement.textContent).toContain('pas une rentabilité');
+    const sections = [...fixture.nativeElement.querySelectorAll('section[aria-labelledby]')]
+      .map((section: HTMLElement) => section.getAttribute('aria-labelledby'));
+    expect(sections).toEqual([
+      'vehicle-operations-title', 'vehicle-identity-title',
+      'vehicle-technical-title', 'vehicle-links-title',
+    ]);
     fixture.componentInstance.operationsPeriod.setValue({ from: '2026-08-01', to: '2026-08-31' });
     fixture.componentInstance.applyOperationsPeriod(new Event('submit'));
     expect(getVehicleOperations).toHaveBeenLastCalledWith(9, '2026-08-01', '2026-08-31');

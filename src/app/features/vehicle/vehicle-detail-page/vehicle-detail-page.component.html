@@ -23,67 +23,6 @@
       </span>
     </app-vehicle-page-header>
 
-    <div class="detail-grid">
-      <section class="detail-card" aria-labelledby="vehicle-identity-title">
-        <h2 id="vehicle-identity-title">Identification</h2>
-        <dl class="detail-list">
-          <div><dt>Marque</dt><dd>{{ currentVehicle.brand }}</dd></div>
-          <div><dt>Modèle</dt><dd>{{ currentVehicle.model }}</dd></div>
-          <div><dt>Version</dt><dd>{{ currentVehicle.version || 'Non renseignée' }}</dd></div>
-          <div><dt>Immatriculation</dt><dd>{{ currentVehicle.registrationNumber || 'Non renseignée' }}</dd></div>
-          <div><dt>Numéro VIN</dt><dd>{{ currentVehicle.vin || 'Non renseigné' }}</dd></div>
-          <div><dt>Année</dt><dd>{{ currentVehicle.year }}</dd></div>
-        </dl>
-      </section>
-
-      <section class="detail-card" aria-labelledby="vehicle-technical-title">
-        <h2 id="vehicle-technical-title">Caractéristiques et acquisition</h2>
-        <dl class="detail-list">
-          <div><dt>Carburant</dt><dd>{{ currentVehicle.fuelType || 'Non renseigné' }}</dd></div>
-          <div><dt>Transmission</dt><dd>{{ currentVehicle.transmissionType || 'Non renseignée' }}</dd></div>
-          <div><dt>Cylindrée</dt><dd>{{ currentVehicle.engineCapacity ?? 'Non renseignée' }}</dd></div>
-          <div><dt>Puissance fiscale</dt><dd>{{ currentVehicle.horsePower ?? 'Non renseignée' }}</dd></div>
-          <div><dt>Date d'acquisition</dt><dd>{{ currentVehicle.acquisitionDate || 'Non renseignée' }}</dd></div>
-          <div><dt>Kilométrage d'acquisition</dt><dd>{{ currentVehicle.acquisitionMileage == null ? 'Non renseigné' : currentVehicle.acquisitionMileage + ' km' }}</dd></div>
-          <div><dt>Kilométrage courant</dt><dd>{{ currentVehicle.currentMileage == null ? 'Non renseigné' : currentVehicle.currentMileage + ' km' }}</dd></div>
-          <div><dt>Recette journalière attendue</dt><dd>{{ currentVehicle.expectedDailyRevenue == null ? 'Non renseignée' : currentVehicle.expectedDailyRevenue + ' FCFA' }}</dd></div>
-        </dl>
-      </section>
-
-      <section class="detail-card" aria-labelledby="vehicle-links-title">
-        <h2 id="vehicle-links-title">Parcours associés</h2>
-        <div class="detail-actions">
-          <button mat-raised-button color="primary" type="button" (click)="openAssignment()"
-            [disabled]="currentVehicle.vehicleStatus !== 'AVAILABLE'">
-            <mat-icon>add</mat-icon>Nouvelle affectation
-          </button>
-          <button mat-stroked-button type="button" (click)="openPayment()"
-            [disabled]="currentVehicle.vehicleStatus === 'INACTIVE' || activeAssignments().length === 0">
-            <mat-icon>payments</mat-icon>Nouvelle recette
-          </button>
-          <button mat-stroked-button type="button" (click)="openExpense()"
-            [disabled]="currentVehicle.vehicleStatus === 'INACTIVE' || currentVehicle.vehicleStatus === 'SOLD'">
-            <mat-icon>receipt_long</mat-icon>Nouvelle dépense
-          </button>
-          <a mat-stroked-button [routerLink]="['/vehicles', currentVehicle.id, 'documents']">
-            <mat-icon>folder</mat-icon>Dossier documentaire
-          </a>
-          <a mat-stroked-button [routerLink]="['/vehicles', currentVehicle.id, 'maintenances']">
-            <mat-icon>build</mat-icon>Historique des entretiens
-          </a>
-          <a mat-stroked-button [routerLink]="['/vehicles', currentVehicle.id, 'maintenance-plans']">
-            <mat-icon>event_repeat</mat-icon>Plans préventifs
-          </a>
-        </div>
-        @if (currentVehicle.vehicleStatus !== 'INACTIVE' && assignmentsLoaded()) {
-          @if (assignmentsError()) {
-            <p class="detail-help" role="alert">Impossible de vérifier les affectations actives.</p>
-          } @else if (activeAssignments().length === 0) {
-            <p class="detail-help">Aucune affectation active : la saisie d’une recette est indisponible.</p>
-          }
-        }
-      </section>
-    </div>
     @if (canSeeOperations()) {
       <section class="detail-card operations-card" aria-labelledby="vehicle-operations-title">
         <div class="operations-heading">
@@ -124,5 +63,68 @@
         }
       </section>
     }
+
+    <div class="detail-grid">
+      <section class="detail-card" aria-labelledby="vehicle-identity-title">
+        <h2 id="vehicle-identity-title">Identification</h2>
+        <dl class="detail-list">
+          <div><dt>Marque</dt><dd>{{ currentVehicle.brand }}</dd></div>
+          <div><dt>Modèle</dt><dd>{{ currentVehicle.model }}</dd></div>
+          <div><dt>Version</dt><dd>{{ currentVehicle.version || 'Non renseignée' }}</dd></div>
+          <div><dt>Immatriculation</dt><dd>{{ currentVehicle.registrationNumber || 'Non renseignée' }}</dd></div>
+          <div><dt>Numéro VIN</dt><dd>{{ currentVehicle.vin || 'Non renseigné' }}</dd></div>
+          <div><dt>Année</dt><dd>{{ currentVehicle.year }}</dd></div>
+        </dl>
+      </section>
+
+      <section class="detail-card" aria-labelledby="vehicle-technical-title">
+        <h2 id="vehicle-technical-title">Caractéristiques et acquisition</h2>
+        <dl class="detail-list">
+          <div><dt>Carburant</dt><dd>{{ currentVehicle.fuelType || 'Non renseigné' }}</dd></div>
+          <div><dt>Transmission</dt><dd>{{ currentVehicle.transmissionType || 'Non renseignée' }}</dd></div>
+          <div><dt>Cylindrée</dt><dd>{{ currentVehicle.engineCapacity ?? 'Non renseignée' }}</dd></div>
+          <div><dt>Puissance fiscale</dt><dd>{{ currentVehicle.horsePower ?? 'Non renseignée' }}</dd></div>
+          <div><dt>Date d'acquisition</dt><dd>{{ currentVehicle.acquisitionDate || 'Non renseignée' }}</dd></div>
+          <div><dt>Kilométrage d'acquisition</dt><dd>{{ currentVehicle.acquisitionMileage == null ? 'Non renseigné' : currentVehicle.acquisitionMileage + ' km' }}</dd></div>
+          <div><dt>Kilométrage courant</dt><dd>{{ currentVehicle.currentMileage == null ? 'Non renseigné' : currentVehicle.currentMileage + ' km' }}</dd></div>
+          <div><dt>Recette journalière attendue</dt><dd>{{ currentVehicle.expectedDailyRevenue == null ? 'Non renseignée' : currentVehicle.expectedDailyRevenue + ' FCFA' }}</dd></div>
+        </dl>
+      </section>
+
+    </div>
+
+    <section class="detail-card links-card" aria-labelledby="vehicle-links-title">
+        <h2 id="vehicle-links-title">Parcours associés</h2>
+        <div class="detail-actions">
+          <button mat-raised-button color="primary" type="button" (click)="openAssignment()"
+            [disabled]="currentVehicle.vehicleStatus !== 'AVAILABLE'">
+            <mat-icon>add</mat-icon>Nouvelle affectation
+          </button>
+          <button mat-stroked-button type="button" (click)="openPayment()"
+            [disabled]="currentVehicle.vehicleStatus === 'INACTIVE' || activeAssignments().length === 0">
+            <mat-icon>payments</mat-icon>Nouvelle recette
+          </button>
+          <button mat-stroked-button type="button" (click)="openExpense()"
+            [disabled]="currentVehicle.vehicleStatus === 'INACTIVE' || currentVehicle.vehicleStatus === 'SOLD'">
+            <mat-icon>receipt_long</mat-icon>Nouvelle dépense
+          </button>
+          <a mat-stroked-button [routerLink]="['/vehicles', currentVehicle.id, 'documents']">
+            <mat-icon>folder</mat-icon>Dossier documentaire
+          </a>
+          <a mat-stroked-button [routerLink]="['/vehicles', currentVehicle.id, 'maintenances']">
+            <mat-icon>build</mat-icon>Historique des entretiens
+          </a>
+          <a mat-stroked-button [routerLink]="['/vehicles', currentVehicle.id, 'maintenance-plans']">
+            <mat-icon>event_repeat</mat-icon>Plans préventifs
+          </a>
+        </div>
+        @if (currentVehicle.vehicleStatus !== 'INACTIVE' && assignmentsLoaded()) {
+          @if (assignmentsError()) {
+            <p class="detail-help" role="alert">Impossible de vérifier les affectations actives.</p>
+          } @else if (activeAssignments().length === 0) {
+            <p class="detail-help">Aucune affectation active : la saisie d’une recette est indisponible.</p>
+          }
+        }
+    </section>
   }
 </section>
