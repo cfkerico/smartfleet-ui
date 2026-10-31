@@ -20,5 +20,6 @@ export const API_ENDPOINTS = {
   vehiclesToAssign: `${baseUrl}/api/vehicles/vehiclestoassign`,
 
   analyticsDashboard: `${baseUrl}/api/analytics/dashboard`,
+  analyticsVehicles: `${baseUrl}/api/analytics/vehicles`,
   dashboard: `${baseUrl}/dashboard`
 } as const;

@@ -1,0 +1,16 @@
+.operations-card { margin-top: 20px; }
+.operations-heading h2 { margin-bottom: 4px; }
+.operations-heading p { margin: 0; color: #617385; }
+.operations-period { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin: 20px 0; }
+.operations-period label { display: grid; gap: 6px; color: #40566b; font-weight: 600; }
+.operations-period input { min-height: 42px; padding: 0 12px; border: 1px solid #b8c5d2; border-radius: 8px; color: #172b3f; font: inherit; }
+.operations-period button { min-height: 42px; }
+.operations-values { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.operations-values div { display: flex; flex-direction: column; gap: 10px; padding: 18px; border: 1px solid #dfe5ec; border-radius: 12px; background: #f8fafc; }
+.operations-values span { color: #526577; }
+.operations-values strong { color: #172b3f; font-size: 1.35rem; overflow-wrap: anywhere; }
+.operations-values .negative strong, .operations-error { color: #a83232; }
+.operations-help { margin: 16px 0 0; color: #64748b; font-size: .9rem; }
+.operations-state { margin: 14px 0; color: #526577; }
+@media (max-width: 760px) { .operations-values { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .operations-period label, .operations-period button { width: 100%; } }

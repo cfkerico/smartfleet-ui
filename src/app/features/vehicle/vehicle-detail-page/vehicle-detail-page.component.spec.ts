@@ -7,6 +7,9 @@ import { of, throwError } from 'rxjs';
 import { VehicleService } from '../../../core/services/vehicle.service';
 import { Vehicle } from '../../../models/vehicle';
 import { VehicleDetailPageComponent } from './vehicle-detail-page.component';
+import { AuthService } from '../../../core/auth/auth.service';
+import { AnalyticsService } from '../../../core/services/analytics.service';
+import { VehicleOperations } from '../../../models/vehicle-operations.model';
 
 describe('VehicleDetailPageComponent', () => {
   const vehicle: Vehicle = {
@@ -17,6 +20,13 @@ describe('VehicleDetailPageComponent', () => {
   const getById = vi.fn();
   const findActiveAssignments = vi.fn(() => of([] as VehicleAssignment[]));
   const open = vi.fn(() => ({ afterClosed: () => of(false) }));
+  const isAdmin = vi.fn(() => false);
+  const hasRole = vi.fn(() => false);
+  const getVehicleOperations = vi.fn();
+  const operations: VehicleOperations = {
+    vehicleId: 9, fromInclusive: '2026-07-01', toInclusive: '2026-07-31',
+    recordedRevenue: 80000, disbursedExpenses: 50000, operatingDifference: 30000,
+  };
 
   async function create(id: string | null) {
     await TestBed.configureTestingModule({
@@ -27,6 +37,8 @@ describe('VehicleDetailPageComponent', () => {
         { provide: VehicleService, useValue: { getById } },
         { provide: MatDialog, useValue: { open } },
         { provide: AssignmentApiService, useValue: { findActiveAssignments } },
+        { provide: AuthService, useValue: { isAdmin, hasRole } },
+        { provide: AnalyticsService, useValue: { getVehicleOperations } },
       ],
     }).compileComponents();
     const fixture = TestBed.createComponent(VehicleDetailPageComponent);
@@ -40,6 +52,10 @@ describe('VehicleDetailPageComponent', () => {
     open.mockReturnValue({ afterClosed: () => of(false) });
     findActiveAssignments.mockReset();
     findActiveAssignments.mockReturnValue(of([]));
+    isAdmin.mockReturnValue(false);
+    hasRole.mockReturnValue(false);
+    getVehicleOperations.mockReset();
+    getVehicleOperations.mockReturnValue(of(operations));
   });
 
   it('loads the vehicle and links to its existing pages', async () => {
@@ -50,6 +66,28 @@ describe('VehicleDetailPageComponent', () => {
     for (const path of ['/vehicles/9/documents', '/vehicles/9/maintenances', '/vehicles/9/maintenance-plans']) {
       expect(fixture.nativeElement.querySelector(`a[href="${path}"]`)).toBeTruthy();
     }
+  });
+
+  it('shows vehicle operations only to financial roles and filters the selected period', async () => {
+    isAdmin.mockReturnValue(true);
+    getById.mockReturnValue(of(vehicle));
+    const fixture = await create('9');
+
+    expect(getVehicleOperations).toHaveBeenCalledExactlyOnceWith(9, undefined, undefined);
+    expect(fixture.nativeElement.textContent).toContain('Exploitation du véhicule');
+    expect(fixture.nativeElement.textContent).toContain('80');
+    expect(fixture.nativeElement.textContent).toContain('50');
+    expect(fixture.nativeElement.textContent).toContain('pas une rentabilité');
+    fixture.componentInstance.operationsPeriod.setValue({ from: '2026-08-01', to: '2026-08-31' });
+    fixture.componentInstance.applyOperationsPeriod(new Event('submit'));
+    expect(getVehicleOperations).toHaveBeenLastCalledWith(9, '2026-08-01', '2026-08-31');
+  });
+
+  it('does not request financial data for another role', async () => {
+    getById.mockReturnValue(of(vehicle));
+    const fixture = await create('9');
+    expect(getVehicleOperations).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.textContent).not.toContain('Exploitation du véhicule');
   });
 
   it('opens assignment creation with this vehicle preselected', async () => {

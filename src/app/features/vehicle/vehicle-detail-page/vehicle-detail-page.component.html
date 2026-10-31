@@ -84,5 +84,45 @@
         }
       </section>
     </div>
+    @if (canSeeOperations()) {
+      <section class="detail-card operations-card" aria-labelledby="vehicle-operations-title">
+        <div class="operations-heading">
+          <div>
+            <h2 id="vehicle-operations-title">Exploitation du véhicule</h2>
+            <p>Versements enregistrés et décaissements attribués à ce véhicule.</p>
+          </div>
+        </div>
+        <form class="operations-period" [formGroup]="operationsPeriod" (submit)="applyOperationsPeriod($event)">
+          <label>Du <input type="date" formControlName="from" required /></label>
+          <label>Au <input type="date" formControlName="to" required /></label>
+          <button mat-raised-button color="primary" type="submit"
+            [disabled]="operationsLoading() || operationsPeriod.invalid">Afficher</button>
+        </form>
+        @if (operationsPeriod.controls.from.touched && operationsPeriod.controls.to.touched &&
+             operationsPeriod.controls.from.value > operationsPeriod.controls.to.value) {
+          <p class="operations-error" role="alert">La date de début doit précéder la date de fin.</p>
+        }
+        @if (operationsLoading()) {
+          <p class="operations-state" role="status">Chargement des indicateurs...</p>
+        }
+        @if (operationsError()) {
+          <div class="operations-state operations-error" role="alert">
+            <p>Impossible de charger les indicateurs de ce véhicule.</p>
+            <button mat-stroked-button type="button"
+              (click)="applyOperationsPeriod($event)">Réessayer</button>
+          </div>
+        }
+        @if (operations(); as data) {
+          <div class="operations-values">
+            <div><span>Recettes enregistrées</span><strong>{{ formatAmount(data.recordedRevenue) }} FCFA</strong></div>
+            <div><span>Dépenses décaissées</span><strong>{{ formatAmount(data.disbursedExpenses) }} FCFA</strong></div>
+            <div [class.negative]="data.operatingDifference < 0">
+              <span>Écart d'exploitation</span><strong>{{ formatAmount(data.operatingDifference) }} FCFA</strong>
+            </div>
+          </div>
+          <p class="operations-help">Cet écart n'est pas une rentabilité : il n'intègre ni le prix d'achat, ni une éventuelle revente, ni les coûts indirects.</p>
+        }
+      </section>
+    }
   }
 </section>
