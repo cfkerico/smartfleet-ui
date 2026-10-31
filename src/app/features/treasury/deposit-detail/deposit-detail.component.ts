@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { finalize, forkJoin } from 'rxjs';
@@ -26,7 +27,7 @@ import { DepositAllocationDetails, ExternalTreasuryAccount, TreasuryDeposit } fr
   selector: 'app-deposit-detail',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink, MatButtonModule, MatCardModule,
-    MatFormFieldModule, MatIconModule, MatProgressSpinnerModule, MatSelectModule],
+    MatFormFieldModule, MatIconModule, MatInputModule, MatProgressSpinnerModule, MatSelectModule],
   templateUrl: './deposit-detail.component.html',
   styleUrl: './deposit-detail.component.scss',
 })
@@ -51,6 +52,11 @@ export class DepositDetailComponent implements OnInit {
   readonly proofLoading = signal(false);
   readonly proofError = signal<string | null>(null);
   readonly confirming = signal(false);
+  readonly cancelling = signal(false);
+  readonly cancelledProofs = signal<DocumentSummary[]>([]);
+  readonly cancellationReason = new FormControl('', {
+    nonNullable: true, validators: [Validators.required, Validators.maxLength(500)],
+  });
   readonly selectedTypeId = new FormControl<number | null>(null);
   readonly selectedProofId = new FormControl<number | null>(null);
 
@@ -78,6 +84,7 @@ export class DepositDetailComponent implements OnInit {
           error: () => this.allocationDetailsUnavailable.set(true),
         });
         if (deposit.status === 'PREPARING') this.loadProofOptions();
+        if (deposit.status === 'CANCELLED') this.loadCancelledProofs();
       },
       error: () => this.error.set('Dépôt introuvable ou inaccessible.'),
     });
@@ -181,6 +188,59 @@ export class DepositDetailComponent implements OnInit {
           error: () => this.notification.error(
             'Confirmation refusée. Vérifiez le justificatif, les recettes et le solde de la collecte.'),
         });
+    });
+  }
+
+  cancelDeposit(): void {
+    const deposit = this.deposit();
+    const reason = this.cancellationReason.value.trim();
+    if (!deposit || deposit.status !== 'PREPARING' || !this.canManage() || this.cancelling()
+        || this.confirming() || !reason || reason.length > 500) {
+      this.cancellationReason.markAsTouched();
+      return;
+    }
+    this.dialog.open(ConfirmationDialogComponent, {
+      width: '480px', maxWidth: '95vw',
+      data: {
+        title: 'Annuler la préparation',
+        message: `Annuler le dépôt #${deposit.id} ? Les allocations et justificatifs resteront consultables. Aucun solde ne sera modifié. Motif : ${reason}`,
+        confirmLabel: 'Annuler le dépôt', cancelLabel: 'Retour', tone: 'danger',
+      },
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed || this.cancelling() || this.deposit()?.status !== 'PREPARING') return;
+      this.cancelling.set(true);
+      this.api.cancel(deposit.id, reason).pipe(finalize(() => this.cancelling.set(false))).subscribe({
+        next: updated => {
+          this.deposit.set(updated);
+          this.notification.success('Dépôt annulé. Aucun solde n’a été modifié.');
+          this.loadCancelledProofs();
+        },
+        error: () => {
+          this.notification.error('Annulation non confirmée. Vérifiez l’état du dépôt avant de réessayer.');
+          this.api.findById(deposit.id).subscribe({
+            next: current => { this.deposit.set(current); if (current.status === 'CANCELLED') this.loadCancelledProofs(); },
+          });
+        },
+      });
+    });
+  }
+
+  loadCancelledProofs(): void {
+    const deposit = this.deposit();
+    if (!deposit || deposit.status !== 'CANCELLED' || !this.canRead()) return;
+    this.proofLoading.set(true);
+    this.proofError.set(null);
+    this.documents.findByOwner({ ownerType: 'TREASURY_DEPOSIT', ownerId: deposit.id,
+      page: 0, size: 100 }).pipe(finalize(() => this.proofLoading.set(false))).subscribe({
+      next: page => this.cancelledProofs.set(page.content),
+      error: () => this.proofError.set('Impossible de charger les justificatifs conservés.'),
+    });
+  }
+
+  viewCancelledProof(documentId: number): void {
+    this.dialog.open(DocumentDetailDialogComponent, {
+      width: '900px', maxWidth: '96vw', maxHeight: '92vh',
+      data: { documentId, documentTypeLabel: 'Justificatif de dépôt', readOnly: true },
     });
   }
 

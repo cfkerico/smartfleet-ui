@@ -13,8 +13,9 @@
         <h1>Dépôt du {{ item.createdAt | date:'dd/MM/yyyy' }}</h1>
         <p>Réf. #{{ item.id }} · Préparé à {{ item.createdAt | date:'HH:mm' }}</p>
       </div>
-      <span class="status" [class.preparing]="item.status === 'PREPARING'">
-        {{ item.status === 'CONFIRMED' ? 'Confirmé' : 'En préparation' }}
+      <span class="status" [class.preparing]="item.status === 'PREPARING'"
+        [class.cancelled]="item.status === 'CANCELLED'">
+        {{ item.status === 'CONFIRMED' ? 'Confirmé' : item.status === 'CANCELLED' ? 'Annulé' : 'En préparation' }}
       </span>
     </header>
 
@@ -29,6 +30,11 @@
           @if (item.confirmedAt) {
             <div><dt>Confirmé le</dt><dd>{{ item.confirmedAt | date:'dd/MM/yyyy à HH:mm' }}</dd></div>
             <div><dt>Confirmé par</dt><dd class="identifier">{{ item.confirmedBy }}</dd></div>
+          }
+          @if (item.cancelledAt) {
+            <div><dt>Annulé le</dt><dd>{{ item.cancelledAt | date:'dd/MM/yyyy à HH:mm' }}</dd></div>
+            <div><dt>Annulé par</dt><dd class="identifier">{{ item.cancelledBy }}</dd></div>
+            <div><dt>Motif d’annulation</dt><dd>{{ item.cancellationReason }}</dd></div>
           }
         </dl>
         @if (accountsUnavailable()) {
@@ -88,15 +94,45 @@
               <p>Aucun justificatif valide encore ajouté à ce dépôt.</p>
             }
           }
+        } @else if (item.status === 'CANCELLED') {
+          <p>Les justificatifs déjà ajoutés restent conservés avec ce dépôt annulé.</p>
+          @if (proofLoading()) { <div class="proof-state" aria-live="polite"><mat-spinner diameter="28"/> Chargement des justificatifs...</div> }
+          @if (proofError()) { <p class="proof-error" role="alert">{{ proofError() }}</p> }
+          @for (proof of cancelledProofs(); track proof.documentId) {
+            <button mat-stroked-button type="button" (click)="viewCancelledProof(proof.documentId)">
+              <mat-icon>visibility</mat-icon> {{ proof.title }}
+            </button>
+          } @empty {
+            @if (!proofError() && !proofLoading()) { <p>Aucun justificatif ajouté.</p> }
+          }
         } @else {
           <p>Aucun justificatif lié à ce dépôt.</p>
         }
       </mat-card>
     </div>
 
+    @if (item.status === 'PREPARING' && canManage()) {
+      <mat-card class="detail-card cancellation-card">
+        <h2>Annuler cette préparation</h2>
+        <p>L’annulation conserve le dépôt, ses allocations et ses justificatifs. Elle ne déplace aucun fonds.</p>
+        <mat-form-field appearance="outline" class="reason-field">
+          <mat-label>Motif d’annulation</mat-label>
+          <textarea matInput [formControl]="cancellationReason" maxlength="500" rows="3"></textarea>
+          @if (cancellationReason.touched && !cancellationReason.value.trim()) {
+            <mat-error>Le motif est obligatoire.</mat-error>
+          }
+        </mat-form-field>
+        <button mat-stroked-button type="button" class="cancel-button"
+          [disabled]="cancelling() || confirming() || cancellationReason.invalid || !cancellationReason.value.trim()"
+          (click)="cancelDeposit()">
+          <mat-icon>cancel</mat-icon> {{ cancelling() ? 'Annulation…' : 'Annuler le dépôt' }}
+        </button>
+      </mat-card>
+    }
+
     <mat-card class="detail-card allocations-card">
-      <h2>Recettes rapprochées</h2>
-      <p>Montants attribués à chaque versement chauffeur.</p>
+      <h2>{{ item.status === 'CONFIRMED' ? 'Recettes rapprochées' : 'Allocations prévues' }}</h2>
+      <p>{{ item.status === 'CONFIRMED' ? 'Montants attribués à chaque versement chauffeur.' : 'Ces montants n’ont pas été déplacés.' }}</p>
       <div class="allocation-list">
         @for (allocation of item.allocations; track allocation.paymentId) {
           <div>

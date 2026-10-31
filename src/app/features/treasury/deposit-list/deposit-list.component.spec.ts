@@ -53,6 +53,18 @@ describe('DepositListComponent', () => {
     expect(api.list).toHaveBeenLastCalledWith('CONFIRMED', 0, 5);
   });
 
+  it('filters and labels cancelled deposits', () => {
+    api.list.mockReturnValue(of({ content: [{ ...deposit, status: 'CANCELLED',
+      cancellationReason: 'Erreur', cancelledBy: 'treasurer', cancelledAt: '2026-10-31T12:00:00Z' }],
+      page: 0, size: 10, totalElements: 1, totalPages: 1, last: true }));
+    const fixture = TestBed.createComponent(DepositListComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.status.setValue('CANCELLED');
+    fixture.detectChanges();
+    expect(api.list).toHaveBeenLastCalledWith('CANCELLED', 0, 10);
+    expect(fixture.nativeElement.textContent).toContain('Annulé');
+  });
+
   it('does not call the API for an unauthorized user', () => {
     auth.hasRole.mockReturnValue(false);
     const fixture = TestBed.createComponent(DepositListComponent);

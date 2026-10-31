@@ -8,6 +8,7 @@ h1 { margin: 2px 0 4px; color: #172b3f; }
 .page-header p { margin: 0; color: #64748b; }
 .status { margin-left: auto; padding: 6px 12px; border-radius: 999px; background: #def4e7; color: #17613a; font-size: .85rem; font-weight: 700; white-space: nowrap; }
 .status.preparing { background: #fff0cf; color: #744a00; }
+.status.cancelled { background: #e8edf2; color: #526577; }
 .detail-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: 16px; }
 .detail-card { padding: 20px 24px; border: 1px solid #dfe5ec; border-radius: 16px; }
 .detail-card h2 { margin: 0 0 16px; font-size: 1.1rem; }
@@ -16,6 +17,10 @@ h1 { margin: 2px 0 4px; color: #172b3f; }
 .proof-field { width: 100%; margin-top: 12px; }
 .proof-error { color: #a83232 !important; }
 .confirm-button { display: block; margin-top: 14px; }
+.cancellation-card { margin-top: 16px; }
+.cancellation-card p { margin-top: -8px; }
+.reason-field { display: block; width: min(650px, 100%); margin-top: 18px; }
+.cancel-button { color: #a83232; border-color: #dcb8b8; }
 dl { display: grid; gap: 12px; margin: 0; }
 dl div { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; }
 dt { color: #64748b; }

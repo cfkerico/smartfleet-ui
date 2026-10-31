@@ -13,7 +13,8 @@ import { DocumentAdministrationApiService } from '../../administration/documents
 import { NotificationService } from '../../../core/services/notification.service';
 
 describe('DepositDetailComponent', () => {
-  const api = { findById: vi.fn(), confirm: vi.fn(), externalAccounts: vi.fn(), allocationDetails: vi.fn() };
+  const api = { findById: vi.fn(), confirm: vi.fn(), cancel: vi.fn(),
+    externalAccounts: vi.fn(), allocationDetails: vi.fn() };
   const dialog = { open: vi.fn() };
   const documents = { findByOwner: vi.fn() };
   const documentAdmin = { findDocumentTypes: vi.fn() };
@@ -33,6 +34,9 @@ describe('DepositDetailComponent', () => {
     auth.isAdmin.mockReturnValue(false);
     api.findById.mockReturnValue(of(confirmedDeposit));
     api.confirm.mockReturnValue(of(confirmedDeposit));
+    api.cancel.mockReturnValue(of({ ...confirmedDeposit, status: 'CANCELLED', proofDocumentId: null,
+      confirmedBy: null, confirmedAt: null, cancellationReason: 'Erreur',
+      cancelledBy: 'treasurer', cancelledAt: '2026-10-31T12:00:00Z' }));
     api.externalAccounts.mockReturnValue(of([
       { id: 2, name: 'Banque principale', type: 'BANK', currencyCode: 'XAF', balance: 40000, active: true },
     ]));
@@ -142,5 +146,46 @@ describe('DepositDetailComponent', () => {
     fixture.detectChanges();
     expect(documents.findByOwner).toHaveBeenCalled();
     expect(fixture.nativeElement.textContent).not.toContain('Confirmer le dépôt');
+  });
+
+  it('cancels a preparing deposit after a reason and confirmation, preserving read-only history', () => {
+    api.findById.mockReturnValue(of({ ...confirmedDeposit, status: 'PREPARING', proofDocumentId: null,
+      confirmedBy: null, confirmedAt: null }));
+    const fixture = TestBed.createComponent(DepositDetailComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.cancellationReason.setValue('Erreur');
+
+    fixture.componentInstance.cancelDeposit();
+    fixture.detectChanges();
+
+    expect(dialog.open).toHaveBeenCalledWith(ConfirmationDialogComponent,
+      expect.objectContaining({ data: expect.objectContaining({ confirmLabel: 'Annuler le dépôt' }) }));
+    expect(api.cancel).toHaveBeenCalledExactlyOnceWith(3, 'Erreur');
+    expect(fixture.componentInstance.deposit()?.status).toBe('CANCELLED');
+    expect(fixture.nativeElement.textContent).toContain('Motif d’annulation');
+    expect(fixture.nativeElement.textContent).not.toContain('Confirmer le dépôt');
+    expect(notification.success).toHaveBeenCalled();
+  });
+
+  it('does not call cancellation when the confirmation dialog is dismissed', () => {
+    api.findById.mockReturnValue(of({ ...confirmedDeposit, status: 'PREPARING', proofDocumentId: null,
+      confirmedBy: null, confirmedAt: null }));
+    dialog.open.mockReturnValue({ afterClosed: () => of(false) });
+    const fixture = TestBed.createComponent(DepositDetailComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.cancellationReason.setValue('Erreur');
+
+    fixture.componentInstance.cancelDeposit();
+
+    expect(api.cancel).not.toHaveBeenCalled();
+  });
+
+  it('does not offer cancellation of a confirmed deposit', () => {
+    const fixture = TestBed.createComponent(DepositDetailComponent);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).not.toContain('Annuler cette préparation');
+    fixture.componentInstance.cancellationReason.setValue('Erreur');
+    fixture.componentInstance.cancelDeposit();
+    expect(api.cancel).not.toHaveBeenCalled();
   });
 });

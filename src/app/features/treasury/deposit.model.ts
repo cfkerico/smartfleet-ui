@@ -1,4 +1,4 @@
-export type TreasuryDepositStatus = 'PREPARING' | 'CONFIRMED';
+export type TreasuryDepositStatus = 'PREPARING' | 'CONFIRMED' | 'CANCELLED';
 
 export interface TreasuryInitializationStatus {
   initialized: boolean;
@@ -50,6 +50,9 @@ export interface TreasuryDeposit {
   createdAt: string;
   confirmedBy: string | null;
   confirmedAt: string | null;
+  cancellationReason: string | null;
+  cancelledBy: string | null;
+  cancelledAt: string | null;
 }
 
 export interface DepositPage {

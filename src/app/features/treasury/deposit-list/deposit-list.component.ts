@@ -89,7 +89,7 @@ export class DepositListComponent implements OnInit {
   }
 
   statusLabel(status: TreasuryDepositStatus): string {
-    return status === 'CONFIRMED' ? 'Confirmé' : 'En préparation';
+    return status === 'CONFIRMED' ? 'Confirmé' : status === 'CANCELLED' ? 'Annulé' : 'En préparation';
   }
 
   accountName(accountId: number): string {

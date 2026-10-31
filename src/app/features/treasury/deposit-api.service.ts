@@ -89,4 +89,9 @@ export class DepositApiService {
     return this.http.post<TreasuryDeposit>(
       `${API_ENDPOINTS.treasury}/deposits/${depositId}/confirmation`, { proofDocumentId });
   }
+
+  cancel(depositId: number, reason: string): Observable<TreasuryDeposit> {
+    return this.http.post<TreasuryDeposit>(
+      `${API_ENDPOINTS.treasury}/deposits/${depositId}/cancellation`, { reason });
+  }
 }
