@@ -6,10 +6,19 @@ import { DepositAllocationDetails, DepositPage, EligibleDepositPaymentPage, Exte
   PrepareDepositRequest, TreasuryDeposit, TreasuryDepositStatus, CashTreasuryAccount,
   TransferCollectionCashRequest, TransferCollectionCashResult, TreasuryMovementPage,
   TreasuryMovementPrefix } from './deposit.model';
+import { InitializeTreasuryRequest, InitializeTreasuryResult, TreasuryInitializationStatus } from './deposit.model';
 
 @Injectable({ providedIn: 'root' })
 export class DepositApiService {
   private readonly http = inject(HttpClient);
+
+  getInitialization(): Observable<TreasuryInitializationStatus> {
+    return this.http.get<TreasuryInitializationStatus>(`${API_ENDPOINTS.treasury}/initialization`);
+  }
+
+  initializeTreasury(request: InitializeTreasuryRequest): Observable<InitializeTreasuryResult> {
+    return this.http.post<InitializeTreasuryResult>(`${API_ENDPOINTS.treasury}/initialization`, request);
+  }
 
   list(status: TreasuryDepositStatus | null, page: number, size: number): Observable<DepositPage> {
     let params = new HttpParams().set('page', page).set('size', size);

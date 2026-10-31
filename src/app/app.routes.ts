@@ -131,6 +131,12 @@ export const routes: Routes = [
               .then(m => m.ExternalAccountsComponent),
           },
           {
+            path: 'treasury/initialization',
+            canActivate: [authGuard],
+            loadComponent: () => import('./features/treasury/initialization/treasury-initialization.component')
+              .then(m => m.TreasuryInitializationComponent),
+          },
+          {
             path: 'treasury/transfers/collection-to-expenses',
             canActivate: [authGuard],
             loadComponent: () => import('./features/treasury/cash-transfer/cash-transfer.component')

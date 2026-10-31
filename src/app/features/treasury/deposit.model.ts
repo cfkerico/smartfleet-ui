@@ -1,5 +1,31 @@
 export type TreasuryDepositStatus = 'PREPARING' | 'CONFIRMED';
 
+export interface TreasuryInitializationStatus {
+  initialized: boolean;
+  cutoverDate: string | null;
+  currencyCode: string | null;
+  collectionOpeningBalance: number | null;
+  expenseCashOpeningBalance: number | null;
+  initializedAt: string | null;
+}
+
+export interface InitializeTreasuryRequest {
+  cutoverDate: string;
+  currencyCode: string;
+  collectionOpeningBalance: string;
+  expenseCashOpeningBalance: string;
+}
+
+export interface InitializeTreasuryResult {
+  companyId: number;
+  cutoverDate: string;
+  currencyCode: string;
+  collectionAccountId: number;
+  collectionOpeningBalance: number;
+  expenseCashAccountId: number;
+  expenseCashOpeningBalance: number;
+}
+
 export interface DepositAllocation {
   paymentId: number;
   amount: number;

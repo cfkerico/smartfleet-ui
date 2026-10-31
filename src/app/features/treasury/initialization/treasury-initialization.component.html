@@ -1,0 +1,48 @@
+<section class="initialization-page">
+  <header class="page-header">
+    <span class="header-icon"><mat-icon>account_balance_wallet</mat-icon></span>
+    <div>
+      <span class="eyebrow">ADMINISTRATION · TRÉSORERIE</span>
+      <h1>Initialisation de la trésorerie</h1>
+      <p>Définissez la date de bascule et les soldes d’ouverture de votre société, une seule fois.</p>
+    </div>
+  </header>
+
+  @if (!canManage()) {
+    <mat-card class="state error">Seul un administrateur peut consulter ou initialiser la trésorerie.</mat-card>
+  } @else if (loading() && !status()) {
+    <mat-card class="state">Chargement de l’état de la trésorerie…</mat-card>
+  } @else if (loadError()) {
+    <mat-card class="state error">
+      <p>Impossible de vérifier l’état de la trésorerie. Aucune opération n’est autorisée tant que cet état est inconnu.</p>
+      <button mat-stroked-button type="button" (click)="load()">Réessayer</button>
+    </mat-card>
+  } @else if (status()?.initialized) {
+    <mat-card class="summary-card">
+      <div class="summary-title"><mat-icon>verified</mat-icon><div><span class="eyebrow">INITIALISATION TERMINÉE</span><h2>Trésorerie active</h2></div></div>
+      <p>Ces paramètres d’ouverture sont conservés à titre de référence. Les soldes courants évoluent avec les mouvements.</p>
+      <dl class="summary-grid">
+        <div><dt>Date de bascule</dt><dd>{{ status()?.cutoverDate | date:'dd/MM/yyyy':'':'fr' }}</dd></div>
+        <div><dt>Devise</dt><dd>{{ status()?.currencyCode }}</dd></div>
+        <div><dt>Espèces collectées à déposer · ouverture</dt><dd>{{ status()?.collectionOpeningBalance | number:'1.2-2':'fr' }}</dd></div>
+        <div><dt>Caisse de dépenses · ouverture</dt><dd>{{ status()?.expenseCashOpeningBalance | number:'1.2-2':'fr' }}</dd></div>
+      </dl>
+    </mat-card>
+  } @else {
+    <mat-card class="form-card">
+      <div class="warning"><mat-icon>info</mat-icon><p>Cette opération crée les deux caisses de base et fixe la date de bascule. Vérifiez les montants avant validation : l’initialisation ne peut pas être répétée.</p></div>
+      <form [formGroup]="form" (submit)="submit($event)" novalidate>
+        <div class="field-grid">
+          <label>Date de bascule <span>*</span><input type="date" formControlName="cutoverDate" required></label>
+          <label>Devise ISO (ex. XAF) <span>*</span><input type="text" formControlName="currencyCode" maxlength="3" autocomplete="off" required></label>
+          <label>Espèces collectées à déposer · solde d’ouverture <span>*</span><input type="text" inputmode="decimal" formControlName="collectionOpeningBalance" placeholder="0,00" autocomplete="off" required></label>
+          <label>Caisse de dépenses · solde d’ouverture <span>*</span><input type="text" inputmode="decimal" formControlName="expenseCashOpeningBalance" placeholder="0,00" autocomplete="off" required></label>
+        </div>
+        @if (form.touched && form.invalid) {
+          <p class="validation">Renseignez une date, une devise ISO à trois lettres et deux montants positifs ou nuls avec au plus deux décimales.</p>
+        }
+        <div class="actions"><button mat-flat-button type="submit" [disabled]="saving() || form.invalid">{{ saving() ? 'Initialisation…' : 'Vérifier et initialiser' }}</button></div>
+      </form>
+    </mat-card>
+  }
+</section>

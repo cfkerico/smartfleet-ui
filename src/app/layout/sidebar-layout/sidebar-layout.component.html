@@ -114,6 +114,16 @@
         <span class="menu-section-title">Administration</span>
       }
 
+      @if (auth.isAdmin()) {
+        <a routerLink="/treasury/initialization" routerLinkActive="active" class="menu-item"
+           title="Initialisation de la trésorerie">
+          <mat-icon>tune</mat-icon>
+          @if (!layoutStateService.sidebarCollapsed()) {
+            <span>Initialisation de la trésorerie</span>
+          }
+        </a>
+      }
+
       <a
         routerLink="/company/documents"
         routerLinkActive="active"
