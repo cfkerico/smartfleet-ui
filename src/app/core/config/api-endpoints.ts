@@ -19,6 +19,6 @@ export const API_ENDPOINTS = {
   driversToAssign: `${baseUrl}/api/drivers/driverstoassign`,
   vehiclesToAssign: `${baseUrl}/api/vehicles/vehiclestoassign`,
 
-  analiticsDashboard: `${baseUrl}/analytics/dashboard`,
+  analyticsDashboard: `${baseUrl}/api/analytics/dashboard`,
   dashboard: `${baseUrl}/dashboard`
 } as const;

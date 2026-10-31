@@ -1,38 +1,52 @@
-<div class="dashboard-grid">
-  <app-alerts-widget
-    [notifications]="notificationStore.notifications()">
-  </app-alerts-widget>
-</div>
-<h1>Analytics Dashboard</h1>
-@if (analytics$ | async; as analytics) {
-  <div class="cards">
-    <div class="card">
-      <h2>{{ analytics?.totalDrivers }}</h2>
-      <p>Drivers</p>
+<main class="dashboard-page">
+  <header class="page-header">
+    <span class="header-icon" aria-hidden="true">▦</span>
+    <div>
+      <span class="eyebrow">PILOTAGE</span>
+      <h1>Tableau de bord</h1>
+      <p>Suivez l'activité de votre société sur la période choisie.</p>
     </div>
+  </header>
 
-    <div class="card">
-      <h2>{{ analytics?.totalVehicles }}</h2>
-      <p>Vehicles</p>
-    </div>
+  @if (canSeeFinancials()) {
+    <section class="dashboard-panel" aria-label="Indicateurs d'exploitation">
+      <div class="panel-heading">
+        <div>
+          <h2>Vue d'exploitation</h2>
+          <p>Les effectifs sont l'état actuel, indépendamment de la période.</p>
+        </div>
+      </div>
 
-    <div class="card">
-      <h2>{{ analytics?.averageScore }}</h2>
-      <p>Average IA Score</p>
-    </div>
-  </div>
-}
+      <form class="period-form" [formGroup]="period" (submit)="applyPeriod($event)">
+        <label>Du <input type="date" formControlName="from" required /></label>
+        <label>Au <input type="date" formControlName="to" required /></label>
+        <button type="submit" [disabled]="loading() || period.invalid">Afficher</button>
+      </form>
+      @if (period.controls.from.touched && period.controls.to.touched &&
+           period.controls.from.value > period.controls.to.value) {
+        <p class="validation-error" role="alert">La date de début doit précéder la date de fin.</p>
+      }
 
-<div class="chart-container">
-  <canvas
-    baseChart
-    [data]="{
-      labels: chartLabels,
-      datasets: [{
-        data: chartData,
-        label: 'Wordked Days'
-       }]
-      }"
-    [type]="'bar'">
-  </canvas>
-</div>
+      @if (loading()) { <p class="state" role="status">Chargement des indicateurs...</p> }
+      @if (error()) {
+        <div class="state error" role="alert">
+          <p>Impossible de charger les indicateurs.</p>
+          <button type="button" (click)="load(period.controls.from.value, period.controls.to.value)">Réessayer</button>
+        </div>
+      }
+      @if (analytics(); as data) {
+        <div class="cards" aria-live="polite">
+          <article class="card"><p>Recettes enregistrées</p><strong>{{ formatAmount(data.recordedRevenue) }} FCFA</strong></article>
+          <article class="card"><p>Dépenses décaissées</p><strong>{{ formatAmount(data.disbursedExpenses) }} FCFA</strong></article>
+          <article class="card" [class.negative]="data.operatingDifference < 0">
+            <p>Écart d'exploitation</p><strong>{{ formatAmount(data.operatingDifference) }} FCFA</strong>
+          </article>
+          <article class="card"><p>Chauffeurs actifs</p><strong>{{ data.activeDrivers }}</strong></article>
+          <article class="card"><p>Véhicules opérationnels</p><strong>{{ data.operationalVehicles }}</strong></article>
+        </div>
+        <p class="explanation">L'écart d'exploitation n'est ni un bénéfice comptable ni le solde de trésorerie. Les dépôts et transferts ne sont pas comptés deux fois.</p>
+      }
+    </section>
+  }
+
+</main>

@@ -1,12 +1,9 @@
 export interface DashboardAnalytics {
-
-  totalDrivers: number;
-
-  totalVehicles: number;
-
-  averageScore: number;
-
-  driverActivity: {
-    [key: string]: number;
-  };
+  fromInclusive: string;
+  toInclusive: string;
+  recordedRevenue: number;
+  disbursedExpenses: number;
+  operatingDifference: number;
+  activeDrivers: number;
+  operationalVehicles: number;
 }
