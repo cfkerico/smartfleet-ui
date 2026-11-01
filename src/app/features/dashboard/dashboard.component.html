@@ -20,7 +20,7 @@
       <form class="period-form" [formGroup]="period" (submit)="applyPeriod($event)">
         <label>Du <input type="date" formControlName="from" required /></label>
         <label>Au <input type="date" formControlName="to" required /></label>
-        <button type="submit" [disabled]="loading() || period.invalid">Afficher</button>
+        <button type="submit" [disabled]="loading() || fleetLoading() || period.invalid">Afficher</button>
       </form>
       @if (period.controls.from.touched && period.controls.to.touched &&
            period.controls.from.value > period.controls.to.value) {
@@ -45,6 +45,55 @@
           <article class="card"><p>Véhicules opérationnels</p><strong>{{ data.operationalVehicles }}</strong></article>
         </div>
         <p class="explanation">L'écart d'exploitation n'est ni un bénéfice comptable ni le solde de trésorerie. Les dépôts et transferts ne sont pas comptés deux fois.</p>
+      }
+    </section>
+
+    <section class="dashboard-panel" aria-label="Comparaison des véhicules">
+      <div class="panel-heading">
+        <div>
+          <h2>Comparaison des véhicules</h2>
+          <p>Même période que les indicateurs ci-dessus. Tous les véhicules sont conservés, y compris les véhicules inactifs ou vendus.</p>
+        </div>
+      </div>
+      @if (fleetLoading()) { <p class="state" role="status">Chargement des véhicules...</p> }
+      @if (fleetError()) {
+        <div class="state error" role="alert">
+          <p>Impossible de charger la comparaison des véhicules.</p>
+          <button type="button" (click)="retryFleet()">Réessayer</button>
+        </div>
+      }
+      @if (fleet(); as page) {
+        @if (page.content.length === 0) {
+          <p class="state">Aucun véhicule pour cette société.</p>
+        } @else {
+          <div class="fleet-table-scroll">
+            <table class="fleet-table">
+              <thead><tr>
+                <th scope="col">Véhicule</th><th scope="col">État</th>
+                <th scope="col" class="amount">Recettes</th>
+                <th scope="col" class="amount">Décaissements</th>
+                <th scope="col" class="amount">Écart d'exploitation</th>
+                <th scope="col">Détail</th>
+              </tr></thead>
+              <tbody>
+                @for (line of page.content; track line.vehicleId) {
+                  <tr>
+                    <td>{{ line.vehicleLabel }}</td>
+                    <td>{{ statusLabel(line.vehicleStatus) }}</td>
+                    <td class="amount">{{ formatAmount(line.recordedRevenue) }} FCFA</td>
+                    <td class="amount">{{ formatAmount(line.disbursedExpenses) }} FCFA</td>
+                    <td class="amount" [class.negative-amount]="line.operatingDifference < 0">
+                      {{ formatAmount(line.operatingDifference) }} FCFA
+                    </td>
+                    <td><a [routerLink]="['/vehicles', line.vehicleId]">Voir la fiche</a></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <mat-paginator [length]="page.totalElements" [pageIndex]="pageIndex()" [pageSize]="pageSize()"
+            [pageSizeOptions]="[5, 10, 20]" (page)="onPageChange($event)" />
+        }
       }
     </section>
   }

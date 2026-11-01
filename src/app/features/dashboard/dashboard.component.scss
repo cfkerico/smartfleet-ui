@@ -20,4 +20,12 @@ h1 { margin: 2px 0 4px; } .page-header p, .panel-heading p { margin: 0; color: #
 .explanation { margin: 18px 0 0; color: #64748b; font-size: .875rem; }
 .state { padding: 18px 0; color: #526577; }
 .error, .validation-error { color: #a83232; }
+.fleet-table-scroll { margin-top: 20px; overflow-x: auto; }
+.fleet-table { width: 100%; border-collapse: collapse; min-width: 760px; }
+.fleet-table th, .fleet-table td { padding: 14px 12px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+.fleet-table th { color: #40566b; background: #f8fafc; font-weight: 700; }
+.fleet-table .amount { text-align: right; white-space: nowrap; }
+.fleet-table .negative-amount { color: #a83232; font-weight: 700; }
+.fleet-table a { color: #005ec4; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.fleet-table a:hover { text-decoration: underline; }
 @media (max-width: 600px) { .dashboard-page { padding: 16px; } .page-header { align-items: flex-start; } .period-form label, .period-form button { width: 100%; } }
