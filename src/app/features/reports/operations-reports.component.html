@@ -1,0 +1,107 @@
+<main class="reports-page">
+  <header class="page-header">
+    <span class="header-icon" aria-hidden="true">▤</span>
+    <div>
+      <span class="eyebrow">PILOTAGE</span>
+      <h1>Rapports d'exploitation</h1>
+      <p>Consultez les opérations enregistrées et exportez les résultats en CSV.</p>
+    </div>
+  </header>
+
+  <section class="report-panel" aria-label="Rapport mensuel">
+    <div class="panel-heading">
+      <div>
+        <h2>Évolution mensuelle</h2>
+        <p>Par défaut, les douze derniers mois, mois courant compris.</p>
+      </div>
+      <button type="button" class="export-button" (click)="exportMonthly()" [disabled]="!monthly()">
+        Exporter les mois affichés (CSV)
+      </button>
+    </div>
+    <form class="filter-form" [formGroup]="monthlyPeriod" (submit)="applyMonthlyPeriod($event)">
+      <label>Du mois <input type="month" formControlName="fromMonth" required /></label>
+      <label>Au mois <input type="month" formControlName="toMonth" required /></label>
+      <button type="submit" [disabled]="monthlyLoading() || monthlyPeriod.invalid ||
+        monthlyPeriod.controls.fromMonth.value > monthlyPeriod.controls.toMonth.value ||
+        monthCount(monthlyPeriod.controls.fromMonth.value, monthlyPeriod.controls.toMonth.value) > 24">Afficher</button>
+    </form>
+    @if (monthlyPeriod.touched && monthCount(monthlyPeriod.controls.fromMonth.value,
+         monthlyPeriod.controls.toMonth.value) > 24) {
+      <p class="validation-error" role="alert">La période ne peut pas dépasser 24 mois.</p>
+    }
+    @if (monthlyLoading()) { <p class="state" role="status">Chargement du rapport mensuel...</p> }
+    @if (monthlyError()) {
+      <div class="state error" role="alert">
+        <p>Impossible de charger le rapport mensuel.</p>
+        <button type="button" (click)="loadMonthly(monthlyPeriod.controls.fromMonth.value,
+          monthlyPeriod.controls.toMonth.value)">Réessayer</button>
+      </div>
+    }
+    @if (monthly(); as series) {
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Mois</th><th scope="col" class="amount">Recettes</th>
+            <th scope="col" class="amount">Décaissements</th><th scope="col" class="amount">Écart</th></tr></thead>
+          <tbody>
+            @for (item of series.months; track item.month) {
+              <tr><td>{{ item.month }}</td>
+                <td class="amount">{{ formatAmount(item.recordedRevenue) }} FCFA</td>
+                <td class="amount">{{ formatAmount(item.disbursedExpenses) }} FCFA</td>
+                <td class="amount" [class.negative]="item.operatingDifference < 0">
+                  {{ formatAmount(item.operatingDifference) }} FCFA
+                </td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+
+  <section class="report-panel" aria-label="Rapport par véhicule">
+    <div class="panel-heading">
+      <div>
+        <h2>Comparaison des véhicules</h2>
+        <p>Les véhicules sans opération restent visibles. L'export contient uniquement la page affichée.</p>
+      </div>
+      <button type="button" class="export-button" (click)="exportFleetPage()" [disabled]="!fleet()">
+        Exporter cette page (CSV)
+      </button>
+    </div>
+    <form class="filter-form" [formGroup]="fleetPeriod" (submit)="applyFleetPeriod($event)">
+      <label>Du <input type="date" formControlName="from" required /></label>
+      <label>Au <input type="date" formControlName="to" required /></label>
+      <button type="submit" [disabled]="fleetLoading() || fleetPeriod.invalid ||
+        fleetPeriod.controls.from.value > fleetPeriod.controls.to.value">Afficher</button>
+    </form>
+    @if (fleetLoading()) { <p class="state" role="status">Chargement des véhicules...</p> }
+    @if (fleetError()) {
+      <div class="state error" role="alert"><p>Impossible de charger la comparaison.</p>
+        <button type="button" (click)="retryFleet()">Réessayer</button></div>
+    }
+    @if (fleet(); as page) {
+      @if (page.content.length === 0) { <p class="state">Aucun véhicule pour cette société.</p> }
+      @else {
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th scope="col">Véhicule</th><th scope="col">État</th>
+              <th scope="col" class="amount">Recettes</th><th scope="col" class="amount">Décaissements</th>
+              <th scope="col" class="amount">Écart</th><th scope="col">Détail</th></tr></thead>
+            <tbody>
+              @for (item of page.content; track item.vehicleId) {
+                <tr><td>{{ item.vehicleLabel }}</td><td>{{ statusLabel(item.vehicleStatus) }}</td>
+                  <td class="amount">{{ formatAmount(item.recordedRevenue) }} FCFA</td>
+                  <td class="amount">{{ formatAmount(item.disbursedExpenses) }} FCFA</td>
+                  <td class="amount" [class.negative]="item.operatingDifference < 0">
+                    {{ formatAmount(item.operatingDifference) }} FCFA</td>
+                  <td><a [routerLink]="['/vehicles', item.vehicleId]">Voir la fiche</a></td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <mat-paginator [length]="page.totalElements" [pageIndex]="pageIndex()" [pageSize]="pageSize()"
+          [pageSizeOptions]="[5, 10, 20]" (page)="changeFleetPage($event)" />
+      }
+    }
+  </section>
+  <p class="explanation">L'écart d'exploitation n'est ni un bénéfice comptable ni le solde de trésorerie.</p>
+</main>

@@ -165,18 +165,20 @@
       </a>
     </section>
 
-    <section class="menu-section">
-      @if (!layoutStateService.sidebarCollapsed()) {
-        <span class="menu-section-title">Pilotage</span>
-      }
-
-      <a routerLink="/reports" routerLinkActive="active" class="menu-item" title="Rapports">
-        <mat-icon>bar_chart</mat-icon>
+    @if (auth.isAdmin() || auth.hasRole('TREASURER')) {
+      <section class="menu-section">
         @if (!layoutStateService.sidebarCollapsed()) {
-          <span>Rapports</span>
+          <span class="menu-section-title">Pilotage</span>
         }
-      </a>
-    </section>
+
+        <a routerLink="/reports" routerLinkActive="active" class="menu-item" title="Rapports">
+          <mat-icon>bar_chart</mat-icon>
+          @if (!layoutStateService.sidebarCollapsed()) {
+            <span>Rapports</span>
+          }
+        </a>
+      </section>
+    }
 
   </nav>
 </aside>

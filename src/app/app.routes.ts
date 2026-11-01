@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
+import { financialRoleGuard } from './core/auth/financial-role.guard';
 
 export const routes: Routes = [
   {
@@ -17,6 +18,12 @@ export const routes: Routes = [
             canActivate: [authGuard],
             loadComponent: () =>
               import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
+          },
+          {
+            path: 'reports',
+            canActivate: [authGuard, financialRoleGuard],
+            loadComponent: () =>
+              import('./features/reports/operations-reports.component').then(m => m.OperationsReportsComponent),
           },
           {
             path: 'company/documents',
