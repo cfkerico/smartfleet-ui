@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { AnalyticsService } from '../../core/services/analytics.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { FleetOperationsPage } from '../../models/fleet-operations.model';
 import { MonthlyOperationsSeries } from '../../models/monthly-operations.model';
 import { OperationsReportsComponent } from './operations-reports.component';
@@ -25,15 +26,21 @@ describe('OperationsReportsComponent', () => {
   };
   const getMonthlyOperations = vi.fn().mockReturnValue(of(monthly));
   const getFleetOperations = vi.fn().mockReturnValue(of(fleet));
+  const exportFleetOperations = vi.fn().mockReturnValue(of(new Blob(['csv'])));
+  const notification = { success: vi.fn(), error: vi.fn() };
 
   beforeEach(async () => {
     getMonthlyOperations.mockClear();
     getFleetOperations.mockClear();
+    exportFleetOperations.mockClear();
+    notification.success.mockClear();
+    notification.error.mockClear();
     await TestBed.configureTestingModule({
       imports: [OperationsReportsComponent],
       providers: [
         provideRouter([]),
-        { provide: AnalyticsService, useValue: { getMonthlyOperations, getFleetOperations } },
+        { provide: AnalyticsService, useValue: { getMonthlyOperations, getFleetOperations, exportFleetOperations } },
+        { provide: NotificationService, useValue: notification },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(OperationsReportsComponent);
@@ -66,5 +73,18 @@ describe('OperationsReportsComponent', () => {
     component.applyFleetPeriod(new Event('submit'));
     expect(component.pageIndex()).toBe(0);
     expect(getFleetOperations).toHaveBeenLastCalledWith(0, 10, '2026-06-01', '2026-06-30');
+  });
+
+  it('requests the complete fleet export for the displayed period', () => {
+    Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: vi.fn().mockReturnValue('blob:test') });
+    Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: vi.fn() });
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+
+    component.exportAllVehicles();
+
+    expect(exportFleetOperations).toHaveBeenCalledWith('2026-07-01', '2026-07-31');
+    expect(click).toHaveBeenCalledOnce();
+    expect(notification.success).toHaveBeenCalledOnce();
+    click.mockRestore();
   });
 });

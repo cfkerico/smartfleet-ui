@@ -61,11 +61,17 @@
     <div class="panel-heading">
       <div>
         <h2>Comparaison des véhicules</h2>
-        <p>Les véhicules sans opération restent visibles. L'export contient uniquement la page affichée.</p>
+        <p>Les véhicules sans opération restent visibles. Choisissez entre la page affichée et la flotte entière.</p>
       </div>
-      <button type="button" class="export-button" (click)="exportFleetPage()" [disabled]="!fleet()">
-        Exporter cette page (CSV)
-      </button>
+      <div class="export-actions">
+        <button type="button" class="export-button" (click)="exportFleetPage()" [disabled]="!fleet()">
+          Exporter cette page (CSV)
+        </button>
+        <button type="button" class="export-button" (click)="exportAllVehicles()"
+          [disabled]="!fleet() || fullExportLoading()">
+          {{ fullExportLoading() ? 'Préparation...' : 'Exporter tous les véhicules (CSV)' }}
+        </button>
+      </div>
     </div>
     <form class="filter-form" [formGroup]="fleetPeriod" (submit)="applyFleetPeriod($event)">
       <label>Du <input type="date" formControlName="from" required /></label>

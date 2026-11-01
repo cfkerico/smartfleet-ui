@@ -31,6 +31,11 @@ export class AnalyticsService {
     return this.http.get<FleetOperationsPage>(API_ENDPOINTS.analyticsVehicles, { params });
   }
 
+  exportFleetOperations(from: string, to: string) {
+    const params = new HttpParams().set('from', from).set('to', to);
+    return this.http.get(API_ENDPOINTS.analyticsVehiclesExport, { params, responseType: 'blob' });
+  }
+
   getMonthlyOperations(fromMonth?: string, toMonth?: string) {
     let params = new HttpParams();
     if (fromMonth && toMonth) params = params.set('fromMonth', fromMonth).set('toMonth', toMonth);

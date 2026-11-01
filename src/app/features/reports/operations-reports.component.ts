@@ -4,9 +4,10 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AnalyticsService } from '../../core/services/analytics.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { FleetOperationsPage } from '../../models/fleet-operations.model';
 import { MonthlyOperationsSeries } from '../../models/monthly-operations.model';
-import { createCsv, downloadCsv } from './report-csv';
+import { downloadBlob, downloadCsv, fleetPageCsv, monthlyReportCsv } from './report-csv';
 
 @Component({
   standalone: true,
@@ -17,6 +18,7 @@ import { createCsv, downloadCsv } from './report-csv';
 })
 export class OperationsReportsComponent implements OnInit {
   private readonly analytics = inject(AnalyticsService);
+  private readonly notification = inject(NotificationService);
 
   readonly monthly = signal<MonthlyOperationsSeries | null>(null);
   readonly monthlyLoading = signal(false);
@@ -24,6 +26,7 @@ export class OperationsReportsComponent implements OnInit {
   readonly fleet = signal<FleetOperationsPage | null>(null);
   readonly fleetLoading = signal(false);
   readonly fleetError = signal(false);
+  readonly fullExportLoading = signal(false);
   readonly pageIndex = signal(0);
   readonly pageSize = signal(10);
 
@@ -109,21 +112,29 @@ export class OperationsReportsComponent implements OnInit {
   exportMonthly(): void {
     const data = this.monthly();
     if (!data) return;
-    downloadCsv(`smartfleet-mensuel-${data.fromMonth}-${data.toMonth}.csv`, createCsv(
-      ['Mois', 'Recettes enregistrées', 'Dépenses décaissées', "Écart d'exploitation"],
-      data.months.map(item => [item.month, item.recordedRevenue, item.disbursedExpenses,
-        item.operatingDifference]),
-    ));
+    downloadCsv(`smartfleet-mensuel-${data.fromMonth}-${data.toMonth}.csv`, monthlyReportCsv(data));
   }
 
   exportFleetPage(): void {
     const data = this.fleet();
     if (!data) return;
     downloadCsv(`smartfleet-vehicules-${data.fromInclusive}-${data.toInclusive}-page-${data.page + 1}.csv`,
-      createCsv(['ID véhicule', 'Véhicule', 'État', 'Recettes enregistrées', 'Dépenses décaissées',
-        "Écart d'exploitation"], data.content.map(item => [item.vehicleId, item.vehicleLabel,
-        this.statusLabel(item.vehicleStatus), item.recordedRevenue, item.disbursedExpenses,
-        item.operatingDifference])));
+      fleetPageCsv(data, status => this.statusLabel(status)));
+  }
+
+  exportAllVehicles(): void {
+    const data = this.fleet();
+    if (!data || this.fullExportLoading()) return;
+    this.fullExportLoading.set(true);
+    this.analytics.exportFleetOperations(data.fromInclusive, data.toInclusive).pipe(
+      finalize(() => this.fullExportLoading.set(false)),
+    ).subscribe({
+      next: blob => {
+        downloadBlob(`smartfleet-vehicules-complet-${data.fromInclusive}-${data.toInclusive}.csv`, blob);
+        this.notification.success('Export complet des véhicules lancé.');
+      },
+      error: () => this.notification.error('Export complet impossible. Réessayez après vérification de la connexion.'),
+    });
   }
 
   monthCount(from: string, to: string): number {
