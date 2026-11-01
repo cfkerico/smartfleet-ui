@@ -5,6 +5,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { AnalyticsService } from '../../core/services/analytics.service';
 import { DashboardAnalytics } from '../../models/dashboard-analytics.model';
 import { FleetOperationsPage } from '../../models/fleet-operations.model';
+import { MonthlyOperationsSeries } from '../../models/monthly-operations.model';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { RouterLink } from '@angular/router';
 
@@ -25,11 +26,18 @@ export class DashboardComponent implements OnInit {
   readonly fleet = signal<FleetOperationsPage | null>(null);
   readonly fleetLoading = signal(false);
   readonly fleetError = signal(false);
+  readonly monthly = signal<MonthlyOperationsSeries | null>(null);
+  readonly monthlyLoading = signal(false);
+  readonly monthlyError = signal(false);
   readonly pageIndex = signal(0);
   readonly pageSize = signal(5);
   readonly period = new FormGroup({
     from: new FormControl('', { nonNullable: true, validators: Validators.required }),
     to: new FormControl('', { nonNullable: true, validators: Validators.required }),
+  });
+  readonly monthlyPeriod = new FormGroup({
+    fromMonth: new FormControl('', { nonNullable: true, validators: Validators.required }),
+    toMonth: new FormControl('', { nonNullable: true, validators: Validators.required }),
   });
 
   canSeeFinancials(): boolean {
@@ -37,7 +45,10 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.canSeeFinancials()) this.load();
+    if (this.canSeeFinancials()) {
+      this.load();
+      this.loadMonthly();
+    }
   }
 
   load(from?: string, to?: string): void {
@@ -66,6 +77,50 @@ export class DashboardComponent implements OnInit {
   retryFleet(): void {
     const { from, to } = this.period.getRawValue();
     this.loadFleet(this.pageIndex(), this.pageSize(), from || undefined, to || undefined);
+  }
+
+  applyMonthlyPeriod(event: Event): void {
+    event.preventDefault();
+    const { fromMonth, toMonth } = this.monthlyPeriod.getRawValue();
+    if (this.monthlyPeriod.invalid || fromMonth > toMonth || this.monthDistance(fromMonth, toMonth) > 24) {
+      this.monthlyPeriod.markAllAsTouched();
+      return;
+    }
+    this.loadMonthly(fromMonth, toMonth);
+  }
+
+  loadMonthly(fromMonth?: string, toMonth?: string): void {
+    if (!this.canSeeFinancials() || this.monthlyLoading()) return;
+    this.monthlyLoading.set(true);
+    this.monthlyError.set(false);
+    this.monthly.set(null);
+    this.analyticsService.getMonthlyOperations(fromMonth, toMonth).pipe(
+      finalize(() => this.monthlyLoading.set(false)),
+    ).subscribe({
+      next: result => {
+        this.monthly.set(result);
+        this.monthlyPeriod.setValue({ fromMonth: result.fromMonth, toMonth: result.toMonth });
+      },
+      error: () => this.monthlyError.set(true),
+    });
+  }
+
+  monthBarWidth(amount: number, months: MonthlyOperationsSeries['months']): number {
+    const maximum = Math.max(1, ...months.flatMap(month => [month.recordedRevenue, month.disbursedExpenses]));
+    return Math.max(0, amount / maximum * 70);
+  }
+
+  monthDistance(fromMonth: string, toMonth: string): number {
+    if (!/^\d{4}-\d{2}$/.test(fromMonth) || !/^\d{4}-\d{2}$/.test(toMonth)) return 0;
+    const [fromYear, fromNumber] = fromMonth.split('-').map(Number);
+    const [toYear, toNumber] = toMonth.split('-').map(Number);
+    return (toYear - fromYear) * 12 + toNumber - fromNumber + 1;
+  }
+
+  monthLabel(month: string): string {
+    const [year, number] = month.split('-').map(Number);
+    return new Intl.DateTimeFormat('fr-FR', { month: 'short', year: 'numeric', timeZone: 'UTC' })
+      .format(new Date(Date.UTC(year, number - 1, 1)));
   }
 
   statusLabel(status: string): string {

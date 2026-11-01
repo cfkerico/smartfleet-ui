@@ -48,6 +48,61 @@
       }
     </section>
 
+    <section class="dashboard-panel" aria-label="Évolution mensuelle de l'exploitation">
+      <div class="panel-heading">
+        <div>
+          <h2>Évolution mensuelle</h2>
+          <p>Recettes enregistrées et dépenses décaissées, mois par mois dans le fuseau de votre société.</p>
+        </div>
+      </div>
+      <form class="period-form" [formGroup]="monthlyPeriod" (submit)="applyMonthlyPeriod($event)">
+        <label>Du mois <input type="month" formControlName="fromMonth" required /></label>
+        <label>Au mois <input type="month" formControlName="toMonth" required /></label>
+        <button type="submit" [disabled]="monthlyLoading() || monthlyPeriod.invalid ||
+          monthlyPeriod.controls.fromMonth.value > monthlyPeriod.controls.toMonth.value ||
+          monthDistance(monthlyPeriod.controls.fromMonth.value, monthlyPeriod.controls.toMonth.value) > 24">Afficher</button>
+      </form>
+      @if (monthlyPeriod.touched && monthDistance(monthlyPeriod.controls.fromMonth.value,
+           monthlyPeriod.controls.toMonth.value) > 24) {
+        <p class="validation-error" role="alert">La période ne peut pas dépasser 24 mois.</p>
+      }
+      @if (monthlyLoading()) { <p class="state" role="status">Chargement de l'évolution mensuelle...</p> }
+      @if (monthlyError()) {
+        <div class="state error" role="alert">
+          <p>Impossible de charger l'évolution mensuelle.</p>
+          <button type="button" (click)="loadMonthly(monthlyPeriod.controls.fromMonth.value,
+            monthlyPeriod.controls.toMonth.value)">Réessayer</button>
+        </div>
+      }
+      @if (monthly(); as series) {
+        <div class="monthly-legend" aria-hidden="true">
+          <span><i class="revenue-key"></i>Recettes</span>
+          <span><i class="expense-key"></i>Décaissements</span>
+        </div>
+        <div class="monthly-series" aria-label="Montants mensuels">
+          @for (item of series.months; track item.month) {
+            <div class="monthly-row">
+              <strong class="monthly-label">{{ monthLabel(item.month) }}</strong>
+              <div class="monthly-bars">
+                <div class="monthly-bar-line">
+                  <span class="monthly-bar revenue-bar" [style.width.%]="monthBarWidth(item.recordedRevenue, series.months)"></span>
+                  <span>{{ formatAmount(item.recordedRevenue) }} FCFA</span>
+                </div>
+                <div class="monthly-bar-line">
+                  <span class="monthly-bar expense-bar" [style.width.%]="monthBarWidth(item.disbursedExpenses, series.months)"></span>
+                  <span>{{ formatAmount(item.disbursedExpenses) }} FCFA</span>
+                </div>
+              </div>
+              <span class="monthly-difference" [class.negative-amount]="item.operatingDifference < 0">
+                Écart {{ formatAmount(item.operatingDifference) }} FCFA
+              </span>
+            </div>
+          }
+        </div>
+        <p class="explanation">L'écart mensuel n'est ni un bénéfice comptable ni un solde de trésorerie.</p>
+      }
+    </section>
+
     <section class="dashboard-panel" aria-label="Comparaison des véhicules">
       <div class="panel-heading">
         <div>
