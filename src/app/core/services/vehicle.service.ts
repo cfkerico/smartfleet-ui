@@ -20,6 +20,16 @@ export interface VehicleDetailsPayload {
   vin: string;
 }
 
+export interface VehicleAcquisitionPriceCorrection {
+  companyId: number;
+  vehicleId: number;
+  previousPrice: number | null;
+  correctedPrice: number;
+  reason: string;
+  correctedBy: string;
+  correctedAt: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class VehicleService {
 
@@ -56,6 +66,17 @@ export class VehicleService {
 
   reactivate(vehicleId: number): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}/${vehicleId}/reactivate`, {});
+  }
+
+  correctAcquisitionPrice(vehicleId: number, correctedPrice: number, reason: string):
+    Observable<VehicleAcquisitionPriceCorrection> {
+    return this.http.post<VehicleAcquisitionPriceCorrection>(
+      `${this.baseUrl}/${vehicleId}/acquisition-price-corrections`, { correctedPrice, reason });
+  }
+
+  getAcquisitionPriceCorrections(vehicleId: number): Observable<VehicleAcquisitionPriceCorrection[]> {
+    return this.http.get<VehicleAcquisitionPriceCorrection[]>(
+      `${this.baseUrl}/${vehicleId}/acquisition-price-corrections`);
   }
 
 }

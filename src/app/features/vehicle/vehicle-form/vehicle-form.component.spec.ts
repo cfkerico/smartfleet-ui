@@ -66,6 +66,13 @@ describe('VehicleFormComponent', () => {
     expect(component.f.expectedDailyRevenue.invalid).toBe(true);
   });
 
+  it('accepts an optional purchase price but rejects a negative value', () => {
+    component.form.patchValue({ acquisitionPrice: -1 });
+    expect(component.f.acquisitionPrice.invalid).toBe(true);
+    component.form.patchValue({ acquisitionPrice: 2500000 });
+    expect(component.f.acquisitionPrice.valid).toBe(true);
+  });
+
   it('does not include current mileage when editing a vehicle', async () => {
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
@@ -87,6 +94,7 @@ describe('VehicleFormComponent', () => {
 
     expect(editComponent.form.valid).toBe(true);
     expect(editComponent.form.controls.acquisitionMileage.disabled).toBe(true);
+    expect(editComponent.form.controls.acquisitionPrice.disabled).toBe(true);
     expect(editComponent.form.value).toMatchObject({
       engineCapacity: 1.6, horsePower: 7,
       acquisitionDate: '2020-05-03', expectedDailyRevenue: 12000,
@@ -95,6 +103,7 @@ describe('VehicleFormComponent', () => {
     editComponent.save();
     expect(close).toHaveBeenCalledOnce();
     expect(close.mock.calls[0][0]).not.toHaveProperty('acquisitionMileage');
+    expect(close.mock.calls[0][0]).not.toHaveProperty('acquisitionPrice');
   });
 
   it('shows labelled transmission and registration fields', () => {

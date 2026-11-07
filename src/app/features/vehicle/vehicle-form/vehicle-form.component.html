@@ -122,7 +122,7 @@
 
     @if (!isEdit) {
       <section class="form-section">
-        <h3>Kilométrage d’acquisition</h3>
+        <h3>Données d’acquisition</h3>
         <div class="form-grid">
           <mat-form-field appearance="outline">
             <mat-label>Kilométrage d’acquisition (km)</mat-label>
@@ -130,6 +130,14 @@
             <mat-hint>Le kilométrage actuel sera initialisé avec cette valeur.</mat-hint>
             @if (f.acquisitionMileage.touched && f.acquisitionMileage.invalid) {
               <mat-error>Indiquez un kilométrage entier positif ou nul.</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Prix d’achat (FCFA)</mat-label>
+            <input matInput type="number" min="0" step="0.01" formControlName="acquisitionPrice">
+            <mat-hint>Facultatif ; correction ultérieure réservée à l’administrateur.</mat-hint>
+            @if (f.acquisitionPrice.touched && f.acquisitionPrice.invalid) {
+              <mat-error>Indiquez un montant positif ou nul, avec deux décimales maximum.</mat-error>
             }
           </mat-form-field>
         </div>

@@ -86,6 +86,9 @@
           <div><dt>Puissance fiscale</dt><dd>{{ currentVehicle.horsePower ?? 'Non renseignée' }}</dd></div>
           <div><dt>Date d'acquisition</dt><dd>{{ currentVehicle.acquisitionDate || 'Non renseignée' }}</dd></div>
           <div><dt>Kilométrage d'acquisition</dt><dd>{{ currentVehicle.acquisitionMileage == null ? 'Non renseigné' : currentVehicle.acquisitionMileage + ' km' }}</dd></div>
+          @if (canSeeOperations()) {
+            <div><dt>Prix d’achat</dt><dd>{{ currentVehicle.acquisitionPrice == null ? 'Non renseigné' : formatAmount(currentVehicle.acquisitionPrice) + ' FCFA' }}</dd></div>
+          }
           <div><dt>Kilométrage courant</dt><dd>{{ currentVehicle.currentMileage == null ? 'Non renseigné' : currentVehicle.currentMileage + ' km' }}</dd></div>
           <div><dt>Recette journalière attendue</dt><dd>{{ currentVehicle.expectedDailyRevenue == null ? 'Non renseignée' : currentVehicle.expectedDailyRevenue + ' FCFA' }}</dd></div>
         </dl>

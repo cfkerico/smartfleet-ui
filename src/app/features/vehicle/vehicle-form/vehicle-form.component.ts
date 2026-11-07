@@ -44,6 +44,7 @@ export class VehicleFormComponent {
     vin: ['', Validators.required],
     registrationNumber: [''],
     acquisitionMileage: [null as number | null, [Validators.required, Validators.min(0), Validators.pattern(/^\d+$/)]],
+    acquisitionPrice: [null as number | null, [Validators.min(0), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
     engineCapacity: [null as number | null, Validators.min(0.01)],
     horsePower: [null as number | null, [Validators.min(1), Validators.pattern(/^\d+$/)]],
     acquisitionDate: [null as string | null],
@@ -56,6 +57,7 @@ export class VehicleFormComponent {
     if (data) {
       this.isEdit = true;
       this.form.controls.acquisitionMileage.disable();
+      this.form.controls.acquisitionPrice.disable();
 
       this.form.patchValue({
         brand: data.brand,
