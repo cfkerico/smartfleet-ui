@@ -1,0 +1,6 @@
+:host { display: block; }
+.dialog-intro { margin: 0 0 8px; font-weight: 700; color: #172b3f; }
+.dialog-help { margin: 0 0 20px; color: #526577; }
+mat-dialog-content { display: grid; gap: 8px; min-width: min(420px, 80vw); }
+mat-form-field { width: 100%; }
+@media (max-width: 500px) { mat-dialog-content { min-width: 0; } }

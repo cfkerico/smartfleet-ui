@@ -13,5 +13,11 @@
 .operations-values .negative strong, .operations-error { color: #a83232; }
 .operations-help { margin: 16px 0 0; color: #64748b; font-size: .9rem; }
 .operations-state { margin: 14px 0; color: #526577; }
+.price-correction { margin-top: 24px; padding-top: 20px; border-top: 1px solid #dfe5ec; }
+.price-correction h3 { margin: 18px 0 10px; font-size: 1rem; color: #172b3f; }
+.price-correction p { margin: 8px 0; color: #526577; }
+.price-history { display: grid; gap: 10px; margin: 0; padding-left: 22px; }
+.price-history li { padding: 10px 12px; border: 1px solid #dfe5ec; border-radius: 10px; background: #f8fafc; }
+.price-history li span { display: block; margin-top: 4px; color: #526577; overflow-wrap: anywhere; }
 @media (max-width: 760px) { .operations-values { grid-template-columns: 1fr; } }
 @media (max-width: 480px) { .operations-period label, .operations-period button { width: 100%; } }

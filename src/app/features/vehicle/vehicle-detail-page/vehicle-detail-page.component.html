@@ -92,6 +92,33 @@
           <div><dt>Kilométrage courant</dt><dd>{{ currentVehicle.currentMileage == null ? 'Non renseigné' : currentVehicle.currentMileage + ' km' }}</dd></div>
           <div><dt>Recette journalière attendue</dt><dd>{{ currentVehicle.expectedDailyRevenue == null ? 'Non renseignée' : currentVehicle.expectedDailyRevenue + ' FCFA' }}</dd></div>
         </dl>
+        @if (isAdmin()) {
+          <div class="price-correction">
+            <button mat-stroked-button type="button" (click)="openAcquisitionPriceCorrection()">
+              <mat-icon>edit</mat-icon>Corriger le prix d’achat
+            </button>
+            <h3>Historique des corrections du prix d’achat</h3>
+            @if (priceCorrectionsLoading()) {
+              <p role="status">Chargement de l’historique...</p>
+            } @else if (priceCorrectionsError()) {
+              <p role="alert">Impossible de charger l’historique des corrections.</p>
+              <button mat-button type="button" (click)="loadPriceCorrections(currentVehicle.id)">Réessayer</button>
+            } @else if (priceCorrections().length === 0) {
+              <p>Aucune correction enregistrée.</p>
+            } @else {
+              <ol class="price-history">
+                @for (correction of priceCorrections(); track correction.correctedAt) {
+                  <li>
+                    <strong>{{ correction.previousPrice == null ? 'Non renseigné' : formatAmount(correction.previousPrice) + ' FCFA' }}
+                      → {{ formatAmount(correction.correctedPrice) }} FCFA</strong>
+                    <span>{{ correction.correctedAt | date:'dd/MM/yyyy HH:mm' }} · {{ correction.correctedBy }}</span>
+                    <span>Motif : {{ correction.reason }}</span>
+                  </li>
+                }
+              </ol>
+            }
+          </div>
+        }
       </section>
 
     </div>

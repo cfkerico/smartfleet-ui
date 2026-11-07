@@ -11,17 +11,20 @@ import { CreateExpenseDialogComponent, CreateExpenseDialogData } from '../../exp
 import { VehicleAssignment } from '../../../models/assignment.model';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { VehicleService } from '../../../core/services/vehicle.service';
+import { VehicleService, VehicleAcquisitionPriceCorrection } from '../../../core/services/vehicle.service';
 import { Vehicle } from '../../../models/vehicle';
 import { VehiclePageHeaderComponent } from '../components/vehicle-page-header/vehicle-page-header.component';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AnalyticsService } from '../../../core/services/analytics.service';
 import { VehicleOperations } from '../../../models/vehicle-operations.model';
+import { AcquisitionPriceDialogComponent, AcquisitionPriceDialogData } from '../acquisition-price-dialog/acquisition-price-dialog.component';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-vehicle-detail-page',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, VehiclePageHeaderComponent],
+  imports: [RouterLink, ReactiveFormsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule,
+    VehiclePageHeaderComponent, DatePipe],
   templateUrl: './vehicle-detail-page.component.html',
   styleUrls: ['../../shared/entity-detail-page.scss', './vehicle-detail-page.component.scss'],
 })
@@ -42,6 +45,9 @@ export class VehicleDetailPageComponent implements OnInit {
   readonly operations = signal<VehicleOperations | null>(null);
   readonly operationsLoading = signal(false);
   readonly operationsError = signal(false);
+  readonly priceCorrections = signal<VehicleAcquisitionPriceCorrection[]>([]);
+  readonly priceCorrectionsLoading = signal(false);
+  readonly priceCorrectionsError = signal(false);
   readonly operationsPeriod = new FormGroup({
     from: new FormControl('', { nonNullable: true, validators: Validators.required }),
     to: new FormControl('', { nonNullable: true, validators: Validators.required }),
@@ -49,6 +55,25 @@ export class VehicleDetailPageComponent implements OnInit {
 
   canSeeOperations(): boolean {
     return this.auth.isAdmin() || this.auth.hasRole('TREASURER');
+  }
+
+  isAdmin(): boolean {
+    return this.auth.isAdmin();
+  }
+
+  openAcquisitionPriceCorrection(): void {
+    const vehicle = this.vehicle();
+    if (!vehicle || !this.isAdmin()) return;
+    const data: AcquisitionPriceDialogData = {
+      vehicleId: vehicle.id, vehicleLabel: `${vehicle.brand} ${vehicle.model}`,
+      currentPrice: vehicle.acquisitionPrice ?? null,
+    };
+    this.dialog.open<AcquisitionPriceDialogComponent, AcquisitionPriceDialogData, boolean>(
+      AcquisitionPriceDialogComponent,
+      {width: '540px', maxWidth: '96vw', maxHeight: '90vh', data},
+    ).afterClosed().subscribe(changed => {
+      if (changed === true) this.loadVehicle(vehicle.id);
+    });
   }
 
   applyOperationsPeriod(event: Event): void {
@@ -137,6 +162,7 @@ export class VehicleDetailPageComponent implements OnInit {
     ).subscribe({
       next: vehicle => {
         this.vehicle.set(vehicle);
+        if (this.isAdmin()) this.loadPriceCorrections(vehicle.id);
         if (this.canSeeOperations()) {
           const { from, to } = this.operationsPeriod.getRawValue();
           this.loadOperations(vehicle.id, from && to ? from : undefined, from && to ? to : undefined);
@@ -168,6 +194,17 @@ export class VehicleDetailPageComponent implements OnInit {
         this.operationsPeriod.setValue({ from: result.fromInclusive, to: result.toInclusive });
       },
       error: () => this.operationsError.set(true),
+    });
+  }
+
+  loadPriceCorrections(vehicleId: number): void {
+    this.priceCorrectionsLoading.set(true);
+    this.priceCorrectionsError.set(false);
+    this.vehicleService.getAcquisitionPriceCorrections(vehicleId).pipe(
+      finalize(() => this.priceCorrectionsLoading.set(false)),
+    ).subscribe({
+      next: history => this.priceCorrections.set(history),
+      error: () => this.priceCorrectionsError.set(true),
     });
   }
 

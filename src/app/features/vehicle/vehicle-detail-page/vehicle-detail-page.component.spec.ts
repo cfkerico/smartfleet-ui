@@ -18,6 +18,7 @@ describe('VehicleDetailPageComponent', () => {
     registrationNumber: 'CE 135 FG', acquisitionMileage: 100000, currentMileage: 101000,
   };
   const getById = vi.fn();
+  const getAcquisitionPriceCorrections = vi.fn();
   const findActiveAssignments = vi.fn(() => of([] as VehicleAssignment[]));
   const open = vi.fn(() => ({ afterClosed: () => of(false) }));
   const isAdmin = vi.fn(() => false);
@@ -34,7 +35,7 @@ describe('VehicleDetailPageComponent', () => {
       providers: [
         provideRouter([]),
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap(id === null ? {} : { vehicleId: id }) } } },
-        { provide: VehicleService, useValue: { getById } },
+        { provide: VehicleService, useValue: { getById, getAcquisitionPriceCorrections } },
         { provide: MatDialog, useValue: { open } },
         { provide: AssignmentApiService, useValue: { findActiveAssignments } },
         { provide: AuthService, useValue: { isAdmin, hasRole } },
@@ -48,6 +49,8 @@ describe('VehicleDetailPageComponent', () => {
 
   beforeEach(() => {
     getById.mockReset();
+    getAcquisitionPriceCorrections.mockReset();
+    getAcquisitionPriceCorrections.mockReturnValue(of([]));
     open.mockReset();
     open.mockReturnValue({ afterClosed: () => of(false) });
     findActiveAssignments.mockReset();
@@ -94,6 +97,26 @@ describe('VehicleDetailPageComponent', () => {
     const fixture = await create('9');
     expect(getVehicleOperations).not.toHaveBeenCalled();
     expect(fixture.nativeElement.textContent).not.toContain('Exploitation du véhicule');
+    expect(getAcquisitionPriceCorrections).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.textContent).not.toContain('Corriger le prix d’achat');
+  });
+
+  it('shows price correction history and opens the correction dialog only for ADMIN', async () => {
+    isAdmin.mockReturnValue(true);
+    getById.mockReturnValue(of({ ...vehicle, acquisitionPrice: 2000000 }));
+    getAcquisitionPriceCorrections.mockReturnValue(of([{
+      companyId: 1, vehicleId: 9, previousPrice: 1500000, correctedPrice: 2000000,
+      reason: 'Erreur de saisie', correctedBy: 'admin-1', correctedAt: '2026-11-01T10:00:00Z',
+    }]));
+    const fixture = await create('9');
+    fixture.detectChanges();
+    expect(getAcquisitionPriceCorrections).toHaveBeenCalledWith(9);
+    expect(fixture.nativeElement.textContent).toContain('Erreur de saisie');
+    expect(fixture.nativeElement.textContent).toContain('Corriger le prix d’achat');
+    fixture.componentInstance.openAcquisitionPriceCorrection();
+    expect(open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: { vehicleId: 9, vehicleLabel: 'Toyota Yaris', currentPrice: 2000000 },
+    }));
   });
 
   it('opens assignment creation with this vehicle preselected', async () => {

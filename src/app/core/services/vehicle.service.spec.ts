@@ -85,4 +85,19 @@ describe('VehicleService', () => {
     expect(reactivate.request.method).toBe('PUT');
     reactivate.flush(null);
   });
+
+  it('posts a motivated purchase price correction and reads its history', () => {
+    service.correctAcquisitionPrice(7, 2500000, 'Erreur de saisie').subscribe();
+    const correction = httpTestingController.expectOne(
+      `${API_ENDPOINTS.vehicles}/7/acquisition-price-corrections`);
+    expect(correction.request.method).toBe('POST');
+    expect(correction.request.body).toEqual({ correctedPrice: 2500000, reason: 'Erreur de saisie' });
+    correction.flush({});
+
+    service.getAcquisitionPriceCorrections(7).subscribe();
+    const history = httpTestingController.expectOne(
+      `${API_ENDPOINTS.vehicles}/7/acquisition-price-corrections`);
+    expect(history.request.method).toBe('GET');
+    history.flush([]);
+  });
 });
