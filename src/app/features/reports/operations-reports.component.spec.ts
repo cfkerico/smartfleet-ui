@@ -80,6 +80,22 @@ describe('OperationsReportsComponent', () => {
     expect(getExpenseCategoryReport).toHaveBeenCalledTimes(2);
   });
 
+  it('exports the displayed expense categories for the displayed period', () => {
+    Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: vi.fn().mockReturnValue('blob:test') });
+    Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: vi.fn() });
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+
+    const button = [...fixture.nativeElement.querySelectorAll('button')]
+      .find((element: HTMLButtonElement) => element.textContent.includes('Exporter les catégories affichées'));
+    expect(button).toBeDefined();
+    expect(button.disabled).toBe(false);
+    button.click();
+
+    expect(click).toHaveBeenCalledOnce();
+    expect(getExpenseCategoryReport).toHaveBeenCalledTimes(1);
+    click.mockRestore();
+  });
+
   it('filters months and rejects a period longer than 24 months', () => {
     component.monthlyPeriod.setValue({ fromMonth: '2026-07', toMonth: '2026-10' });
     component.applyMonthlyPeriod(new Event('submit'));

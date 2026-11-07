@@ -1,4 +1,4 @@
-import { createCsv, fleetPageCsv, monthlyReportCsv } from './report-csv';
+import { createCsv, expenseCategoryReportCsv, fleetPageCsv, monthlyReportCsv } from './report-csv';
 
 describe('createCsv', () => {
   it('writes a French Excel-compatible CSV with escaped values and raw amounts', () => {
@@ -33,5 +33,19 @@ describe('createCsv', () => {
     }, status => status === 'AVAILABLE' ? 'Disponible' : status);
     expect(csv).toContain('"7";"542036 - Toyota Corolla";"Disponible";"80000";"50000";"30000"');
     expect(csv.split('\r\n')).toHaveLength(3);
+  });
+
+  it('exports every expense category including zero amounts and the displayed total', () => {
+    const csv = expenseCategoryReportCsv({
+      fromInclusive: '2026-02-01', toInclusive: '2026-11-30', totalDisbursed: 297000,
+      categories: [
+        { category: 'FUEL', disbursedAmount: 40000 },
+        { category: 'DOCUMENT', disbursedAmount: 0 },
+      ],
+    }, category => category === 'FUEL' ? 'Carburant' : 'Documents');
+    expect(csv).toContain('"Carburant";"40000"');
+    expect(csv).toContain('"Documents";"0"');
+    expect(csv).toContain('"Total décaissé";"297000"');
+    expect(csv.split('\r\n')).toHaveLength(5);
   });
 });

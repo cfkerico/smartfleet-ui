@@ -115,6 +115,8 @@
         <h2>Décaissements par catégorie</h2>
         <p>Montants réellement payés, y compris les décaissements partiels, dans le fuseau de votre société.</p>
       </div>
+      <button type="button" class="export-button" (click)="exportExpenseCategories()"
+        [disabled]="!expenseCategories()">Exporter les catégories affichées (CSV)</button>
     </div>
     <form class="filter-form" [formGroup]="expenseCategoryPeriod" (submit)="applyExpenseCategoryPeriod($event)">
       <label>Du <input type="date" formControlName="from" required /></label>

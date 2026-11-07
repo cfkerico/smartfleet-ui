@@ -8,7 +8,7 @@ import { NotificationService } from '../../core/services/notification.service';
 import { FleetOperationsPage } from '../../models/fleet-operations.model';
 import { MonthlyOperationsSeries } from '../../models/monthly-operations.model';
 import { ExpenseCategoryReport } from '../../models/expense-category-report.model';
-import { downloadBlob, downloadCsv, fleetPageCsv, monthlyReportCsv } from './report-csv';
+import { downloadBlob, downloadCsv, expenseCategoryReportCsv, fleetPageCsv, monthlyReportCsv } from './report-csv';
 
 @Component({
   standalone: true,
@@ -162,6 +162,13 @@ export class OperationsReportsComponent implements OnInit {
     const data = this.monthly();
     if (!data) return;
     downloadCsv(`smartfleet-mensuel-${data.fromMonth}-${data.toMonth}.csv`, monthlyReportCsv(data));
+  }
+
+  exportExpenseCategories(): void {
+    const data = this.expenseCategories();
+    if (!data) return;
+    downloadCsv(`smartfleet-depenses-categories-${data.fromInclusive}-${data.toInclusive}.csv`,
+      expenseCategoryReportCsv(data, category => this.expenseCategoryLabel(category)));
   }
 
   exportFleetPage(): void {

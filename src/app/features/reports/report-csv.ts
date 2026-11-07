@@ -1,5 +1,6 @@
 import { FleetOperationsPage } from '../../models/fleet-operations.model';
 import { MonthlyOperationsSeries } from '../../models/monthly-operations.model';
+import { ExpenseCategoryReport } from '../../models/expense-category-report.model';
 
 export function createCsv(headers: string[], rows: (string | number)[][]): string {
   const quote = (value: string | number) => {
@@ -20,6 +21,15 @@ export function fleetPageCsv(data: FleetOperationsPage, statusLabel: (status: st
     "Écart d'exploitation"], data.content.map(item => [item.vehicleId, item.vehicleLabel,
     statusLabel(item.vehicleStatus), item.recordedRevenue, item.disbursedExpenses,
     item.operatingDifference]));
+}
+
+export function expenseCategoryReportCsv(
+  data: ExpenseCategoryReport, categoryLabel: (category: string) => string,
+): string {
+  return createCsv(['Catégorie', 'Décaissements'], [
+    ...data.categories.map(item => [categoryLabel(item.category), item.disbursedAmount]),
+    ['Total décaissé', data.totalDisbursed],
+  ]);
 }
 
 export function downloadCsv(filename: string, content: string): void {
