@@ -6,6 +6,7 @@ import { AnalyticsService } from '../../core/services/analytics.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { FleetOperationsPage } from '../../models/fleet-operations.model';
 import { MonthlyOperationsSeries } from '../../models/monthly-operations.model';
+import { ExpenseCategoryReport } from '../../models/expense-category-report.model';
 import { OperationsReportsComponent } from './operations-reports.component';
 
 describe('OperationsReportsComponent', () => {
@@ -24,22 +25,33 @@ describe('OperationsReportsComponent', () => {
       recordedRevenue: 80000, disbursedExpenses: 50000, operatingDifference: 30000 }],
     page: 0, size: 10, totalElements: 12, totalPages: 2, last: false,
   };
+  const categories: ExpenseCategoryReport = {
+    fromInclusive: '2026-07-01', toInclusive: '2026-07-31', totalDisbursed: 50000,
+    categories: [
+      { category: 'FUEL', disbursedAmount: 30000 },
+      { category: 'REPAIR', disbursedAmount: 20000 },
+      { category: 'INSURANCE', disbursedAmount: 0 },
+    ],
+  };
   const getMonthlyOperations = vi.fn().mockReturnValue(of(monthly));
   const getFleetOperations = vi.fn().mockReturnValue(of(fleet));
   const exportFleetOperations = vi.fn().mockReturnValue(of(new Blob(['csv'])));
+  const getExpenseCategoryReport = vi.fn().mockReturnValue(of(categories));
   const notification = { success: vi.fn(), error: vi.fn() };
 
   beforeEach(async () => {
     getMonthlyOperations.mockClear();
     getFleetOperations.mockClear();
     exportFleetOperations.mockClear();
+    getExpenseCategoryReport.mockClear();
     notification.success.mockClear();
     notification.error.mockClear();
     await TestBed.configureTestingModule({
       imports: [OperationsReportsComponent],
       providers: [
         provideRouter([]),
-        { provide: AnalyticsService, useValue: { getMonthlyOperations, getFleetOperations, exportFleetOperations } },
+        { provide: AnalyticsService, useValue: { getMonthlyOperations, getFleetOperations,
+          exportFleetOperations, getExpenseCategoryReport } },
         { provide: NotificationService, useValue: notification },
       ],
     }).compileComponents();
@@ -49,12 +61,23 @@ describe('OperationsReportsComponent', () => {
     await fixture.whenStable();
   });
 
-  it('loads both reports and shows zero months and a vehicle link', () => {
+  it('loads all reports and shows zero months, categories and a vehicle link', () => {
     expect(getMonthlyOperations).toHaveBeenCalledWith(undefined, undefined);
     expect(getFleetOperations).toHaveBeenCalledWith(0, 10, undefined, undefined);
+    expect(getExpenseCategoryReport).toHaveBeenCalledWith(undefined, undefined);
     expect(fixture.nativeElement.textContent).toContain('2026-08');
     expect(fixture.nativeElement.textContent).toContain('542036 - Toyota Corolla');
+    expect(fixture.nativeElement.textContent).toContain('Assurance');
     expect(fixture.nativeElement.querySelector('a[href="/vehicles/7"]')).not.toBeNull();
+  });
+
+  it('filters actual disbursements by an independent period', () => {
+    component.expenseCategoryPeriod.setValue({ from: '2026-10-01', to: '2026-10-31' });
+    component.applyExpenseCategoryPeriod(new Event('submit'));
+    expect(getExpenseCategoryReport).toHaveBeenLastCalledWith('2026-10-01', '2026-10-31');
+    component.expenseCategoryPeriod.setValue({ from: '2026-11-01', to: '2026-10-31' });
+    component.applyExpenseCategoryPeriod(new Event('submit'));
+    expect(getExpenseCategoryReport).toHaveBeenCalledTimes(2);
   });
 
   it('filters months and rejects a period longer than 24 months', () => {

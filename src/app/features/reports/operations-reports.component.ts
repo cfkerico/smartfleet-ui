@@ -7,6 +7,7 @@ import { AnalyticsService } from '../../core/services/analytics.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { FleetOperationsPage } from '../../models/fleet-operations.model';
 import { MonthlyOperationsSeries } from '../../models/monthly-operations.model';
+import { ExpenseCategoryReport } from '../../models/expense-category-report.model';
 import { downloadBlob, downloadCsv, fleetPageCsv, monthlyReportCsv } from './report-csv';
 
 @Component({
@@ -27,6 +28,9 @@ export class OperationsReportsComponent implements OnInit {
   readonly fleetLoading = signal(false);
   readonly fleetError = signal(false);
   readonly fullExportLoading = signal(false);
+  readonly expenseCategories = signal<ExpenseCategoryReport | null>(null);
+  readonly expenseCategoriesLoading = signal(false);
+  readonly expenseCategoriesError = signal(false);
   readonly pageIndex = signal(0);
   readonly pageSize = signal(10);
 
@@ -38,10 +42,15 @@ export class OperationsReportsComponent implements OnInit {
     from: new FormControl('', { nonNullable: true, validators: Validators.required }),
     to: new FormControl('', { nonNullable: true, validators: Validators.required }),
   });
+  readonly expenseCategoryPeriod = new FormGroup({
+    from: new FormControl('', { nonNullable: true, validators: Validators.required }),
+    to: new FormControl('', { nonNullable: true, validators: Validators.required }),
+  });
 
   ngOnInit(): void {
     this.loadMonthly();
     this.loadFleet();
+    this.loadExpenseCategories();
   }
 
   applyMonthlyPeriod(event: Event): void {
@@ -107,6 +116,46 @@ export class OperationsReportsComponent implements OnInit {
   retryFleet(): void {
     const { from, to } = this.fleetPeriod.getRawValue();
     this.loadFleet(this.pageIndex(), this.pageSize(), from || undefined, to || undefined);
+  }
+
+  applyExpenseCategoryPeriod(event: Event): void {
+    event.preventDefault();
+    const { from, to } = this.expenseCategoryPeriod.getRawValue();
+    if (this.expenseCategoryPeriod.invalid || from > to) {
+      this.expenseCategoryPeriod.markAllAsTouched();
+      return;
+    }
+    this.loadExpenseCategories(from, to);
+  }
+
+  loadExpenseCategories(from?: string, to?: string): void {
+    if (this.expenseCategoriesLoading()) return;
+    this.expenseCategoriesLoading.set(true);
+    this.expenseCategoriesError.set(false);
+    this.expenseCategories.set(null);
+    this.analytics.getExpenseCategoryReport(from, to).pipe(
+      finalize(() => this.expenseCategoriesLoading.set(false)),
+    ).subscribe({
+      next: result => {
+        this.expenseCategories.set(result);
+        this.expenseCategoryPeriod.setValue({ from: result.fromInclusive, to: result.toInclusive });
+      },
+      error: () => this.expenseCategoriesError.set(true),
+    });
+  }
+
+  retryExpenseCategories(): void {
+    const { from, to } = this.expenseCategoryPeriod.getRawValue();
+    this.loadExpenseCategories(from || undefined, to || undefined);
+  }
+
+  expenseCategoryLabel(category: string): string {
+    const labels: Record<string, string> = {
+      FUEL: 'Carburant', MAINTENANCE: 'Entretien', REPAIR: 'Réparation',
+      SPARE_PART: 'Pièces détachées', INSURANCE: 'Assurance', TAX: 'Taxes',
+      DOCUMENT: 'Documents', SALARY: 'Salaires', UTILITY: 'Fournitures', OTHER: 'Autres',
+    };
+    return labels[category] ?? category;
   }
 
   exportMonthly(): void {

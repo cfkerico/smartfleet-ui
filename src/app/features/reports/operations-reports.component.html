@@ -109,5 +109,39 @@
       }
     }
   </section>
+  <section class="report-panel" aria-label="Dépenses décaissées par catégorie">
+    <div class="panel-heading">
+      <div>
+        <h2>Décaissements par catégorie</h2>
+        <p>Montants réellement payés, y compris les décaissements partiels, dans le fuseau de votre société.</p>
+      </div>
+    </div>
+    <form class="filter-form" [formGroup]="expenseCategoryPeriod" (submit)="applyExpenseCategoryPeriod($event)">
+      <label>Du <input type="date" formControlName="from" required /></label>
+      <label>Au <input type="date" formControlName="to" required /></label>
+      <button type="submit" [disabled]="expenseCategoriesLoading() || expenseCategoryPeriod.invalid ||
+        expenseCategoryPeriod.controls.from.value > expenseCategoryPeriod.controls.to.value">Afficher</button>
+    </form>
+    @if (expenseCategoriesLoading()) { <p class="state" role="status">Chargement des catégories...</p> }
+    @if (expenseCategoriesError()) {
+      <div class="state error" role="alert"><p>Impossible de charger les décaissements par catégorie.</p>
+        <button type="button" (click)="retryExpenseCategories()">Réessayer</button></div>
+    }
+    @if (expenseCategories(); as report) {
+      <p class="category-total">Total décaissé : <strong>{{ formatAmount(report.totalDisbursed) }} FCFA</strong></p>
+      <div class="table-scroll">
+        <table class="categories-table">
+          <thead><tr><th scope="col">Catégorie</th><th scope="col" class="amount">Décaissements</th></tr></thead>
+          <tbody>
+            @for (item of report.categories; track item.category) {
+              <tr><td>{{ expenseCategoryLabel(item.category) }}</td>
+                <td class="amount">{{ formatAmount(item.disbursedAmount) }} FCFA</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="explanation">Les demandes non décaissées ne sont pas incluses.</p>
+    }
+  </section>
   <p class="explanation">L'écart d'exploitation n'est ni un bénéfice comptable ni le solde de trésorerie.</p>
 </main>

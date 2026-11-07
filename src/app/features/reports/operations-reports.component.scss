@@ -25,4 +25,7 @@ td a { color: #005ec4; font-weight: 600; text-decoration: none; white-space: now
 td a:hover { text-decoration: underline; }
 .state { padding: 18px 0; }
 .explanation { color: #64748b; font-size: .875rem; }
+.category-total { margin: 0 0 16px; color: #40566b; }
+.category-total strong { color: #172b3f; font-size: 1.15rem; }
+.categories-table { min-width: 520px; }
 @media (max-width: 600px) { .reports-page { padding: 16px; } .filter-form label, .filter-form button { width: 100%; } }
